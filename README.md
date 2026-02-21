@@ -2,9 +2,10 @@
 
 ## PROPOR 2026
 
-The **17th International Conference on Computational Processing of Portuguese (PROPOR 2026)** is the main scientific meeting in the area of language and speech technologies for the Portuguese/Galician language. The 2026 edition will be held in **Salvador, Brazil, from April 13–16, 2026**.
-PROPOR is a biennial event hosted alternately in Brazil and Portugal (and now Galicia), with a history spanning since 1993. More information at [propor2026.ufba.br](https://propor2026.ufba.br/) and [propor.org](https://propor.org).
 > Replication package for the paper published at **PROPOR 2026** — *17th International Conference on Computational Processing of Portuguese*.
+
+The **17th International Conference on Computational Processing of Portuguese (PROPOR 2026)** is the premier scientific venue for language and speech technologies applied to Portuguese and Galician. The 2026 edition will be held in **Salvador, Brazil, from April 13–16, 2026**.
+PROPOR is a biennial event held alternately in Brazil and Portugal (and now Galicia), with a tradition dating back to 1993. More information at [propor2026.ufba.br](https://propor2026.ufba.br/) and [propor.org](https://propor.org).
 
 📄 **Paper:** _in progress_
 
@@ -48,7 +49,7 @@ This repository contains all code used in the experiments reported in the paper,
 
 ## Models
 
-Three LLMs were evaluated under both the baseline and JAMEX strategies:
+Three LLMs were evaluated under both the single-prompt baseline strategy and the JAMEX multi-agent pipeline:
 
 - **GPT-5** (OpenAI, proprietary) — API access, context window 256k tokens, medium reasoning effort for LLM-as-a-Judge and low reasoning effort for agents/baseline.
 - **Gemma 3 12B** (Google DeepMind, open weights) — optimized for GPU/TPU execution, 128k context window.
@@ -58,7 +59,7 @@ Three LLMs were evaluated under both the baseline and JAMEX strategies:
 
 ## Dataset
 
-Experiments were conducted on a stratified sample of **n = 1,225** Law appellate decisions (*acórdãos*) from the **Superior Tribunal de Justiça (STJ)** official open data portal, covering the period January 1, 2023 – December 31, 2024.
+Experiments were conducted on a stratified sample of **n = 1,225** legal appellate decisions (*acórdãos* — Brazilian collegiate court rulings) from the **Superior Tribunal de Justiça (STJ)** official open data portal, covering the period January 1, 2023 – December 31, 2024.
 
 A semantic diversity filter was applied using cosine similarity (θ = 0.15) on domain-specific embeddings to reduce near-duplicate documents and increase corpus variance.
 
@@ -127,8 +128,8 @@ The dataset derived from STJ public records is subject to the terms of the [STJ 
 
 ## Acknowledgements
 
-This work is derived from a final project (*Trabalho de Conclusão de Curso*) of the Specialization in Data Science at **Pontifícia Universidade Católica do Paraná (PUCPR)**, where two of the authors are currently enrolled in the Master's program in Computer Science. We thank **PUCPR** for the academic environment and institutional support that made this work possible.
+This work originated as a capstone project (*Trabalho de Conclusão de Curso*) of the Specialization in Data Science at **Pontifícia Universidade Católica do Paraná (PUCPR)**, where two of the authors are currently enrolled in the Master's program in Computer Science. We thank **PUCPR** for the academic environment and institutional support that made this work possible.
 
-We gratefully acknowledge the **Superior Tribunal de Justiça (STJ)** for making their appellate decisions publicly available through the [Open Data Portal](https://dadosabertos.web.stj.jus.br/group/jurisprudencia), for the investment in infrastructure that made this research computationally feasible, and for the institutional support to scientific research.
+We gratefully acknowledge the **Superior Tribunal de Justiça (STJ)** for making their appellate decisions publicly available through the [Open Data Portal](https://dadosabertos.web.stj.jus.br/group/jurisprudencia) and for the institutional support that made this research possible.
 
-We also thank the **Coordenação de Aperfeiçoamento de Pessoal de Nível Superior (CAPES)** for supporting scientific production and the development of the academic and technical faculty body in Brazil.
+We also thank the **Coordenação de Aperfeiçoamento de Pessoal de Nível Superior (CAPES)** for supporting scientific research and for fostering the training and development of graduate researchers and faculty across Brazil.
