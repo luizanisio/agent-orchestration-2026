@@ -95,7 +95,7 @@ def download_decisions(
 def _text_fingerprint(doc: dict) -> str:
     """Create a short fingerprint for a document based on its textual content."""
     text = " ".join(str(v) for v in doc.values() if v)
-    return hashlib.md5(text.encode("utf-8")).hexdigest()  # noqa: S324 – used for dedup, not security
+    return hashlib.md5(text.encode("utf-8")).hexdigest()  # noqa: S324 – used for deduplication, not security
 
 
 def apply_diversity_filter(
