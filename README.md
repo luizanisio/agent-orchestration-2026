@@ -51,7 +51,7 @@ Three LLMs were evaluated under both the baseline and JAMEX strategies:
 
 ## Dataset
 
-Experiments were conducted on a stratified sample of **n = 1,225** Criminal Law appellate decisions (*acórdãos*) from the **Superior Tribunal de Justiça (STJ)** official open data portal, covering the period January 1, 2023 – December 31, 2024.
+Experiments were conducted on a stratified sample of **n = 1,225** Law appellate decisions (*acórdãos*) from the **Superior Tribunal de Justiça (STJ)** official open data portal, covering the period January 1, 2023 – December 31, 2024.
 
 A semantic diversity filter was applied using cosine similarity (θ = 0.15) on domain-specific embeddings to reduce near-duplicate documents and increase corpus variance.
 
