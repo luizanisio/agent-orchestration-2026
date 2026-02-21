@@ -26,6 +26,13 @@ This repository contains all code used in the experiments reported in the paper,
 
 ---
 
+## Architecture
+
+![JAMEX Agent Orchestration Diagram](images/diagram_agents.png)
+*Figure: JAMEX multi-agent orchestration pipeline — specialist agents with planning, dependency-aware execution, schema validation, and directed review communicate exclusively through JSON objects.*
+
+---
+
 ## Experimental Setup
 
 | Component         | Specification                                      |
