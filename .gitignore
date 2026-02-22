@@ -207,6 +207,7 @@ marimo/_lsp/
 __marimo__/
 
 # Data
-notebooks/espelhos_raw**
+_temp/**
 artigo**
 notebooks/downloads_stj/**
+data/espelhos_acordaos_artigo2026_com_texto.parquet
