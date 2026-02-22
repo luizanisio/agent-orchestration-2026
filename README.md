@@ -73,13 +73,14 @@ The full text of each decision is **not stored in this repository**. To reproduc
 
 The notebook (`notebooks/01_data_preparation.ipynb`) performs the following steps:
 
-1. Loads `espelhos_acordaos_artigo2026.parquet` — the index file with the 1,225 selected decisions and their identifiers (`seq_documento_acordao`, `id_espelho`).
-2. Connects to the CKAN dataset [`integras-de-decisoes-terminativas-e-acordaos-do-diario-da-justica`](https://dadosabertos.web.stj.jus.br/dataset/integras-de-decisoes-terminativas-e-acordaos-do-diario-da-justica) and lists available ZIP files.
-3. Filters ZIP files by the years present in the sample (e.g., `2022`, `2023`) to avoid unnecessary downloads.
-4. Streams each ZIP, extracts only the `.txt` files whose names match a `seq_documento_acordao` in the sample, and maps the content back to the dataframe.
-5. Saves the enriched dataset to `espelhos_acordaos_artigo2026_com_texto.parquet`.
+1. Loads `espelhos_acordaos_artigo2026.parquet` — the index file with the 1,225 selected decisions and their identifiers (`seq_documento_acordao` and `num_registro`). A computed field `id_peca` (format: `seq_documento_acordao + '.' + ano + '.'`, e.g. `188798478.2023.`) is derived within the notebook and used as the document identifier throughout the experiment pipeline.
+2. Connects to the CKAN dataset [`integras-de-decisoes-terminativas-e-acordaos-do-diario-da-justica`](https://dadosabertos.web.stj.jus.br/dataset/integras-de-decisoes-terminativas-e-acordaos-do-diario-da-justica) and lists available ZIP files; separately, queries the per-*órgão julgador* mirror datasets to list available JSON files.
+3. Filters ZIP and JSON files by the years present in the sample (e.g., `2023`, `2024`) to avoid unnecessary downloads.
+4. Streams each ZIP, extracts only the `.txt` files whose names match a `seq_documento_acordao` in the sample, and maps the full-text content back to the dataframe.
+5. Downloads and processes each mirror JSON, filtering records by `num_registro` and joining structured metadata fields (`teseJuridica`, `tema`, `referenciasLegislativas`, `jurisprudenciaCitada`, `notas`, `termosAuxiliares`, `informacoesComplementares`, etc.) back to the dataframe via `seq_documento_acordao`.
+6. Saves the enriched dataset to `espelhos_acordaos_artigo2026_com_texto.parquet`.
 
-Downloaded ZIPs are cached locally in `notebooks/downloads_stj/` so subsequent runs do not re-download files already present.
+Downloaded ZIPs are cached locally in `notebooks/downloads_stj/` and mirror JSONs in `notebooks/downloads_stj/espelhos/`, so subsequent runs do not re-download files already present.
 
 **Data availability:** The dataset is **not distributed directly** in this repository. Texts are fetched on demand from the [STJ Open Data Portal](https://dadosabertos.web.stj.jus.br/group/jurisprudencia), ensuring compliance with access policies and data governance requirements enforced by the portal at the time of download.
 
