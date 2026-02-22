@@ -61,16 +61,32 @@ Three LLMs were evaluated under both the single-prompt baseline strategy and the
 
 Experiments were conducted on a stratified sample of **n = 1,225** legal appellate decisions (*acórdãos* — Brazilian collegiate court rulings) from the **Superior Tribunal de Justiça (STJ)** official open data portal, covering the period January 1, 2023 – December 31, 2024.
 
-A semantic diversity filter was applied using cosine similarity (θ = 0.15) on domain-specific embeddings to reduce near-duplicate documents and increase corpus variance.
+### Sample Selection
 
-**Data availability:** The dataset is **not distributed directly** in this repository. Instead, a data extraction script is provided that downloads decisions directly from the [STJ Open Data Portal](https://dadosabertos.web.stj.jus.br/group/jurisprudencia), ensuring compliance with any terms of use, access policies, or data governance requirements enforced by the portal at the time of download.
+Candidate decisions were identified through the STJ internal jurisprudence index (*Summa*), which provides structured metadata including `seq_documento_acordao`, publication date, and class information. The sample was restricted to decisions published on the *Diário da Justiça Eletrônico* (DJe) and indexed with at least one valid *espelho do acórdão* entry in the CKAN open data portal.
+
+A semantic diversity filter was applied using cosine similarity (θ = 0.15) on domain-specific embeddings to reduce near-duplicate documents and increase corpus variance. 
+
+### Obtaining the Full Texts
+
+The full text of each decision is **not stored in this repository**. To reproduce the dataset used in the paper, run the data preparation notebook, which downloads each decision's full text directly from the STJ Open Data Portal using the `seq_documento_acordao` identifier:
+
+The notebook (`notebooks/01_data_preparation.ipynb`) performs the following steps:
+
+1. Loads `espelhos_acordaos_artigo2026.parquet` — the index file with the 1,225 selected decisions and their identifiers (`seq_documento_acordao`, `id_espelho`).
+2. Connects to the CKAN dataset [`integras-de-decisoes-terminativas-e-acordaos-do-diario-da-justica`](https://dadosabertos.web.stj.jus.br/dataset/integras-de-decisoes-terminativas-e-acordaos-do-diario-da-justica) and lists available ZIP files.
+3. Filters ZIP files by the years present in the sample (e.g., `2022`, `2023`) to avoid unnecessary downloads.
+4. Streams each ZIP, extracts only the `.txt` files whose names match a `seq_documento_acordao` in the sample, and maps the content back to the dataframe.
+5. Saves the enriched dataset to `espelhos_acordaos_artigo2026_com_texto.parquet`.
+
+Downloaded ZIPs are cached locally in `notebooks/downloads_stj/` so subsequent runs do not re-download files already present.
+
+**Data availability:** The dataset is **not distributed directly** in this repository. Texts are fetched on demand from the [STJ Open Data Portal](https://dadosabertos.web.stj.jus.br/group/jurisprudencia), ensuring compliance with access policies and data governance requirements enforced by the portal at the time of download.
 
 This approach ensures that:
 - Data is always fetched from the authoritative source.
 - Users comply with the STJ Open Data Portal's current terms and policies.
 - No court decision content is redistributed without authorization.
-
-See `notebooks` for detailed instructions, required credentials (if any), and notes on how to reproduce the exact sample used in the paper (stratification criteria, date range, and semantic filtering parameters).
 
 ---
 
