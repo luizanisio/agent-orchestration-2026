@@ -43,8 +43,9 @@ Parâmetros do construtor:
 --------------------------
     anos                      : set[str] | None  — anos de publicação (YYYY). None = todos.
     classes                   : set[str] | None  — siglas de classes processuais. None = todas.
-    numeros_registros         : set[str] | None  — filtrar por numeroRegistro específico.
-    seq_documentos            : set[int] | None  — filtrar por seq_documento_acordao específico.
+    registros                 : set[str] | None  — filtrar por numeroRegistro específico.
+                                podem ser tuplas (registro, data_publicacao) ou (registro, data_publicacao, tipo_decisao)
+    documentos                : set[int] | None  — filtrar por seq_documento_acordao específico.
     colunas                   : list[str] | None — campos do espelho a importar. None = padrão.
     orgaos                    : list[str] | None — siglas dos órgãos (ex: ['T5', 'S3']). None = todos.
     download_dir              : Path  — pasta para cache de ZIPs (padrão: downloads_stj).
@@ -102,6 +103,26 @@ def _extrair_data_pub_espelho(valor: str) -> str:
     return f'{m.group(3)}{m.group(2)}{m.group(1)}' if m else ''
 
 
+
+def _padronizar_data_filtro(valor: str) -> str:
+    """Padroniza data contida nos filtros (registros) para formato YYYYMMDD."""
+    if not valor: return ''
+    v = str(valor).strip()
+    if re.match(r'^\d{8}$', v): return v
+    
+    # DD/MM/YYYY ou DD-MM-YYYY
+    m = re.match(r'^(\d{2})[-/](\d{2})[-/](\d{4})$', v)
+    if m: return f"{m.group(3)}{m.group(2)}{m.group(1)}"
+    
+    # YYYY-MM-DD ou YYYY/MM/DD
+    m = re.match(r'^(\d{4})[-/](\d{2})[-/](\d{2})$', v)
+    if m: return f"{m.group(1)}{m.group(2)}{m.group(3)}"
+    
+    d = _extrair_data_pub_integra(v)
+    if d: return d
+    d = _extrair_data_pub_espelho(v)
+    return d or v
+
 def _extrair_data_pub_integra(valor) -> str:
     """Converte dataPublicacao de metadados de íntegra para YYYYMMDD.
 
@@ -141,22 +162,54 @@ class UtilCkan:
         anos:    Optional[set[str]]    = None,
         classes: Optional[set[str]]    = None,
         orgaos:  Optional[list[str]]    = None,
-        numeros_registros: Optional[set[str]] = None,
-        seq_documentos: Optional[set[int]] = None,
+        registros: Optional[set] = None,
+        documentos: Optional[set] = None,
         colunas: Optional[list[str]] = None,
         download_dir: Path              = Path('downloads_stj'),
         espelhos_dir: Path              = Path('downloads_stj/espelhos'),
         metadados_dir: Path             = Path('downloads_stj/metadados_integras'),
+        integras_dir: Path              = Path('downloads_stj/integras'),
         base_url:     str               = CKAN_BASE_URL,
         timeout:      int               = 600,
-        permitir_download_espelho: bool = True,
-        permitir_download_integra: bool = True,
+        atualizar_cache_e_mapas: bool   = True,
     ):
+        ''' Inicializa o utilitário CKAN.
+        Args:
+            anos: Anos de interesse (ex: {'2023', '2024'}).
+            classes: Classes de processos (ex: {'AI', 'RE'}).
+            orgaos: Siglas dos órgãos (ex: ['T1', 'T2']).
+            registros: Números de registro (ex: {'123456'}).
+            documentos: Sequências de documentos (ex: {123456}).
+            colunas: Colunas a serem extraídas dos espelhos.
+            download_dir: Diretório para download dos arquivos.
+            espelhos_dir: Diretório para cache dos espelhos.
+            integras_dir: Diretório para cache dos ZIPs de íntegras.
+            metadados_dir: Diretório para cache dos metadados das íntegras.
+            base_url: URL base do CKAN.
+            timeout: Timeout HTTP em segundos.
+            atualizar_cache_e_mapas: Permitir baixar novos arquivos via API CKAN e atualizar/recriar os mapas.
+                - se False, usa apenas os arquivos e mapas já armazenados em cache.
+                - será considerado True independentemente do valor fornecido se os mapas não forem encontrados na inicialização.
+        '''
+
         self.anos         = set(anos) if anos else None
         self.classes      = {c.upper() for c in classes} if classes else None
-        self.numeros_registros = set(numeros_registros) if numeros_registros else None
-        self.seq_documentos    = set(seq_documentos) if seq_documentos else None
-        self.colunas           = colunas or COLUNAS_ESPELHO_PADRAO
+        
+        # Filtros de registros aceitam string ou tuplas (reg, data) ou (reg, data, tipo)
+        self.registros = set()
+        if registros:
+            for r in registros:
+                if isinstance(r, str):
+                    self.registros.add(r.strip())
+                elif isinstance(r, (tuple, list)):
+                    if len(r) == 2:
+                        self.registros.add((str(r[0]).strip(), _padronizar_data_filtro(r[1])))
+                    elif len(r) >= 3:
+                        self.registros.add((str(r[0]).strip(), _padronizar_data_filtro(r[1]), str(r[2]).upper().strip()))
+
+        self.documentos = {str(d).strip() for d in documentos} if documentos else None
+        self.colunas    = colunas or COLUNAS_ESPELHO_PADRAO
+
         # Filtra DATASETS_ESPELHOS_PADRAO pelas siglas informadas
         if orgaos:
             siglas = {s.upper() for s in orgaos}
@@ -169,13 +222,13 @@ class UtilCkan:
         self.download_dir  = Path(download_dir)
         self.espelhos_dir  = Path(espelhos_dir)
         self.metadados_dir = Path(metadados_dir)
+        self.integras_dir  = Path(integras_dir)
         self.base_url     = base_url
         self.timeout      = timeout
-        self.permitir_download_espelho = permitir_download_espelho
-        self.permitir_download_integra = permitir_download_integra
         self.download_dir.mkdir(parents=True, exist_ok=True)
         self.espelhos_dir.mkdir(parents=True, exist_ok=True)
         self.metadados_dir.mkdir(parents=True, exist_ok=True)
+        self.integras_dir.mkdir(parents=True, exist_ok=True)
 
         # ── Mapas de índice ──
         self._caminho_mapa_espelhos = self.download_dir / 'mapa_espelhos.json'
@@ -184,8 +237,30 @@ class UtilCkan:
         self._mapa_integras: dict[str, dict] = {}   # id_mapa → registro
         self.duplicados: dict[str, list[dict]] = {}  # id_mapa → lista de ocorrências
 
+        # Determina a necessidade de atualização forçada
+        self.atualizar_cache_e_mapas = atualizar_cache_e_mapas
+        if not self._caminho_mapa_espelhos.is_file() or not self._caminho_mapa_integras.is_file():
+            self.atualizar_cache_e_mapas = True
+
         # Carrega mapas existentes do disco
         self._carregar_mapas()
+
+        if self.atualizar_cache_e_mapas:
+           self.baixar_espelhos()
+           self.atualizar_mapas()
+
+    def _passou_filtro_registro(self, num_reg: str, data_pub: str, tipo_decisao: str) -> bool:
+        """Verifica se o registro satisfaz os filtros de tuplas de registros."""
+        if not self.registros:
+            return True
+        num = num_reg.strip()
+        data = data_pub.strip()
+        tipo = tipo_decisao.upper().strip()
+        return (
+            (num in self.registros) or 
+            ((num, data) in self.registros) or 
+            ((num, data, tipo) in self.registros)
+        )
 
     # ══════════════════════════════════════════════════════════════════════════
     # Mapa — construção e consulta
@@ -296,6 +371,10 @@ class UtilCkan:
 
                 if not num_reg or not data_pub or not tipo_decisao:
                     continue
+                
+                # Filtra a carga de registros usando as tuplas do inicializador
+                if not self._passou_filtro_registro(num_reg, data_pub, tipo_decisao):
+                    continue
 
                 id_mapa = _gerar_id_mapa(num_reg, data_pub, tipo_decisao)
                 id_espelho = str(item.get('id') or '').strip()
@@ -364,7 +443,7 @@ class UtilCkan:
         # O ZIP correspondente tem nome baseado na data de publicação do metadado
         # ZIPs antigos: 202202.zip (mês inteiro), novos: 20240110.zip (dia)
         # Montamos lookup de ZIPs disponíveis em cache para verificar
-        zips_cache = {z.stem: z.name for z in self.download_dir.glob('*.zip')}
+        zips_cache = {z.stem: z.name for z in self.integras_dir.glob('*.zip')}
 
         print(f'  🔄  Indexando {len(novos_locais)} JSON(s) de metadados...')
         inseridos = 0
@@ -392,6 +471,14 @@ class UtilCkan:
 
                     if not num_reg or not data_pub or not tipo_doc:
                         continue
+                    
+                    # Filtra a carga de registros usando as tuplas do inicializador
+                    if not self._passou_filtro_registro(num_reg, data_pub, tipo_doc):
+                        continue
+
+                    if self.documentos and seq_doc:
+                        if str(seq_doc).strip() not in self.documentos:
+                            continue
 
                     id_mapa = _gerar_id_mapa(num_reg, data_pub, tipo_doc)
 
@@ -445,8 +532,8 @@ class UtilCkan:
     def consultar_mapa(self, filtros: Optional[dict] = None) -> list[dict]:
         """Retorna registros do mapa de espelhos que satisfazem os filtros configurados.
 
-        Combina os filtros do construtor (anos, orgaos, classes, numeros_registros,
-        seq_documentos) com filtros adicionais opcionais passados como dict.
+        Combina os filtros do construtor (anos, orgaos, classes, registros,
+        documentos) com filtros adicionais opcionais passados como dict.
         Retorna lista de registros do mapa (cada um possui id_mapa, id_espelho, etc.).
         """
         resultados = []
@@ -466,15 +553,20 @@ class UtilCkan:
                 sigla = reg.get('sigla_classe', '').upper()
                 if not any(re.search(rf'\b{re.escape(c)}\b', sigla) for c in self.classes):
                     continue
-            # Filtro por número de registro
-            if self.numeros_registros:
-                if reg.get('numero_registro') not in self.numeros_registros:
+            # Filtro por registro (pode ser str, tupla de 2 - com data, ou tupla de 3 - com tipo)
+            if self.registros:
+                reg_num = str(reg.get('numero_registro', ''))
+                reg_data = str(reg.get('data_publicacao', ''))
+                reg_tipo = str(reg.get('tipo_decisao', ''))
+                if not self._passou_filtro_registro(reg_num, reg_data, reg_tipo):
                     continue
-            # Filtro por seq_documento (via cruzamento com mapa de íntegras)
-            if self.seq_documentos:
+
+            # Filtro por documento (seq_documento) no espelho ou na íntegra
+            if self.documentos:
+                seq_esp = str(reg.get('seq_documento', '')).strip()
                 integra = self._mapa_integras.get(id_mapa, {})
-                seq = integra.get('seq_documento')
-                if seq not in self.seq_documentos:
+                seq_int = str(integra.get('seq_documento', '')).strip()
+                if seq_esp not in self.documentos and seq_int not in self.documentos:
                     continue
             # Filtros adicionais
             if filtros:
@@ -539,7 +631,7 @@ class UtilCkan:
                 por_zip.setdefault(arq, []).append(item)
 
         for nome_zip, itens_zip in tqdm(por_zip.items(), desc='Extraindo íntegras'):
-            caminho_zip = self.download_dir / nome_zip
+            caminho_zip = self.integras_dir / nome_zip
             if not caminho_zip.is_file():
                 print(f'  ⚠️  ZIP não encontrado em cache: {nome_zip}')
                 continue
@@ -759,7 +851,7 @@ class UtilCkan:
         print(f'Baixando {len(recursos)} arquivo(s) de espelhos...')
         for r in tqdm(recursos, desc='Espelhos'):
             try:
-                self._baixar(r['url'], r['name'], self.espelhos_dir, self.permitir_download_espelho)
+                self._baixar(r['url'], r['name'], self.espelhos_dir, self.atualizar_cache_e_mapas)
             except Exception as e:
                 print(f'  ⚠️  {r["name"]}: {e}')
 
@@ -770,19 +862,19 @@ class UtilCkan:
         print(f'Baixando {len(recursos)} ZIP(s) de íntegras...')
         for r in tqdm(recursos, desc='ZIPs'):
             try:
-                self._baixar(r['url'], r['name'], self.download_dir, self.permitir_download_integra)
+                self._baixar(r['url'], r['name'], self.integras_dir, self.atualizar_cache_e_mapas)
             except Exception as e:
                 print(f'  ⚠️  {r["name"]}: {e}')
 
     def baixar_espelho(self, recurso: dict) -> Path:
         """Baixa um recurso de espelho para o cache."""
         return self._baixar(recurso['url'], recurso['name'],
-                            self.espelhos_dir, self.permitir_download_espelho)
+                            self.espelhos_dir, self.atualizar_cache_e_mapas)
 
     def baixar_zip(self, recurso: dict) -> Path:
         """Baixa um ZIP de íntegras para o cache."""
         return self._baixar(recurso['url'], recurso['name'],
-                            self.download_dir, self.permitir_download_integra)
+                            self.integras_dir, self.atualizar_cache_e_mapas)
 
     # ══════════════════════════════════════════════════════════════════════════
     # Métodos internos
@@ -881,19 +973,14 @@ class UtilCkan:
 class ExemplosCKan():
 
     @classmethod
-    def exemplo1(cls, permitir_download_espelho, permitir_download_integra):
+    def exemplo1(cls, atualizar_cache_e_mapas):
         print('=== Exemplo 1: construir mapas + dataset Penal (2024) ===\n')
 
         ckan = UtilCkan(
             anos   = {'2024','2024'},
             orgaos = ['T5', 'T6', 'S3'],
-            permitir_download_espelho = permitir_download_espelho,
-            permitir_download_integra = permitir_download_integra,
+            atualizar_cache_e_mapas = atualizar_cache_e_mapas,
         )
-
-        # Baixa espelhos e atualiza mapas
-        ckan.baixar_espelhos()
-        ckan.atualizar_mapas()
 
         # Mostra estatísticas dos mapas
         cruzados = ckan.cruzar_espelhos_integras()
@@ -920,16 +1007,13 @@ class ExemplosCKan():
 
 
     @classmethod
-    def exemplo2(cls, num_registro, permitir_download_espelho, permitir_download_integra):
+    def exemplo2(cls, num_registro, atualizar_cache_e_mapas):
         print('=== Exemplo 2: construir mapas + dataset com um número de registro específico ===\n')
         num_registro = num_registro or '202201546162'
         ckan2 = UtilCkan(
-            numeros_registros= {num_registro},
-            permitir_download_espelho = permitir_download_espelho,
-            permitir_download_integra = permitir_download_integra
+            registros= {num_registro},
+            atualizar_cache_e_mapas = atualizar_cache_e_mapas,
         )
-        ckan2.baixar_espelhos()
-        ckan2.atualizar_mapas()
 
         df = ckan2.gerar_dataset_espelhos(
             caminho_saida  = Path('../data/exemplo_ementas.parquet'),
@@ -976,14 +1060,10 @@ if __name__ == '__main__':
     """Exemplos de uso — execução direta para teste rápido."""
     from pathlib import Path
 
-    permitir_download_integra = True
-    permitir_download_espelho = True
-
+    atualizar_mapas_e_cache = True
     # Exemplo 1: construir mapas e gerar dataset Penal (2024)
-    #ExemplosCKan.exemplo1(permitir_download_espelho, permitir_download_integra)
+    #ExemplosCKan.exemplo1(atualizar_mapas_e_cache)
 
     # Exemplo 2: construir mapas e gerar dataset com um número de registro específico
-    ExemplosCKan.exemplo2(num_registro = '202302829818', 
-                            permitir_download_espelho = permitir_download_espelho,
-                            permitir_download_integra = permitir_download_integra)
+    ExemplosCKan.exemplo2(num_registro = '202302829818', atualizar_cache_e_mapas = atualizar_mapas_e_cache)
 
