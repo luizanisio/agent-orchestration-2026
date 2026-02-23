@@ -48,8 +48,8 @@ Parâmetros do construtor:
     documentos                : set[int] | None  — filtrar por seq_documento_acordao específico.
     colunas                   : list[str] | None — campos do espelho a importar. None = padrão.
     orgaos                    : list[str] | None — siglas dos órgãos (ex: ['T5', 'S3']). None = todos.
-    download_dir              : Path  — pasta para cache de ZIPs (padrão: downloads_stj).
-    espelhos_dir              : Path  — pasta para cache de JSONs (padrão: downloads_stj/espelhos).
+    download_dir              : Path  — pasta raiz para cache (padrão: downloads_stj).
+                                As subpastas espelhos/, integras/ e metadados_integras/ são criadas automaticamente.
     timeout                   : int   — timeout HTTP em segundos (padrão: 600).
     permitir_download_espelho : bool  — False = usa apenas cache para espelhos.
     permitir_download_integra : bool  — False = usa apenas cache para ZIPs de íntegras.
@@ -166,9 +166,6 @@ class UtilCkan:
         documentos: Optional[set] = None,
         colunas: Optional[list[str]] = None,
         download_dir: Path              = Path('downloads_stj'),
-        espelhos_dir: Path              = Path('downloads_stj/espelhos'),
-        metadados_dir: Path             = Path('downloads_stj/metadados_integras'),
-        integras_dir: Path              = Path('downloads_stj/integras'),
         base_url:     str               = CKAN_BASE_URL,
         timeout:      int               = 600,
         atualizar_cache_e_mapas: bool   = True,
@@ -181,10 +178,8 @@ class UtilCkan:
             registros: Números de registro (ex: {'123456'}).
             documentos: Sequências de documentos (ex: {123456}).
             colunas: Colunas a serem extraídas dos espelhos.
-            download_dir: Diretório para download dos arquivos.
-            espelhos_dir: Diretório para cache dos espelhos.
-            integras_dir: Diretório para cache dos ZIPs de íntegras.
-            metadados_dir: Diretório para cache dos metadados das íntegras.
+            download_dir: Diretório raiz para cache. Subpastas espelhos/, integras/ e
+                metadados_integras/ são criadas automaticamente dentro dele.
             base_url: URL base do CKAN.
             timeout: Timeout HTTP em segundos.
             atualizar_cache_e_mapas: Permitir baixar novos arquivos via API CKAN e atualizar/recriar os mapas.
@@ -220,9 +215,9 @@ class UtilCkan:
         else:
             self.orgaos = DATASETS_ESPELHOS_PADRAO
         self.download_dir  = Path(download_dir)
-        self.espelhos_dir  = Path(espelhos_dir)
-        self.metadados_dir = Path(metadados_dir)
-        self.integras_dir  = Path(integras_dir)
+        self.espelhos_dir  = self.download_dir / 'espelhos'
+        self.metadados_dir = self.download_dir / 'metadados_integras'
+        self.integras_dir  = self.download_dir / 'integras'
         self.base_url     = base_url
         self.timeout      = timeout
         self.download_dir.mkdir(parents=True, exist_ok=True)
@@ -318,9 +313,24 @@ class UtilCkan:
         }
         self.duplicados.setdefault(id_mapa, []).append(entrada)
 
-    def obter_duplicados(self) -> dict[str, list[dict]]:
-        """Retorna dicionário com todos os id_mapa que possuem duplicatas, e as ocorrências."""
-        return self.duplicados
+    def obter_duplicados(self, filtro=None) -> dict[str, list[dict]]:
+        """Retorna dicionário com os id_mapa que possuem duplicatas e suas ocorrências.
+
+        Args:
+            filtro: Opcional. Restringe o resultado aos id_mapa presentes no conjunto
+                    informado. Aceita:
+                      - set / list  de strings  (id_mapa)
+                      - pandas DataFrame com coluna 'id_mapa'
+                    Se None, retorna todos os duplicados.
+        """
+        if filtro is None:
+            return self.duplicados
+        import pandas as pd
+        if isinstance(filtro, pd.DataFrame):
+            ids = set(filtro['id_mapa'].dropna()) if 'id_mapa' in filtro.columns else set()
+        else:
+            ids = set(filtro)
+        return {k: v for k, v in self.duplicados.items() if k in ids}
 
     # ── Construção dos mapas ──────────────────────────────────────────────────
 
@@ -965,6 +975,35 @@ class UtilCkan:
             print(f'  🔗  Com correspondência íntegra no mapa: {ci} / {total}')
             print(sep)
         print('  ✅  Concluído!')
+
+    @staticmethod
+    def exibir_amostra(df, n: int = 2, titulo: str = 'Amostra'):
+        """Exibe até n registros do DataFrame de forma legível."""
+        import pandas as pd
+        if df is None or df.empty:
+            print('⚠️  Nenhum dado disponível.')
+            return
+        print(f'\n{titulo} ({len(df)} registros totais, exibindo {min(n, len(df))}):')        
+        print('═' * 65)
+        col_integra = 'integra' if 'integra' in df.columns else None
+        col_ementa  = 'ementa'  if 'ementa'  in df.columns else None
+        amostra = df.head(n)
+        for i, row in amostra.iterrows():
+            excluir = {'integra', 'ementa', 'decisao'}
+            dados = [
+                f'  {str(c).ljust(28)}: {v}'
+                for c, v in row.items()
+                if c not in excluir and str(v) not in ('', '[]', 'None')
+            ]
+            dados.sort()
+            [print(d) for d in dados]
+            if col_ementa and pd.notna(row.get(col_ementa)) and str(row[col_ementa]):
+                txt = str(row[col_ementa])[:200] + '[..]' + str(row[col_ementa])[200:]
+                print(f'  {"EMENTA:":12}: {txt}')
+            if col_integra and pd.notna(row.get(col_integra)) and str(row[col_integra]):
+                txt = str(row[col_integra])[:200] + '[..]' + str(row[col_integra])[200:]
+                print(f'  {"ÍNTEGRA:":12}: {txt}')
+            print('─' * 65)
 
 ##############################################################################
 ####### EXEMPLOS

@@ -210,6 +210,5 @@ __marimo__/
 _temp/**
 artigo**
 notebooks/downloads_stj/**
-data/espelhos_acordaos_artigo2026_com_texto.parquet
-data/espelhos_acordaos_por_ano_com_texto.parquet
-data/espelhos_acordaos_artigo2026_com_texto_temp_ckan.parquet
+data/espelhos_*com_texto*.parquet
+data/exemplo*.parquet
