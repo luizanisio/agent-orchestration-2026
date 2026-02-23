@@ -658,9 +658,9 @@ class UtilCkan:
                         txt_path = item.get('arquivo_txt', '')
                         # Tenta: 1) caminho exato, 2) busca por seq no lookup
                         if txt_path and txt_path in zf.namelist():
-                            integras[item['id_mapa']] = zf.read(txt_path).decode('utf-8', errors='replace')
+                            integras[item['id_mapa']] = self._normalizar_texto(zf.read(txt_path).decode('utf-8', errors='replace'))
                         elif seq in txt_por_seq:
-                            integras[item['id_mapa']] = zf.read(txt_por_seq[seq]).decode('utf-8', errors='replace')
+                            integras[item['id_mapa']] = self._normalizar_texto(zf.read(txt_por_seq[seq]).decode('utf-8', errors='replace'))
             except Exception as e:
                 print(f'  ⚠️  Erro ao ler {nome_zip}: {e}')
 
@@ -715,21 +715,22 @@ class UtilCkan:
 
     def gerar_dataset_espelhos(
         self,
-        caminho_saida: str | Path,
+        caminho_saida: Optional[str | Path] = None,
         incluir_integras: bool = False,
         incluir_ementas: bool = True,
         incluir_decisoes: bool = True,
     ):
-        """Gera um parquet com espelhos + opcionalmente íntegras, usando os mapas.
+        """Gera um DataFrame com espelhos + opcionalmente íntegras, usando os mapas.
 
         Aplica automaticamente os filtros configurados no construtor.
-        Retorna o DataFrame gerado.
+        Retorna o DataFrame gerado. Se caminho_saida for fornecido, salva o parquet.
         """
         import pandas as pd
         from tqdm.auto import tqdm
 
-        caminho_saida = Path(caminho_saida)
-        caminho_saida.parent.mkdir(parents=True, exist_ok=True)
+        if caminho_saida:
+            caminho_saida = Path(caminho_saida)
+            caminho_saida.parent.mkdir(parents=True, exist_ok=True)
 
         # ── 1. Cruzar mapas e obter espelhos ──────────────────────────────────
         cruzados = self.cruzar_espelhos_integras()
@@ -769,9 +770,9 @@ class UtilCkan:
 
                 reg = {c: self._formatar_valor(item_json.get(c)) for c in self.colunas}
                 if incluir_ementas:
-                    reg['ementa'] = self._formatar_valor(item_json.get('ementa'))
+                    reg['ementa'] = self._normalizar_texto(item_json.get('ementa'))
                 if incluir_decisoes:
-                    reg['decisao'] = self._formatar_valor(item_json.get('decisao'))
+                    reg['decisao'] = self._normalizar_texto(item_json.get('decisao'))
 
                 cruzado = cruzados_map[id_mapa]
                 reg['id_mapa']                = id_mapa
@@ -795,8 +796,9 @@ class UtilCkan:
             df['integra'] = df['id_mapa'].map(integras).fillna('')
 
         # ── 3. Salvamento e resumo ────────────────────────────────────────────
-        df.to_parquet(caminho_saida, index=False)
-        self._imprimir_resumo(df, caminho_saida, incluir_integras)
+        if caminho_saida:
+            df.to_parquet(caminho_saida, index=False)
+            self._imprimir_resumo(df, caminho_saida, incluir_integras)
         return df
 
     # ══════════════════════════════════════════════════════════════════════════
@@ -934,12 +936,19 @@ class UtilCkan:
 
     @staticmethod
     def _formatar_valor(v):
-        """Normaliza strings e arredonda floats."""
+        """Normaliza strings estruturadas (campos curtos) e arredonda floats."""
         if isinstance(v, str):
             return v.replace('\n', ' ').replace('\r', ' ').strip()
         if isinstance(v, float):
             return round(v, 3)
         return v
+
+    @staticmethod
+    def _normalizar_texto(v) -> str:
+        """Normaliza texto longo (ementa, decisão, íntegra): converte \\r em \\n preservando parágrafos."""
+        if not v or not isinstance(v, str):
+            return v or ''
+        return v.replace('\r\n', '\n').replace('\r', '\n').strip()
 
     @staticmethod
     def _imprimir_resumo(df, caminho_saida: Path, incluir_integras: bool):
@@ -976,8 +985,20 @@ class UtilCkan:
             print(sep)
         print('  ✅  Concluído!')
 
-    @staticmethod
-    def exibir_amostra(df, n: int = 2, titulo: str = 'Amostra'):
+    @classmethod
+    def _obter_trecho_texto(cls, texto:str, inicio = 200, fim= 100, quebras = None):
+        ''' retorna o texto inteiro caso seja menor que inicio+fim ou trecho inicial e final com [..] entre eles
+            quebras, se diferente de None, substitui \n pelo conteúdo de quebras, útil para algumas apresentaçõe de dados
+        '''
+        
+        if len(texto) <= inicio + fim:
+            res = texto
+        else:
+            res = texto[:inicio] + ' [..] ' + texto[-fim:]
+        return res if quebras is None else res.replace('\n', quebras)
+
+    @classmethod
+    def exibir_amostra(cls, df, n: int = 2, titulo: str = 'Amostra'):
         """Exibe até n registros do DataFrame de forma legível."""
         import pandas as pd
         if df is None or df.empty:
@@ -987,23 +1008,142 @@ class UtilCkan:
         print('═' * 65)
         col_integra = 'integra' if 'integra' in df.columns else None
         col_ementa  = 'ementa'  if 'ementa'  in df.columns else None
-        amostra = df.head(n)
+
+        def _texto(v) -> str:
+            """Retorna a string limpa do valor ou '' se vazio/nulo."""
+            if v is None:
+                return ''
+            s = str(v).replace('\r\n', '\n').replace('\r', '\n').strip()
+            return s if s not in ('', 'None', 'nan') else ''
+
+        # Prefere registros com ementa e íntegra preenchidas; completa com o restante se necessário
+        tem_ementa   = df[col_ementa].fillna('').astype(str).str.strip().str.len().gt(0)   if col_ementa  else pd.Series(False, index=df.index)
+        tem_integra_ = df[col_integra].fillna('').astype(str).str.strip().str.len().gt(0)  if col_integra else pd.Series(False, index=df.index)
+
+        idx_completos = df.index[tem_ementa & tem_integra_]
+        idx_parciais  = df.index[(tem_ementa | tem_integra_) & ~(tem_ementa & tem_integra_)]
+        idx_vazios    = df.index[~tem_ementa & ~tem_integra_]
+
+        idx_ordenados = idx_completos.tolist() + idx_parciais.tolist() + idx_vazios.tolist()
+        amostra = df.loc[idx_ordenados[:n]]
         for i, row in amostra.iterrows():
             excluir = {'integra', 'ementa', 'decisao'}
             dados = [
                 f'  {str(c).ljust(28)}: {v}'
                 for c, v in row.items()
-                if c not in excluir and str(v) not in ('', '[]', 'None')
+                if c not in excluir and str(v) not in ('', '[]', 'None', 'nan')
             ]
             dados.sort()
             [print(d) for d in dados]
-            if col_ementa and pd.notna(row.get(col_ementa)) and str(row[col_ementa]):
-                txt = str(row[col_ementa])[:200] + '[..]' + str(row[col_ementa])[200:]
-                print(f'  {"EMENTA:":12}: {txt}')
-            if col_integra and pd.notna(row.get(col_integra)) and str(row[col_integra]):
-                txt = str(row[col_integra])[:200] + '[..]' + str(row[col_integra])[200:]
-                print(f'  {"ÍNTEGRA:":12}: {txt}')
+            if col_ementa:
+                txt = _texto(row.get(col_ementa))
+                if txt:
+                    print(f'  {"EMENTA:":12}: {cls._obter_trecho_texto(texto = txt, quebras = " // ")}')
+            if col_integra:
+                txt = _texto(row.get(col_integra))
+                if txt:
+                    print(f'  {"ÍNTEGRA:":12}: {cls._obter_trecho_texto(texto = txt, quebras = " // ")}')
             print('─' * 65)
+
+    def exibir_metricas(self, df, caminho_saida=None):
+        """Exibe métricas abrangentes do DataFrame resultante da extração.
+
+        Args:
+            df: DataFrame retornado por gerar_dataset_espelhos.
+            caminho_saida: caminho do parquet salvo (opcional, exibe info de arquivo).
+        """
+        import pandas as pd
+        from pathlib import Path
+
+        sep   = '─' * 55
+        total = len(df)
+
+        if caminho_saida:
+            p = Path(caminho_saida)
+            print(sep)
+            print('  ✅  ARQUIVO GERADO')
+            print(sep)
+            print(f'  Arquivo   : {p}')
+            if p.exists():
+                print(f'  Tamanho   : {p.stat().st_size / 1024**2:.2f} MB')
+            print(f'  Colunas   : {len(df.columns)}  →  {df.columns.tolist()}')
+
+        com_integra  = df['integra'].str.len().gt(0).sum() if 'integra' in df.columns else 0
+        sem_integra  = total - com_integra
+        com_espelho  = df['id_mapa'].notna().sum() if 'id_mapa' in df.columns else total
+        sem_espelho  = total - com_espelho
+        dups         = self.obter_duplicados(df)
+        n_dups_ids   = len(dups)
+        n_dups_total = sum(len(v) for v in dups.values())
+
+        print(sep)
+        print('  📊  COBERTURA DOS DADOS')
+        print(sep)
+        print(f'  Total de registros        : {total:>6}')
+        print(f'  Com texto da íntegra      : {com_integra:>6}  ({com_integra/total*100:.1f}%)')
+        print(f'  Sem texto da íntegra      : {sem_integra:>6}  ({sem_integra/total*100:.1f}%)')
+        print(f'  Com dados de espelho      : {com_espelho:>6}  ({com_espelho/total*100:.1f}%)')
+        print(f'  Sem dados de espelho      : {sem_espelho:>6}  ({sem_espelho/total*100:.1f}%)')
+        if n_dups_ids:
+            print(f'  ⚠️  IDs com duplicatas    : {n_dups_ids:>6}  ({n_dups_total} ocorrência(s) — use ckan.obter_duplicados())')
+
+        tamanhos = (
+            df.loc[df['integra'].str.len() > 0, 'integra'].str.len()
+            if 'integra' in df.columns
+            else pd.Series(dtype=int)
+        )
+        print(sep)
+        print('  📏  TAMANHO DOS TEXTOS INTEGRAIS (chars)')
+        print(sep)
+        if not tamanhos.empty:
+            print(f'  Média                     : {tamanhos.mean():>10.0f}')
+            print(f'  Mediana                   : {tamanhos.median():>10.0f}')
+            print(f'  Mínimo                    : {tamanhos.min():>10.0f}')
+            print(f'  Máximo                    : {tamanhos.max():>10.0f}')
+            print(f'  Total de caracteres       : {tamanhos.sum():>10,.0f}')
+        else:
+            print('  (nenhum texto disponível)')
+
+        data_col = next(
+            (c for c in ('data_publicacao_iso', 'publicacao', 'ano') if c in df.columns),
+            None,
+        )
+        if data_col:
+            print(sep)
+            print('  📅  REGISTROS POR ANO')
+            print(sep)
+            tmp = df.copy()
+            tmp['_ano'] = df[data_col].astype(str).str[:4]
+            agr = tmp.groupby('_ano').agg(
+                total=('_ano', 'count'),
+                com_integra=('integra', lambda x: x.str.len().gt(0).sum())
+                if 'integra' in df.columns
+                else ('_ano', lambda x: 0),
+            ).sort_index()
+            for ano, row in agr.iterrows():
+                pct = row['com_integra'] / row['total'] * 100 if row['total'] else 0
+                print(f'  {ano}  →  {row["total"]:>5} registros | texto: {row["com_integra"]:>5} ({pct:.0f}%)')
+
+        org_col = next(
+            (c for c in ('nomeOrgaoJulgador', 'orgao') if c in df.columns),
+            None,
+        )
+        if org_col:
+            print(sep)
+            print('  ⚖️   REGISTROS POR ÓRGÃO JULGADOR (top 10)')
+            print(sep)
+            por_orgao = (
+                df[org_col]
+                .fillna('(não informado)')
+                .value_counts()
+                .head(10)
+            )
+            for org, cnt in por_orgao.items():
+                print(f'  {str(org):<35} : {cnt:>5}')
+
+        print(sep)
+        print('  ✅  Processamento concluído!')
+        print(sep)
 
 ##############################################################################
 ####### EXEMPLOS
