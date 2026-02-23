@@ -48,11 +48,23 @@ Parâmetros do construtor:
     documentos                : set[int] | None  — filtrar por seq_documento_acordao específico.
     colunas                   : list[str] | None — campos do espelho a importar. None = padrão.
     orgaos                    : list[str] | None — siglas dos órgãos (ex: ['T5', 'S3']). None = todos.
-    download_dir              : Path  — pasta raiz para cache (padrão: downloads_stj).
-                                As subpastas espelhos/, integras/ e metadados_integras/ são criadas automaticamente.
-    timeout                   : int   — timeout HTTP em segundos (padrão: 600).
-    permitir_download_espelho : bool  — False = usa apenas cache para espelhos.
-    permitir_download_integra : bool  — False = usa apenas cache para ZIPs de íntegras.
+    download_dir              : Path      — pasta raiz para cache (padrão: downloads_stj).
+                                    As subpastas espelhos/, integras/ e metadados_integras/ são criadas automaticamente.
+    timeout                   : int       — timeout HTTP em segundos (padrão: 600).
+    atualizar_cache_e_mapas   : int|bool|None
+                                    — controla quando os caches e mapas são atualizados:
+                                      • None / False  → nunca baixa nada novo; usa exclusivamente o cache local.
+                                      • True          → sempre baixa/atualiza; retenta recursos com erro.
+                                      • int (minutos) → atualiza os mapas se o mais antigo tiver > N min;
+                                                        recursos com erro (.info) são retentados individualmente
+                                                        se o respectivo .info for mais antigo que N minutos.
+                                                        Padrão: 12 * 60 (12 horas).
+                                    Estratégia de cache por recurso (zip/json):
+                                      • Arquivo existe com tamanho > 0  → usa cache (nunca re-baixa).
+                                      • Arquivo ausente + .info presente → erro anterior; retenta conforme param.
+                                      • Arquivo ausente + sem .info      → nunca tentado; baixa se permitido.
+                                      • Falha no download                → cria/atualiza .info com detalhes.
+                                    Independentemente, atualização é forçada se os arquivos de mapa não existirem.
 """
 
 import json
@@ -168,7 +180,7 @@ class UtilCkan:
         download_dir: Path              = Path('downloads_stj'),
         base_url:     str               = CKAN_BASE_URL,
         timeout:      int               = 600,
-        atualizar_cache_e_mapas: bool   = True,
+        atualizar_cache_e_mapas: bool | int | None = 12 * 60,
     ):
         ''' Inicializa o utilitário CKAN.
         Args:
@@ -182,9 +194,21 @@ class UtilCkan:
                 metadados_integras/ são criadas automaticamente dentro dele.
             base_url: URL base do CKAN.
             timeout: Timeout HTTP em segundos.
-            atualizar_cache_e_mapas: Permitir baixar novos arquivos via API CKAN e atualizar/recriar os mapas.
-                - se False, usa apenas os arquivos e mapas já armazenados em cache.
-                - será considerado True independentemente do valor fornecido se os mapas não forem encontrados na inicialização.
+            atualizar_cache_e_mapas: Controla quando os caches e mapas são refreshados.
+                - None / False  → nunca baixa nada novo; usa exclusivamente o cache local.
+                - True          → sempre baixa/atualiza ao inicializar; retenta recursos com erro.
+                - int (minutos) → atualiza os mapas somente se o mapa mais antigo tiver mais de
+                                  N minutos. Recursos com erro (arquivo .info) são retentados
+                                  individualmente se o .info tiver mais de N minutos.
+                                  Padrão: 12 * 60 (12 horas).
+                Independentemente do valor, a atualização é forçada se os arquivos de mapa não
+                forem encontrados em disco.
+
+                Estratégia de cache por recurso (zip/json):
+                  • Arquivo existe com tamanho > 0 → sempre usa o cache (nunca re-baixa).
+                  • Arquivo ausente + .info presente → erro anterior; retenta conforme o parâmetro.
+                  • Arquivo ausente + sem .info      → nunca tentado; baixa se download permitido.
+                  • Falha no download               → cria/atualiza arquivo .info com detalhes.
         '''
 
         self.anos         = set(anos) if anos else None
@@ -232,17 +256,51 @@ class UtilCkan:
         self._mapa_integras: dict[str, dict] = {}   # id_mapa → registro
         self.duplicados: dict[str, list[dict]] = {}  # id_mapa → lista de ocorrências
 
-        # Determina a necessidade de atualização forçada
-        self.atualizar_cache_e_mapas = atualizar_cache_e_mapas
-        if not self._caminho_mapa_espelhos.is_file() or not self._caminho_mapa_integras.is_file():
-            self.atualizar_cache_e_mapas = True
-
         # Carrega mapas existentes do disco
         self._carregar_mapas()
+
+        # Preserva o valor original para decisões por recurso individual
+        self._param_cache = atualizar_cache_e_mapas
+
+        # Determina a necessidade de atualização com base no parâmetro e na idade dos mapas
+        self.atualizar_cache_e_mapas = self._resolver_atualizacao(atualizar_cache_e_mapas)
 
         if self.atualizar_cache_e_mapas:
            self.baixar_espelhos()
            self.atualizar_mapas()
+
+    def _resolver_atualizacao(self, parametro) -> bool:
+        """Determina se os mapas e caches devem ser atualizados.
+
+        Regras (aplicadas nesta ordem):
+          1. Mapa(s) ausente(s) em disco → True (forçado).
+          2. parametro is None or False  → False.
+          3. parametro is True           → True.
+          4. parametro é int (minutos)   → True se o mapa mais antigo tiver mais de
+             ``parametro`` minutos; False caso contrário.
+        """
+        # 1. Mapas ausentes → sempre atualiza
+        if not self._caminho_mapa_espelhos.is_file() or not self._caminho_mapa_integras.is_file():
+            return True
+        # 2. Desativado explicitamente
+        if parametro is None or parametro is False:
+            return False
+        # 3. Forçado explicitamente
+        if parametro is True:
+            return True
+        # 4. Intervalo em minutos
+        try:
+            minutos = int(parametro)
+            if minutos <= 0:
+                return False
+            mtime = min(
+                self._caminho_mapa_espelhos.stat().st_mtime,
+                self._caminho_mapa_integras.stat().st_mtime,
+            )
+            idade_min = (datetime.now().timestamp() - mtime) / 60
+            return idade_min >= minutos
+        except (TypeError, ValueError):
+            return False
 
     def _passou_filtro_registro(self, num_reg: str, data_pub: str, tipo_decisao: str) -> bool:
         """Verifica se o registro satisfaz os filtros de tuplas de registros."""
@@ -863,7 +921,7 @@ class UtilCkan:
         print(f'Baixando {len(recursos)} arquivo(s) de espelhos...')
         for r in tqdm(recursos, desc='Espelhos'):
             try:
-                self._baixar(r['url'], r['name'], self.espelhos_dir, self.atualizar_cache_e_mapas)
+                self._baixar(r['url'], r['name'], self.espelhos_dir, self._param_cache)
             except Exception as e:
                 print(f'  ⚠️  {r["name"]}: {e}')
 
@@ -874,19 +932,19 @@ class UtilCkan:
         print(f'Baixando {len(recursos)} ZIP(s) de íntegras...')
         for r in tqdm(recursos, desc='ZIPs'):
             try:
-                self._baixar(r['url'], r['name'], self.integras_dir, self.atualizar_cache_e_mapas)
+                self._baixar(r['url'], r['name'], self.integras_dir, self._param_cache)
             except Exception as e:
                 print(f'  ⚠️  {r["name"]}: {e}')
 
     def baixar_espelho(self, recurso: dict) -> Path:
         """Baixa um recurso de espelho para o cache."""
         return self._baixar(recurso['url'], recurso['name'],
-                            self.espelhos_dir, self.atualizar_cache_e_mapas)
+                            self.espelhos_dir, self._param_cache)
 
     def baixar_zip(self, recurso: dict) -> Path:
         """Baixa um ZIP de íntegras para o cache."""
         return self._baixar(recurso['url'], recurso['name'],
-                            self.integras_dir, self.atualizar_cache_e_mapas)
+                            self.integras_dir, self._param_cache)
 
     # ══════════════════════════════════════════════════════════════════════════
     # Métodos internos
@@ -899,22 +957,98 @@ class UtilCkan:
         r.raise_for_status()
         return r.json()['result'].get('resources', [])
 
-    def _baixar(self, url: str, nome_arquivo: str, pasta: Path, permitir: bool) -> Path:
-        """Baixa o arquivo para `pasta` usando cache local."""
-        caminho = Path(pasta) / nome_arquivo
-        if caminho.is_file():
+    def _deve_tentar_recurso(self, caminho_info: Path, param) -> bool:
+        """Decide se um recurso com falha anterior (arquivo .info) deve ser retentado.
+
+        Regras:
+          - None / False        → False (nunca retenta).
+          - True                → True  (sempre retenta).
+          - int (minutos)       → True se o .info for mais antigo que ``param`` minutos.
+        """
+        if param is None or param is False:
+            return False
+        if param is True:
+            return True
+        try:
+            minutos = int(param)
+            if minutos <= 0:
+                return False
+            idade_min = (datetime.now().timestamp() - caminho_info.stat().st_mtime) / 60
+            return idade_min >= minutos
+        except (TypeError, ValueError, OSError):
+            return False
+
+    def _baixar(self, url: str, nome_arquivo: str, pasta: Path, param) -> Path:
+        """Baixa o arquivo para ``pasta`` usando cache local com estratégia por recurso.
+
+        Regras de cache:
+          1. Arquivo existe com tamanho > 0 → usa o cache (nunca re-baixa).
+          2. Arquivo ausente + .info presente → falha anterior;
+             retenta somente se ``_deve_tentar_recurso`` autorizar.
+          3. Arquivo ausente + sem .info → nunca tentado;
+             baixa se ``param`` for truthy (True ou int > 0).
+          4. Falha no download → cria/atualiza .info; remove arquivo parcial.
+          5. Sucesso → remove .info se existir.
+        """
+        caminho      = Path(pasta) / nome_arquivo
+        caminho_info = caminho.parent / (caminho.name + '.info')
+
+        # 1. Cache válido
+        if caminho.is_file() and caminho.stat().st_size > 0:
             print(f'  [cache] {nome_arquivo:<55}', end='\r', flush=True)
             return caminho
-        if not permitir:
+
+        # 2. Falha anterior registrada no .info
+        if caminho_info.is_file():
+            if not self._deve_tentar_recurso(caminho_info, param):
+                try:
+                    info = json.loads(caminho_info.read_text('utf-8'))
+                    erro_anterior = info.get('erro', '?')
+                    tentativa_em  = info.get('tentativa_em', '?')
+                except Exception:
+                    erro_anterior, tentativa_em = '?', '?'
+                raise FileNotFoundError(
+                    f'[erro anterior em {tentativa_em}] {nome_arquivo}: {erro_anterior}'
+                )
+            # Autorizado a retentar — prossegue para o download
+
+        # 3. Nunca tentado: verifica se download é permitido
+        elif not param:
             raise FileNotFoundError(
                 f'[ignorado] {nome_arquivo} não está em cache e download está desabilitado'
             )
+
+        # 4. Executa o download
         print(f'  [↓]     {nome_arquivo:<55}', end='\r', flush=True)
-        with requests.get(url, stream=True, timeout=self.timeout) as resp:
-            resp.raise_for_status()
-            with open(caminho, 'wb') as f:
-                for chunk in resp.iter_content(chunk_size=1 << 20):
-                    f.write(chunk)
+        try:
+            with requests.get(url, stream=True, timeout=self.timeout) as resp:
+                resp.raise_for_status()
+                with open(caminho, 'wb') as f:
+                    for chunk in resp.iter_content(chunk_size=1 << 20):
+                        f.write(chunk)
+        except Exception as exc:
+            # Registra a falha no .info e limpa arquivo parcial
+            if caminho.is_file():
+                try:
+                    caminho.unlink()
+                except OSError:
+                    pass
+            info_payload = {
+                'url':          url,
+                'tentativa_em': datetime.now().isoformat(),
+                'erro':         str(exc),
+            }
+            caminho_info.write_text(
+                json.dumps(info_payload, ensure_ascii=False, indent=2), encoding='utf-8'
+            )
+            raise
+
+        # 5. Sucesso — remove .info se existir
+        if caminho_info.is_file():
+            try:
+                caminho_info.unlink()
+            except OSError:
+                pass
         return caminho
 
     @staticmethod
