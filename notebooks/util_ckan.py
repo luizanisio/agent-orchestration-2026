@@ -51,6 +51,9 @@ Como usar:
 Parâmetros comuns do construtor (UtilCkanBase):
 ------------------------------------------------
     anos                      : set[str] | None  — anos de publicação (YYYY). None = todos.
+    datas                     : set|list | None   — datas de publicação específicas.
+                                Aceita vários formatos: 'YYYYMMDD', 'YYYY-MM-DD', 'DD/MM/YYYY'.
+                                None = sem filtro por data específica (usa apenas ``anos`` se informado).
     classes                   : set[str] | None  — siglas de classes processuais. None = todas.
     registros                 : set[str] | None  — filtrar por numeroRegistro específico.
                                 podem ser tuplas (registro, data_publicacao) ou (registro, data_publicacao, tipo_decisao)
@@ -196,6 +199,7 @@ class UtilCkanBase:
     def __init__(
         self,
         anos:    Optional[set[str]]    = None,
+        datas:   Optional[set]         = None,
         classes: Optional[set[str]]    = None,
         registros: Optional[set] = None,
         documentos: Optional[set] = None,
@@ -208,6 +212,8 @@ class UtilCkanBase:
 
         Args:
             anos: Anos de interesse (ex: {'2023', '2024'}).
+            datas: Datas de publicação específicas. Aceita vários formatos:
+                'YYYYMMDD', 'YYYY-MM-DD', 'DD/MM/YYYY'. Ex: {'2023-06-01', '15/06/2023'}.
             classes: Classes de processos (ex: {'AI', 'RE'}).
             registros: Números de registro. Aceita strings ou tuplas
                 (registro, data) ou (registro, data, tipo).
@@ -221,6 +227,7 @@ class UtilCkanBase:
                 - int (minutos) → atualiza se o mapa mais antigo tiver > N min.
         """
         self.anos         = set(anos) if anos else None
+        self.datas        = {_padronizar_data_filtro(d) for d in datas} if datas else None
         self.classes      = {c.upper() for c in classes} if classes else None
         
         # Filtros de registros aceitam string ou tuplas (reg, data) ou (reg, data, tipo)
@@ -276,6 +283,12 @@ class UtilCkanBase:
         if not self.anos:
             return True
         return len(data_pub) >= 4 and data_pub[:4] in self.anos
+
+    def _passou_filtro_data(self, data_pub: str) -> bool:
+        """Verifica se a data de publicação (YYYYMMDD) está entre as datas filtradas."""
+        if not self.datas:
+            return True
+        return data_pub.strip() in self.datas
 
     def _passou_filtro_classe(self, sigla_classe: str) -> bool:
         """Verifica se a sigla da classe processual está entre as filtradas."""
@@ -426,13 +439,6 @@ class UtilCkanBase:
 
                     if not num_reg or not data_pub or not tipo_doc:
                         continue
-                    
-                    if not self._passou_filtro_registro(num_reg, data_pub, tipo_doc):
-                        continue
-
-                    if self.documentos and seq_doc:
-                        if str(seq_doc).strip() not in self.documentos:
-                            continue
 
                     id_mapa = _gerar_id_mapa(num_reg, data_pub, tipo_doc)
                     arquivo_txt = f'{data_pub}/{seq_doc}.txt'
@@ -845,6 +851,7 @@ class UtilCkan(UtilCkanBase):
     def __init__(
         self,
         anos:    Optional[set[str]]    = None,
+        datas:   Optional[set]         = None,
         classes: Optional[set[str]]    = None,
         orgaos:  Optional[list[str]]    = None,
         registros: Optional[set] = None,
@@ -859,6 +866,7 @@ class UtilCkan(UtilCkanBase):
 
         Args:
             anos: Anos de interesse (ex: {'2023', '2024'}).
+            datas: Datas de publicação específicas (ex: {'2023-06-01', '15/06/2023'}).
             classes: Classes de processos (ex: {'AI', 'RE'}).
             orgaos: Siglas dos órgãos (ex: ['T1', 'T2']). None = todos.
             registros: Números de registro (ex: {'123456'}).
@@ -870,7 +878,7 @@ class UtilCkan(UtilCkanBase):
             atualizar_cache_e_mapas: Controla atualização de cache e mapas.
         """
         super().__init__(
-            anos=anos, classes=classes, registros=registros,
+            anos=anos, datas=datas, classes=classes, registros=registros,
             documentos=documentos, download_dir=download_dir,
             base_url=base_url, timeout=timeout,
             atualizar_cache_e_mapas=atualizar_cache_e_mapas,
@@ -985,9 +993,6 @@ class UtilCkan(UtilCkanBase):
 
                 if not num_reg or not data_pub or not tipo_decisao:
                     continue
-                
-                if not self._passou_filtro_registro(num_reg, data_pub, tipo_decisao):
-                    continue
 
                 id_mapa = _gerar_id_mapa(num_reg, data_pub, tipo_decisao)
                 id_espelho = str(item.get('id') or '').strip()
@@ -1029,6 +1034,8 @@ class UtilCkan(UtilCkanBase):
 
         for id_mapa, reg in self._mapa_espelhos.items():
             if not self._passou_filtro_ano(reg.get('data_publicacao', '')):
+                continue
+            if not self._passou_filtro_data(reg.get('data_publicacao', '')):
                 continue
             if filtrar_orgao and reg.get('orgao', '') not in orgaos_siglas:
                 continue
@@ -1409,6 +1416,7 @@ class UtilCkanIntegra(UtilCkanBase):
     def __init__(
         self,
         anos:    Optional[set[str]]    = None,
+        datas:   Optional[set]         = None,
         classes: Optional[set[str]]    = None,
         registros: Optional[set] = None,
         documentos: Optional[set] = None,
@@ -1421,6 +1429,7 @@ class UtilCkanIntegra(UtilCkanBase):
 
         Args:
             anos: Anos de interesse (ex: {'2023', '2024'}).
+            datas: Datas de publicação específicas (ex: {'2023-06-01', '15/06/2023'}).
             classes: Classes de processos (ex: {'AI', 'RE'}).
             registros: Números de registro. Aceita strings ou tuplas.
             documentos: Sequências de documentos (ex: {123456}).
@@ -1430,7 +1439,7 @@ class UtilCkanIntegra(UtilCkanBase):
             atualizar_cache_e_mapas: Controla atualização de cache e mapas.
         """
         super().__init__(
-            anos=anos, classes=classes, registros=registros,
+            anos=anos, datas=datas, classes=classes, registros=registros,
             documentos=documentos, download_dir=download_dir,
             base_url=base_url, timeout=timeout,
             atualizar_cache_e_mapas=atualizar_cache_e_mapas,
@@ -1484,6 +1493,8 @@ class UtilCkanIntegra(UtilCkanBase):
         resultados = []
         for id_mapa, reg in self._mapa_integras.items():
             if not self._passou_filtro_ano(reg.get('data_publicacao', '')):
+                continue
+            if not self._passou_filtro_data(reg.get('data_publicacao', '')):
                 continue
             if not self._passou_filtro_registro(
                 str(reg.get('numero_registro', '')),
