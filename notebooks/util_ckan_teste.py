@@ -75,6 +75,44 @@ class TestUtilCkanFiltros(unittest.TestCase):
                     ]
                 }
             },
+            {
+                'nome': 'Filtro por data de publicação (formato ISO)',
+                'parametros': {
+                    'datas': {'2024-08-22'},
+                },
+                'esperados': {
+                    'data_publicacao': '20240822',
+                }
+            },
+            {
+                'nome': 'Filtro por data de publicação (formato DD/MM/YYYY)',
+                'parametros': {
+                    'datas': {'22/08/2024'},
+                },
+                'esperados': {
+                    'data_publicacao': '20240822',
+                }
+            },
+            {
+                'nome': 'Filtro por data de publicação (formato YYYYMMDD)',
+                'parametros': {
+                    'datas': {'20240822'},
+                },
+                'esperados': {
+                    'data_publicacao': '20240822',
+                }
+            },
+            {
+                'nome': 'Filtro combinado: datas + órgão',
+                'parametros': {
+                    'datas': {'2024-08-22'},
+                    'orgaos': ['T2'],
+                },
+                'esperados': {
+                    'data_publicacao': '20240822',
+                    'orgao': 'T2',
+                }
+            },
         ]
         
         for cenario in cenarios:
@@ -107,6 +145,8 @@ class TestUtilCkanFiltros(unittest.TestCase):
                         self.assertEqual(res_dict.get('orgao'), esperado['orgao'])
                     if 'numero_registro' in esperado:
                         self.assertEqual(res_dict.get('numero_registro'), esperado['numero_registro'])
+                    if 'data_publicacao' in esperado:
+                        self.assertEqual(res_dict.get('data_publicacao'), esperado['data_publicacao'])
                     if 'tem_integra' in esperado:
                         self.assertEqual(res_dict.get('tem_integra'), esperado['tem_integra'])
                         
@@ -162,6 +202,24 @@ class TestUtilCkanIntegraFiltros(unittest.TestCase):
                     'id_mapa': '202302829818.20240822.ACÓRDÃO',
                 }
             },
+            {
+                'nome': 'Filtro por data de publicação (UtilCkanIntegra)',
+                'parametros': {
+                    'datas': {'2024-08-22'},
+                },
+                'esperados': {
+                    'data_publicacao': '20240822',
+                }
+            },
+            {
+                'nome': 'Filtro por data DD/MM/YYYY (UtilCkanIntegra)',
+                'parametros': {
+                    'datas': {'22/08/2024'},
+                },
+                'esperados': {
+                    'data_publicacao': '20240822',
+                }
+            },
         ]
 
         for cenario in cenarios:
@@ -181,6 +239,8 @@ class TestUtilCkanIntegraFiltros(unittest.TestCase):
                     self.assertEqual(item.get('numero_registro'), esperado['numero_registro'])
                 if 'seq_documento' in esperado:
                     self.assertEqual(str(item.get('seq_documento')), esperado['seq_documento'])
+                if 'data_publicacao' in esperado:
+                    self.assertEqual(item.get('data_publicacao'), esperado['data_publicacao'])
                 if 'ministro' in esperado:
                     self.assertEqual(item.get('ministro'), esperado['ministro'])
                 # Verifica presença de campos obrigatórios
