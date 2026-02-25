@@ -1354,7 +1354,7 @@ class UtilCkan(UtilCkanBase):
         )
         if data_col:
             print(sep)
-            print('  📅  REGISTROS POR ANO')
+            print('  📅  REGISTROS POR ANO DE PUBLICAÇÃO')
             print(sep)
             tmp = df.copy()
             tmp['_ano'] = df[data_col].astype(str).str[:4]
