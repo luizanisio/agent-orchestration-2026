@@ -1,0 +1,6 @@
+# HTTP e download com cache
+requests>=2.32.0
+# Manipulação de dados tabulares
+pandas>=2.3.0
+# Barras de progresso (tqdm.auto para compatibilidade com Jupyter e terminal)
+tqdm>=4.67.0
