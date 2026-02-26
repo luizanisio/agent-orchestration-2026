@@ -17,26 +17,10 @@ abordagem multi-agentes.
 # carrega variáveis de ambiente na pasta atual, anterior ou src
 import sys
 sys.path.append('../src')
+from util import UtilEnv, Util, UtilArquivos, UtilTextos, UtilDataHora
 sys.path.append('../prompts')
-from util import UtilEnv
-if not UtilEnv.carregar_env('.env', pastas=['./','../', '../src']):
-    raise EnvironmentError('Não foi possível carregar o arquivo .env')
-
-from util import Util, UtilArquivos, UtilTextos, UtilDataHora, UtilCriptografia
-from util_openai import get_resposta
-# cria um método simplificado de chamada do prompt usando util_openai.get_resposta 
-# pode ser adaptado de acordo com a api que for utilizada para as extrações
-def prompt(**kwargs):
-    if not UtilEnv.get_str('PESSOAL_OPENROUTER_API_KEY'):
-        raise EnvironmentError('⚠️ Não foi possível carregar a sua API-KEY do OpenRouter em PESSOAL_OPENROUTER_API_KEY no arquivo .env!')
-    if 'sg_modelo' in kwargs:
-        kwargs['modelo'] = kwargs.pop('sg_modelo','')
-    if 'prompt_retorna_json' in kwargs:
-        kwargs['as_json'] = kwargs.pop('prompt_retorna_json')
-    kwargs['silencioso'] = True
-    res = get_resposta(**kwargs)
-    res['tratada'] = True
-    return res
+from prompt_espelho_base import PROMPT_BASE_SJR_S3_JSON, PROMPT_USER
+from util_prompt_experimento import send_prompt
 
 import pandas as pd
 import os, sys
@@ -48,18 +32,16 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from time import time
 import traceback
 
-from prompt_espelho_base import PROMPT_BASE_SJR_S3_JSON, PROMPT_USER
 
 UtilEnv.carregar_env('.env', pastas=['../'])
 
 LOCK_SESSAO = Lock()
-CRIPT = UtilCriptografia()
 PASTA_SAIDAS_EXTRACAO=None
 PASTA_RAIZ=None
 DATAFRAME_ESPELHOS =None
 ARQ_LOGS =None
 MODELO_ESPELHO = None
-MODELO_ESPELHO_THINK = 'medium'
+MODELO_ESPELHO_THINK = 'medium'  # nem todo modelo tem essa opção, verificar na documentação do modelo escolhido
 ARQUIVO_RESUMO_EXTRACAO = None
 
 # configura as variáveis globais - nessa posição permite que as mudanças sejam feitas apenas no __main__ para 
@@ -131,13 +113,13 @@ def get_extracao(row, somente_verificar = False):
         {"role": "system", "content": PROMPT_BASE_SJR_S3_JSON},
         {"role": "user", "content": prompt_user}]
     try:
-        espelho_res = prompt(prompt = messages, 
-                            sg_modelo=MODELO_ESPELHO, papel='', 
-                            think = MODELO_ESPELHO_THINK,
-                            sem_erro=True, 
-                            prompt_retorna_json=True,
-                            temperature=0, 
-                            retorno_resumido=True)
+        espelho_res = send_prompt( prompt = messages, 
+                                   sg_modelo=MODELO_ESPELHO, papel='', 
+                                   think = MODELO_ESPELHO_THINK,
+                                   sem_erro=True, 
+                                   prompt_retorna_json=True,
+                                   temperature=0, 
+                                   retorno_resumido=True)
         ERROS_CONSECUTIVOS = 0
     except Exception as e:
         ERROS_CONSECUTIVOS += 1
@@ -226,10 +208,16 @@ def get_resumo_espelho(row):
 
 if __name__ == '__main__':
 
+    ''' Pata                       ModelApi Openrouter       Api OpenAi
+        --------------------------------------------------------------------
+        espelhos_base_gpt5         or:openai/gpt-5           openai/gpt-5
+        espelhos_base_gemma3_12b   or:google/gemma-3-12b-it
+        espelhos_base_gemma3_27b   or:google/gemma-3-27b-it
+    '''
     # o nome do modelo "o:" indica para a classe usar o openrouter.ai     
     # realizar uma rodada completa para cada modelo que desejar
     configurar_extracao(pasta_raiz ='../data',
-                        pasta_extracao='espelho_base_gemma3_12b',
+                        pasta_extracao='espelhos_base_gemma3_12b',
                         modelo =  'or:google/gemma-3-12b-it')
 
     assert os.path.isdir(PASTA_SAIDAS_EXTRACAO), 'Pasta de saída não existe!'
@@ -264,6 +252,8 @@ if __name__ == '__main__':
 
     # caso queira uma rodada de teste
     # df_extrair = df_extrair[:5] 
+    # O uum id_peca fixo para teste:
+    # df_extrair = df_extrair[df_extrair['id_peca'] == '202202853462.20230510.']
 
     # Executar extrações em paralelo com threads
     NUM_THREADS = 3  # Ajuste conforme desejar
@@ -288,7 +278,9 @@ if __name__ == '__main__':
     print('-' * 40)
     print(f'Gravando resumo da extração em {ARQUIVO_RESUMO_EXTRACAO}')
     df_consolidado = pd.DataFrame(df_consolidado)
-    df_consolidado['time'] = df_consolidado['time'].astype(int)
+    if len(df_consolidado) > 0:
+        print(f'Número de resumos consolidados: {len(df_consolidado)}')
+        df_consolidado['time'] = df_consolidado['time'].astype(int)
     df_consolidado.to_csv(ARQUIVO_RESUMO_EXTRACAO, index=False, encoding='utf-8-sig')
     
     print_resumo_sessao()

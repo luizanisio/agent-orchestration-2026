@@ -27,6 +27,14 @@ This repository contains all code used in the experiments reported in the paper,
 
 ---
 
+## Repository Structure
+
+- **`01_notebooks/`**: Contains Jupyter notebooks for data preparation and exploratory data analysis (EDA).
+- **`02_extractions/`**: Contains the scripts for running the baseline single-prompt extractions and the JAMEX multi-agent pipeline.
+- **`03_analysis/`**: Contains scripts and notebooks for evaluating the extraction results, calculating metrics, and generating the final analysis.
+
+---
+
 ## Architecture
 
 ![JAMEX Agent Orchestration Diagram](images/diagram_agents.jpg)
@@ -71,7 +79,7 @@ A semantic diversity filter was applied using cosine similarity (θ = 0.15) on d
 
 The full text of each decision is **not stored in this repository**. To reproduce the dataset used in the paper, run the data preparation notebook, which downloads each decision's full text directly from the STJ Open Data Portal using the `seq_documento_acordao` identifier:
 
-The notebook (`notebooks/01_data_preparation.ipynb`) performs the following steps:
+The notebook (`01_notebooks/01_data_preparation.ipynb`) performs the following steps:
 
 1. Loads `espelhos_acordaos_artigo2026.parquet` — the index file with the 1,225 selected decisions and their identifiers (`seq_documento_acordao` and `num_registro`). A computed field `id_peca` (format: `seq_documento_acordao + '.' + ano + '.'`, e.g. `188798478.2023.`) is derived within the notebook and used as the document identifier throughout the experiment pipeline.
 2. Connects to the STJ open data CKAN instance and identifies JSON metadata resources for both *espelhos* (per *órgão julgador*) and *íntegras* (the full texts).
@@ -81,7 +89,7 @@ The notebook (`notebooks/01_data_preparation.ipynb`) performs the following step
 6. Downloads and processes each judgment metadata sheet (*espelho*) JSON, joining structured metadata fields (`teseJuridica`, `tema`, `referenciasLegislativas`, `jurisprudenciaCitada`, `notas`, `termosAuxiliares`, `informacoesComplementares`, etc.) back to the dataframe.
 7. Saves the enriched dataset to `espelhos_acordaos_artigo2026_com_texto.parquet`.
 
-Downloaded ZIPs are cached locally in `notebooks/downloads_stj/` and judgment metadata sheet (*espelho*) JSONs in `notebooks/downloads_stj/espelhos/`, so subsequent runs do not re-download files already present.
+Downloaded ZIPs are cached locally in `01_notebooks/downloads_stj/` and judgment metadata sheet (*espelho*) JSONs in `01_notebooks/downloads_stj/espelhos/`, so subsequent runs do not re-download files already present.
 
 **Data availability:** The dataset is **not distributed directly** in this repository. Texts are fetched on demand from the [STJ Open Data Portal](https://dadosabertos.web.stj.jus.br/group/jurisprudencia), ensuring compliance with access policies and data governance requirements enforced by the portal at the time of download.
 
@@ -92,7 +100,7 @@ This approach ensures that:
 
 ### Exploratory Dataset Preparation
 
-The notebook `notebooks/02_data_exploration.ipynb` is an **independent** companion tool for ad-hoc data exploration. It fetches judgment metadata sheet (*espelho*) JSONs and full-text ZIPs directly from the STJ Open Data Portal, with no dependency on the experiment parquet file. Two filter constants control what is retrieved: `ANOS_PUBLICACAO_SELECIONADOS` (e.g. `{'2023', '2024'}`) and `CLASSES_SELECIONADAS` (e.g. `{'HC'}`); setting either to `None` disables that filter. There are extra options to toggle fetching full-text (`INCLUIR_INTEGRAS`), or the `ementa` / `decisao` keys from the *espelhos*. The output is `espelhos_acordaos_por_ano_com_texto.parquet`, which contains all matching records and the specified attributes. Downloaded files are cached under `notebooks/downloads_stj/` and reused on subsequent runs.
+The notebook `01_notebooks/02_data_exploration.ipynb` is an **independent** companion tool for ad-hoc data exploration. It fetches judgment metadata sheet (*espelho*) JSONs and full-text ZIPs directly from the STJ Open Data Portal, with no dependency on the experiment parquet file. Two filter constants control what is retrieved: `ANOS_PUBLICACAO_SELECIONADOS` (e.g. `{'2023', '2024'}`) and `CLASSES_SELECIONADAS` (e.g. `{'HC'}`); setting either to `None` disables that filter. There are extra options to toggle fetching full-text (`INCLUIR_INTEGRAS`), or the `ementa` / `decisao` keys from the *espelhos*. The output is `espelhos_acordaos_por_ano_com_texto.parquet`, which contains all matching records and the specified attributes. Downloaded files are cached under `01_notebooks/downloads_stj/` and reused on subsequent runs.
 
 ---
 
@@ -110,7 +118,7 @@ _in progress_
 
 _in progress_
 
-See the notebooks in `notebooks/` for step-by-step replication of all paper results.
+See the notebooks in `01_notebooks/` and scripts in `03_analysis/` for step-by-step replication of all paper results.
 
 ---
 

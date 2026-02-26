@@ -209,8 +209,9 @@ __marimo__/
 # Data
 _temp/**
 artigo**
-notebooks/downloads_stj/**
+01_notebooks/downloads_stj/**
 data/espelhos_*com_texto*.parquet
 data/exemplo*.parquet
 data/espelhos_agentes**
 data/espelho_base**
+.vscode/settings.json

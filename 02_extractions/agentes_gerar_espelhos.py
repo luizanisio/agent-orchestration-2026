@@ -17,10 +17,10 @@ modelos LLM (GPT-5, Gemma-3) e mantém sessão de controle com estatísticas de 
 # carrega variáveis de ambiente na pasta atual, anterior ou src
 import sys
 sys.path.append('../src')
+from util import UtilEnv, Util, UtilArquivos, UtilTextos, UtilDataHora
 sys.path.append('../prompts')
-from util import UtilEnv, UtilArquivos
-if not UtilEnv.carregar_env('.env', pastas=['./','../', '../src']):
-    raise EnvironmentError('Não foi possível carregar o arquivo .env')
+from util_prompt_experimento import send_prompt
+
 # outras dependências    
 import pandas as pd
 import os, json
@@ -149,28 +149,6 @@ def gerar_respostas(row, pasta_extracao):
         registrar_log_inconsistencia(id_peca, 'EXCECAO', erro_msg[:200])
         print(f'Erro ao processar peça id_peca={id_peca}: {traceback.format_exc()}')
 
-def teste_open_router():
-    from util_openai import get_resposta
-    prompt = "Responda 2 + 2 = ? no formato json: {'resposta': valor}"
-    # modelos gratuitos nem sempre estão disponíveis
-    modelo = 'or:google/gemma-3-3b-it:floor'
-    modelo = 'or:google/gemma-3-27b-it:free'
-    modelo = 'or:google/gemini-2.0-flash-exp:free'
-    resposta = get_resposta(prompt, papel = 'responser rápido',
-                            modelo=modelo, 
-                            max_tokens=150,
-                            as_json=True, silencioso=False)
-    if not isinstance(resposta, dict):
-        print('Resposta do modelo não está em formato JSON:', resposta)
-        exit(1)
-    if ('error' in resposta):
-        print('Erro retornado pelo modelo:', resposta)
-        exit(1)
-    if not resposta.get('resposta'):
-        print('Resposta do modelo não contém o campo "resposta":', resposta)
-        exit(1)
-    print('Resposta do modelo:', resposta.get('resposta'))
-    exit(0)
 
 if __name__ == '__main__':
     # descomente para testar acesso ao openrouter.ai com sua api
@@ -190,14 +168,8 @@ if __name__ == '__main__':
     assert TAMANHO in ['4b','12b', '27b'], f"Tamanho inválido: {TAMANHO}. Deve ser '4b', '12b' ou '27b'."
     MODELO_ESPELHO = f'or:google/gemma-3-{TAMANHO}-it'#:floor free nitro'
     MODELO_ESPELHO_THINK = 'medium'
-    from util_openai import get_resposta
-    # ajuste o método se for usar outra api
-    def def_resposta_router(*args, **kwargs):
-        if not UtilEnv.get_str('PESSOAL_OPENROUTER_API_KEY'):
-           raise EnvironmentError('⚠️ Não foi possível carregar a sua API-KEY do OpenRouter em PESSOAL_OPENROUTER_API_KEY no arquivo .env!')
-        kwargs['silencioso'] = True
-        return get_resposta(*args, **kwargs)
-    CALLABLE_RESPOSTA = def_resposta_router
+    CALLABLE_RESPOSTA = send_prompt # pode ser adaptado para outra função de chamada de modelo, se necessário
+    
     #PASTA_RAIZ = '/content/drive/MyDrive/TCC 2025 - Compartilhado no Drive/dados/'
     PASTA_RAIZ = '../data/'
     PASTA_EXTRACAO = os.path.join(PASTA_RAIZ, f'espelhos_agentes_gemma3_{TAMANHO}/')
@@ -234,23 +206,15 @@ if __name__ == '__main__':
         df = df[df['id_peca'].isin(id_peca)]
         print(f' - filtrado para lista de id_peca, total de {len(df)} peças.')
 
-    # identifica peças únicas para processamento
-    print(f'Identificando peças únicas para processamento de {len(df)} peças...')
-    pecas_unicas = list(set(df['id_peca']))
-    pecas = []
-    for p in pecas_unicas:
-        primeira_ocorrencia = df[df['id_peca'] == p].iloc[0]
-        pecas.append(primeira_ocorrencia)
-    df_unicas = pd.DataFrame(pecas)
-    print(f'Total de peças únicas para processamento: {len(df_unicas)}')
-
     print(f'Iniciando processamento com {NUM_THREADS} threads...\n- pasta: {PASTA_EXTRACAO}\n- modelo: {MODELO_ESPELHO}')
+    
+    #df = df[:2]
 
     with ThreadPoolExecutor(max_workers=NUM_THREADS) as executor:
         
-        futures = {executor.submit(gerar_respostas, row, PASTA_EXTRACAO): row['id_peca'] for _, row in df_unicas.iterrows()}
+        futures = {executor.submit(gerar_respostas, row, PASTA_EXTRACAO): row['id_peca'] for _, row in df.iterrows()}
         
-        for future in tqdm(as_completed(futures), desc='Extraindo espelhos', ncols=60, total=len(df_unicas)):
+        for future in tqdm(as_completed(futures), desc='Extraindo espelhos', ncols=60, total=len(df)):
             try:
                 future.result()
             except Exception as e:
@@ -269,5 +233,4 @@ if __name__ == '__main__':
     print(f'ARQUIVOS GERADOS: {PASTA_EXTRACAO}')
     print(f' - Total de arquivos: {len(lst)}')
     print(f' - Total de peças analisadas: {len(df)}')
-    print(f' - Total de peças únicas analisadas: {len(df_unicas)}')
     print('='*80)

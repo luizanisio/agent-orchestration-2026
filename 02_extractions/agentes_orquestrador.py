@@ -14,10 +14,14 @@ referências legislativas, notas, temas, etc. Inclui validação final e mecanis
 de revisão com observabilidade completa do processo.
 """
 
+import sys
+sys.path.append('../prompts')
+from prompt_espelho_agentes import *
+
+
 from glob import glob
 import os
 import json
-from prompt_espelho_agentes import *
 from threading import Lock
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from datetime import datetime
