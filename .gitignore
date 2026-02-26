@@ -215,3 +215,7 @@ data/exemplo*.parquet
 #data/espelhos_agentes**
 #data/espelho_base**
 .vscode/settings.json
+03_analysis/_bertmodels**
+*.7z
+*.zip
+replace_names*.py
