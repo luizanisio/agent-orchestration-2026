@@ -140,7 +140,7 @@ Diretivas de Formatação:
   • recursoRepetitivo: true APENAS se o texto disser "Recurso Repetitivo".
   • temaRepetitivo: Número inteiro (ex: 931). Se houver múltiplos (ex: "Temas 931 e 932"), use NULL e descreva no assunto.
 
-Exemplos de Saída (Use APENAS como modelo de estrutura, **NUNCA** copie os dados abaixo):
+Exemplos de Saída JSON (Use APENAS como modelo de estrutura, **NUNCA** copie os dados abaixo):
 {
   "jurisprudenciaCitada": [
     {
@@ -196,7 +196,7 @@ Diretivas de Formatação:
   - Use "Art." (maiúsculo), "§" (símbolo), números arábicos ou romanos conforme original.
 - Redação Posterior: Preencha APENAS se o texto disser explicitamente "com redação dada pela Lei...".
 
-Exemplos de Saída (Use APENAS como modelo de estrutura, **NUNCA** copie os dados abaixo):
+Exemplos de Saída JSON (Use APENAS como modelo de estrutura, **NUNCA** copie os dados abaixo):
 {
   "referenciasLegislativas": [
     { 

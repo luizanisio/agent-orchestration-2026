@@ -40,8 +40,8 @@ def teste_open_router():
     # colocar od: para o get_resposta(..) identificar que é o openroter
     #modelo = 'or:google/gemma-3-3b-it:floor'
     #modelo = 'or:google/gemini-2.0-flash-exp:free'
-    #modelo = 'or:google/gemma-3-27b-it:free'
-    modelo = 'or:nvidia/nemotron-3-nano-30b-a3b:free'
+    modelo = 'or:google/gemma-3-27b-it:floor'
+    #modelo = 'or:nvidia/nemotron-3-nano-30b-a3b:free'
     #modelo = 'or:openai/gpt-5'
     #modelo = 'gpt-5' # api openai
     resposta = get_resposta(prompt, papel = 'responser rápido',

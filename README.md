@@ -81,15 +81,12 @@ The full text of each decision is **not stored in this repository**. To reproduc
 
 The notebook (`01_notebooks/01_data_preparation.ipynb`) performs the following steps:
 
-1. Loads `espelhos_acordaos_artigo2026.parquet` — the index file with the 1,225 selected decisions and their identifiers (`seq_documento_acordao` and `num_registro`). A computed field `id_peca` (format: `seq_documento_acordao + '.' + ano + '.'`, e.g. `188798478.2023.`) is derived within the notebook and used as the document identifier throughout the experiment pipeline.
-2. Connects to the STJ open data CKAN instance and identifies JSON metadata resources for both *espelhos* (per *órgão julgador*) and *íntegras* (the full texts).
-3. Selectively downloads the JSON resources based on the filtering parameters (e.g. publication years).
-4. Generates comprehensive offline indices (`mapa_espelhos` and `mapa_integras`) leveraging a composite key architecture (`id_mapa` comprising `numeroRegistro.YYYYMMDD.TIPO_DECISAO`). This normalizes schemas—bridging naming convention shifts and structural changes, effectively correlating *espelhos* and *íntegras* independent of CKAN's inner constraints.
-5. Employs the mapped indices to reliably cross-reference constraints, dynamically fetching and extracting specifically targeted full-texts right out of the local cached ZIP archives, ensuring high-fidelity extraction even when directory layout patterns vary.
-6. Downloads and processes each judgment metadata sheet (*espelho*) JSON, joining structured metadata fields (`teseJuridica`, `tema`, `referenciasLegislativas`, `jurisprudenciaCitada`, `notas`, `termosAuxiliares`, `informacoesComplementares`, etc.) back to the dataframe.
-7. Saves the enriched dataset to `espelhos_acordaos_artigo2026_com_texto.parquet`.
-
-Downloaded ZIPs are cached locally in `01_notebooks/downloads_stj/` and judgment metadata sheet (*espelho*) JSONs in `01_notebooks/downloads_stj/espelhos/`, so subsequent runs do not re-download files already present.
+1. Loads the base index `espelhos_acordaos_artigo2026.parquet` (1,225 decisions).
+2. Connects to the STJ open data CKAN instance to fetch the metadata JSONs.
+3. Downloads the required ZIP archives containing the decisions' full texts based on the configured years and caches them locally to avoid redundant downloads.
+4. Generates offline indices to reliably correlate full-text documents (*íntegras*) with their respective metadata (*espelhos*).
+5. Extracts the specific texts and structured metadata (*teseJuridica*, *referenciasLegislativas*, etc.) from the cached files.
+6. Saves the enriched and joined dataset as `espelhos_acordaos_artigo2026_com_texto.parquet`.
 
 **Data availability:** The dataset is **not distributed directly** in this repository. Texts are fetched on demand from the [STJ Open Data Portal](https://dadosabertos.web.stj.jus.br/group/jurisprudencia), ensuring compliance with access policies and data governance requirements enforced by the portal at the time of download.
 
@@ -100,25 +97,56 @@ This approach ensures that:
 
 ### Exploratory Dataset Preparation
 
-The notebook `01_notebooks/02_data_exploration.ipynb` is an **independent** companion tool for ad-hoc data exploration. It fetches judgment metadata sheet (*espelho*) JSONs and full-text ZIPs directly from the STJ Open Data Portal, with no dependency on the experiment parquet file. Two filter constants control what is retrieved: `ANOS_PUBLICACAO_SELECIONADOS` (e.g. `{'2023', '2024'}`) and `CLASSES_SELECIONADAS` (e.g. `{'HC'}`); setting either to `None` disables that filter. There are extra options to toggle fetching full-text (`INCLUIR_INTEGRAS`), or the `ementa` / `decisao` keys from the *espelhos*. The output is `espelhos_acordaos_por_ano_com_texto.parquet`, which contains all matching records and the specified attributes. Downloaded files are cached under `01_notebooks/downloads_stj/` and reused on subsequent runs.
+The notebook `01_notebooks/02_data_exploration.ipynb` is an **independent** companion tool for ad-hoc data exploration. It fetches datasets directly from the STJ portal—with no dependency on the main experiment files. You can customize the retrieval by adjusting filters like `ANOS_PUBLICACAO_SELECIONADOS` and `CLASSES_SELECIONADAS` directly in the notebook's variables.
 
 ---
 
-## Usage
+## Usage: Experiment Walkthrough
 
-### Running the baseline
+This section provides a step-by-step guide to reproducing the experiment. The process is divided into four main stages: dataset assembly, baseline extractions, multi-agent extractions, and final analysis.
 
-_in progress_
+### 1. Assembling the Dataset
 
-### Running JAMEX
+The experiment begins by constructing the dataset of judicial decisions using a Jupyter Notebook. 
 
-_in progress_
+- **Notebook:** `01_notebooks/01_data_preparation.ipynb`
+- **Execution:** Run the notebook cells sequentially to fetch the required judicial texts and basic metadata. This will generate the enriched parquet dataset (`espelhos_acordaos_artigo2026_com_texto.parquet`).
+- **Configuration Points:** By default, the notebook processes specific years. You can change the target years and API timeouts by searching for the following tags within the notebook's code cells:
+  - `[TAG: DATASET_CONFIG]`: To adjust the CKAN timeout.
+  - `[TAG: DATASET_YEARS]`: To modify the target years downloaded.
 
-### Reproducing evaluation metrics
+### 2. Running the Baseline Extractions
 
-_in progress_
+After assembling the dataset, the next step is performing the extractions using the single-prompt baseline approach.
 
-See the notebooks in `01_notebooks/` and scripts in `03_analysis/` for step-by-step replication of all paper results.
+- **Script:** `02_extractions/gerar_espelho_sjr_base.py`
+- **Execution:** Run the script directly from the terminal (ensure your environment variables and API keys are properly set in your `.env` file).
+- **Configuration Points:** You can adjust the models to test or perform trial runs using a subset of documents. Look for the following tags in the script:
+  - `[TAG: EXTRACTION_TEST_IDS]`: Uncomment or edit the test array to limit extraction to specific document IDs for quick testing.
+  - `[TAG: EXTRACTION_BASE_MODELS]`: Edit this section to add/remove evaluated base models and define their output folders.
+
+### 3. Running JAMEX (Multi-Agent Extractions)
+
+With the baseline complete, you can generate the extractions using the JAMEX multi-agent orchestration.
+
+- **Script:** `02_extractions/agentes_gerar_espelhos.py`
+- **Execution:** Similar to the baseline, run this via terminal from within the extractions folder.
+- **Configuration Points:** Follows the same logic for customization:
+  - `[TAG: EXTRACTION_TEST_IDS]`: For limiting the run to specific test document IDs.
+  - `[TAG: EXTRACTION_AGENT_MODELS]`: To configure which LLMs the agent orchestration runs on.
+
+### 4. Reproducing Evaluation Metrics and Analysis
+
+Once both extraction strategies finish generating their unstructured and structured JSON outputs, you can evaluate their performance.
+
+- **Script:** `03_analysis/comparar_extracoes.py`
+- **Configuration File:** `03_analysis/config_espelho.yaml`
+- **Execution:** Run the comparison script explicitly passing the yaml configuration: `python comparar_extracoes.py config_espelho.yaml`
+- **Configuration Points:** The comparison logic heavily relies on external settings inside the `config_espelho.yaml` file. You can adjust the compared data sources by looking for the tags in the YAML file:
+  - `[TAG: ANALYSIS_BASE_MODEL]`: Modifies the reference (gold-standard/baseline) model for comparisons.
+  - `[TAG: ANALYSIS_COMPARE_MODELS]`: Modifies the list of extraction models to be evaluated against the base pattern.
+
+See the notebooks in `01_notebooks/` and scripts in `03_analysis/` for additional step-by-step replication of all paper results.
 
 ---
 

@@ -251,9 +251,9 @@ def extrair_dados(pasta_raiz, pasta_extracao, modelo, ids_fixos=None):
 if __name__ == '__main__':
 
     # [TAG: EXTRACTION_TEST_IDS]
+    ids_fixos_teste = None
     # lista opcional de ids para rodadas de teste (None = todos os registros)
-    ids_fixos_teste = ['202202853462.20230510.', '202201555326.20220614.']
-    #ids_fixos_teste = None  # descomente para processar todos os registros
+    # ids_fixos_teste = ['202202853462.20230510.', '202201555326.20220614.']
 
     ''' Pasta                       ModelApi Openrouter       Api OpenAi
         --------------------------------------------------------------------
