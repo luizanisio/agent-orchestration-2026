@@ -30,13 +30,34 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 from tqdm import tqdm
 from threading import Lock
 
-MODELO_ESPELHO = None
-MODELO_ESPELHO_THINK = None
-CALLABLE_RESPOSTA = None
-ARQUIVO_LOG = None
+# estado mutável de sessão — compartilhado entre threads durante a extração
 LOCK_LOG = Lock()
-
 sessao = {}
+
+def criar_cfg(pasta_raiz, pasta_extracao, modelo, modelo_think='medium', callable_modelo=None):
+    """Cria o dicionário de configuração para uma rodada de extração por agentes.
+
+    Centraliza todos os caminhos e parâmetros, eliminando variáveis globais
+    de configuração e tornando as dependências explícitas entre funções.
+    """
+    pasta_saidas = os.path.join(pasta_raiz, pasta_extracao)
+    arq_dataframe = os.path.join(pasta_raiz, 'espelhos_acordaos_artigo2026_com_texto.parquet')
+    if not os.path.isfile(arq_dataframe):
+        print('⚠️ Não foi possível carregar o dataframe de espelhos!')
+        print(f'Verifique se o arquivo {arq_dataframe} existe!')
+        print(f'Utilize o notebook 01_data_preparation.ipynb para gerar o dataframe!')
+        exit(0)
+    os.makedirs(pasta_saidas, exist_ok=True)
+    arq_logs = os.path.join(pasta_saidas, 'log_inconsistencias.txt')
+    return {
+        'pasta_raiz': pasta_raiz,
+        'pasta_saidas': pasta_saidas,
+        'arq_dataframe': arq_dataframe,
+        'arq_logs': arq_logs,
+        'modelo': modelo,
+        'modelo_think': modelo_think,       # nem todo modelo suporta; verificar documentação
+        'callable_modelo': callable_modelo,  # função de chamada do modelo (ex: send_prompt)
+    }
 
 def print_sessao():
     global sessao
@@ -61,16 +82,21 @@ def avaliar_parada_por_erro(erro):
         print(msg)
         exit(1)
 
-def registrar_log_inconsistencia(id_peca, tipo_inconsistencia, detalhes=''):
-    """Registra inconsistências no arquivo de log de forma thread-safe."""
-    global ARQUIVO_LOG, LOCK_LOG
-    if not ARQUIVO_LOG:
-        return
+def registrar_log_inconsistencia(id_peca, tipo_inconsistencia, cfg, detalhes=''):
+    """Registra inconsistências no arquivo de log de forma thread-safe.
+
+    Args:
+        id_peca: Identificador da peça (None para iniciar o arquivo).
+        tipo_inconsistencia: Tipo do problema encontrado.
+        cfg: Dicionário de configuração da rodada.
+        detalhes: Informações adicionais sobre a inconsistência.
+    """
+    arq_logs = cfg['arq_logs']
     # inicia o arquivo caso id_peca seja None
     if id_peca is None:
         with LOCK_LOG:
-            if not os.path.exists(ARQUIVO_LOG):
-                with open(ARQUIVO_LOG, 'w', encoding='utf-8') as f:
+            if not os.path.exists(arq_logs):
+                with open(arq_logs, 'w', encoding='utf-8') as f:
                     f.write(f'Log de Inconsistências - Iniciado em {pd.Timestamp.now().strftime("%Y-%m-%d %H:%M:%S")}\n\n')
         return
     timestamp = pd.Timestamp.now().strftime('%Y-%m-%d %H:%M:%S')
@@ -78,33 +104,37 @@ def registrar_log_inconsistencia(id_peca, tipo_inconsistencia, detalhes=''):
     if detalhes:
         mensagem += f" | {detalhes}"
     mensagem += "\n"
-    
+
     with LOCK_LOG:
-        with open(ARQUIVO_LOG, 'a', encoding='utf-8') as f:
+        with open(arq_logs, 'a', encoding='utf-8') as f:
             f.write(mensagem)
 
-def gerar_respostas(row, pasta_extracao):
+def gerar_respostas(row, cfg):
+    """Gera espelho de um acórdão usando o sistema de agentes orquestrados.
+
+    Args:
+        row: Linha do dataframe com dados do acórdão.
+        cfg: Dicionário de configuração da rodada (caminhos, modelo, etc.).
+    """
     global sessao
     id_peca = row['id_peca']
-    #print(f'\n{"="*80}\nProcessando peça id_peca={id_peca}\n{"="*80}\n')
     try:
         texto = row.get('texto') or row.get('integra')
         if not texto or len(texto) < 100:
             print(f'Texto da peça {id_peca} muito curto ou inexistente.')
             sessao['sem_texto'] = sessao.get('sem_texto', 0) + 1
-            registrar_log_inconsistencia(id_peca, 'SEM_TEXTO', f'Tamanho: {len(texto) if texto else 0} caracteres')
+            registrar_log_inconsistencia(id_peca, 'SEM_TEXTO', cfg, f'Tamanho: {len(texto) if texto else 0} caracteres')
             return
-        #print('TEXTO PEÇA ""', texto[:500], '...')
         
         # Instancia o orquestrador com o texto, id_peca e pasta de observabilidade
         orq = AgenteOrquestradorEspelho(
             id_peca=id_peca, 
             texto_peca=texto,
-            pasta_extracao=pasta_extracao,
+            pasta_extracao=cfg['pasta_saidas'],
             observabilidade=True,
-            modelo_espelho=MODELO_ESPELHO,
-            modelo_think=MODELO_ESPELHO_THINK,
-            callable_modelo=CALLABLE_RESPOSTA
+            modelo_espelho=cfg['modelo'],
+            modelo_think=cfg['modelo_think'],
+            callable_modelo=cfg['callable_modelo']
         )
         
         # Executa a orquestração
@@ -118,10 +148,10 @@ def gerar_respostas(row, pasta_extracao):
             campos_identificados = metadados.get('campos_identificados', [])
             if not campos_identificados or len(campos_identificados) == 0:
                 sessao['sem_campos'] = sessao.get('sem_campos', 0) + 1
-                registrar_log_inconsistencia(id_peca, 'NENHUM_CAMPO_IDENTIFICADO', 'AgenteCampos não identificou campos para extração')
+                registrar_log_inconsistencia(id_peca, 'NENHUM_CAMPO_IDENTIFICADO', cfg, 'AgenteCampos não identificou campos para extração')
             elif erros:
                 sessao['com_erro'] = sessao.get('com_erro', 0) + 1
-                registrar_log_inconsistencia(id_peca, 'COM_ERRO', json.dumps(erros, ensure_ascii=False))
+                registrar_log_inconsistencia(id_peca, 'COM_ERRO', cfg, json.dumps(erros, ensure_ascii=False))
                 avaliar_parada_por_erro(erros)
             else:
                 campos_com_valor = {k: v for k, v in espelho.items() if v not in [None, '', [], {}]}
@@ -131,7 +161,7 @@ def gerar_respostas(row, pasta_extracao):
                 
                 # Registra se todos os campos estão vazios
                 if len(campos_com_valor) == 0:
-                    registrar_log_inconsistencia(id_peca, 'TODOS_CAMPOS_VAZIOS', f'Total de campos: {len(campos_sem_valor)}')
+                    registrar_log_inconsistencia(id_peca, 'TODOS_CAMPOS_VAZIOS', cfg, f'Total de campos: {len(campos_sem_valor)}')
             
             if espelho.get('carregado'):
                sessao['existentes'] = sessao.get('existentes', 0) + 1
@@ -139,98 +169,116 @@ def gerar_respostas(row, pasta_extracao):
                sessao['concluidos'] = sessao.get('concluidos', 0) + 1
         else:
             sessao['sem_espelho'] = sessao.get('sem_espelho', 0) + 1
-            registrar_log_inconsistencia(id_peca, 'SEM_ESPELHO', 'Orquestrador não retornou espelho')
+            registrar_log_inconsistencia(id_peca, 'SEM_ESPELHO', cfg, 'Orquestrador não retornou espelho')
         
         if (sessao.get('excecoes',0)+sessao.get('concluidos',0)+sessao.get('existentes',0)+sessao.get('com_erro',0))  % 10 == 0:
             print_sessao()
     except Exception as e:
         sessao['excecoes'] = sessao.get('excecoes', 0) + 1
         erro_msg = str(e)
-        registrar_log_inconsistencia(id_peca, 'EXCECAO', erro_msg[:200])
+        registrar_log_inconsistencia(id_peca, 'EXCECAO', cfg, erro_msg[:200])
         print(f'Erro ao processar peça id_peca={id_peca}: {traceback.format_exc()}')
 
 
-if __name__ == '__main__':
-    # descomente para testar acesso ao openrouter.ai com sua api
-    #teste_open_router()
+def extrair_dados(pasta_raiz, pasta_extracao, modelo, ids_fixos=None):
+    """Executa uma rodada completa de extração de espelhos por agentes.
 
-    # defina um id_peca específico se quiser extrair apenas ele
-    id_peca = None
+    Cria a configuração, carrega o dataframe, filtra registros, executa
+    extrações em paralelo e exibe resumo. Pode ser chamada em loop para
+    múltiplos modelos sem depender de variáveis globais de configuração.
 
-    # Executar extrações em paralelo com threads
-    NUM_THREADS = 3  # Ajuste se desejar
+    Args:
+        pasta_raiz: Pasta raiz dos dados (ex: '../data')
+        pasta_extracao: Subpasta para salvar as extrações (ex: 'espelhos_agentes_gemma3_12b')
+        modelo: Identificador do modelo LLM (ex: 'or:google/gemma-3-12b-it')
+        ids_fixos: Lista opcional de id_peca para filtrar o dataframe (útil para testes)
+    """
+    # cria configuração da rodada — substitui variáveis globais
+    cfg = criar_cfg(pasta_raiz, pasta_extracao, modelo, callable_modelo=send_prompt)
 
-    # verifique se foi passado um tamanho por argumento
-    # se não foi passado, use o fixo 
-    # realize rodadas completas para cada tamanho que desejar
-    TAMANHO = '12b' # 12b ou 27b usados no experimento (ou 4b para testes menores)
-    TAMANHO = sys.argv[1] if len(sys.argv) > 1 else TAMANHO
-    assert TAMANHO in ['4b','12b', '27b'], f"Tamanho inválido: {TAMANHO}. Deve ser '4b', '12b' ou '27b'."
-    MODELO_ESPELHO = f'or:google/gemma-3-{TAMANHO}-it'#:floor free nitro'
-    MODELO_ESPELHO_THINK = 'medium'
-    CALLABLE_RESPOSTA = send_prompt # pode ser adaptado para outra função de chamada de modelo, se necessário
-    
-    #PASTA_RAIZ = '/content/drive/MyDrive/TCC 2025 - Compartilhado no Drive/dados/'
-    PASTA_RAIZ = '../data/'
-    PASTA_EXTRACAO = os.path.join(PASTA_RAIZ, f'espelhos_agentes_gemma3_{TAMANHO}/')
-    DATAFRAME_ESPELHOS = os.path.join(PASTA_RAIZ, 'espelhos_acordaos_artigo2026_com_texto.parquet')
-    if not os.path.isfile(DATAFRAME_ESPELHOS):
-        print('⚠️ Não foi possível carregar o dataframe de espelhos!')
-        print(f'Verifique se o arquivo {DATAFRAME_ESPELHOS} existe!')
-        print(f'Utilize o notebook 01_data_preparation.ipynb para gerar o dataframe!')
-        exit(0)
+    # inicia o arquivo de log de inconsistências
+    registrar_log_inconsistencia(None, None, cfg)
 
-    os.makedirs(PASTA_EXTRACAO, exist_ok=True)
+    print(f'Carregando dataframe: {cfg["arq_dataframe"]}')
+    df = pd.read_parquet(cfg['arq_dataframe'])
+    print(f'DataFrame carregado com {len(df)} peças para processamento.')
 
-    # arquivo de log
-    ARQUIVO_LOG = os.path.join(PASTA_EXTRACAO, 'log_inconsistencias.txt')
-    registrar_log_inconsistencia(None, None)  # inicia o arquivo de log
-
-    # Carrega DataFrame com peças a processar
-    df = pd.read_parquet(DATAFRAME_ESPELHOS)
-    print('DataFrame carregado com ', len(df), 'peças para processamento.')
     # filtra mantendo apenas os que possuem íntegra
     q_total = len(df)
     df = df[df['tem_integra'] == True]
     print('-' * 40)
     print(f'Total de registros com íntegra: {len(df)} de {q_total}')
     print('-' * 40)
+
+    # filtra por ids fixos de teste, se fornecidos
+    if ids_fixos:
+        df = df[df['id_peca'].isin(ids_fixos)]
+        print(f'ℹ️ Filtrando por {len(ids_fixos)} ids fixos de teste: {len(df)} registros encontrados')
+        print('-' * 40)
+
     print('Exemplos do dataframe de espelhos:')
     print(df.head(2))
     print('-' * 40)
 
-    if isinstance(id_peca, str) and id_peca.strip():
-        df = df[df['id_peca'] == id_peca]
-        print(f' - filtrado para id_peca={id_peca}, total de {len(df)} peças.')
-    if isinstance(id_peca, list) and len(id_peca) > 0:
-        df = df[df['id_peca'].isin(id_peca)]
-        print(f' - filtrado para lista de id_peca, total de {len(df)} peças.')
-
-    print(f'Iniciando processamento com {NUM_THREADS} threads...\n- pasta: {PASTA_EXTRACAO}\n- modelo: {MODELO_ESPELHO}')
-    
-    #df = df[:2]
+    # executa extrações em paralelo com threads
+    NUM_THREADS = 2
+    print(f'Iniciando processamento com {NUM_THREADS} threads...\n- pasta: {cfg["pasta_saidas"]}\n- modelo: {cfg["modelo"]}')
 
     with ThreadPoolExecutor(max_workers=NUM_THREADS) as executor:
-        
-        futures = {executor.submit(gerar_respostas, row, PASTA_EXTRACAO): row['id_peca'] for _, row in df.iterrows()}
-        
+        futures = {executor.submit(gerar_respostas, row, cfg): row['id_peca'] for _, row in df.iterrows()}
+
         for future in tqdm(as_completed(futures), desc='Extraindo espelhos', ncols=60, total=len(df)):
             try:
                 future.result()
             except Exception as e:
                 id_peca = futures[future]
-                raise Exception(f'Erro ao processar peça id_peca={id_peca}: {str(e)}\n{traceback.format_exc()}')
-    print_sessao()   
-    # for idx, row in df.iterrows():
-    #     gerar_respostas(row, PASTA_EXTRACAO)
-    #     print_sessao()
+                registrar_log_inconsistencia(id_peca, 'EXCECAO_THREAD', cfg, str(e)[:200])
+                print(f'Erro ao processar peça id_peca={id_peca}: {traceback.format_exc()}')
+    print_sessao()
 
-    # Carrega dados da peça
-    lst = UtilArquivos.listar_arquivos(PASTA_EXTRACAO, mascara='*.json')
+    # resumo dos arquivos gerados
+    lst = UtilArquivos.listar_arquivos(cfg['pasta_saidas'], mascara='*.json')
     lst = [arq for arq in lst if '.resumo.' not in arq]
-    # Informa onde os arquivos foram salvos
     print('\n' + '='*80)
-    print(f'ARQUIVOS GERADOS: {PASTA_EXTRACAO}')
+    print(f'ARQUIVOS GERADOS: {cfg["pasta_saidas"]}')
     print(f' - Total de arquivos: {len(lst)}')
     print(f' - Total de peças analisadas: {len(df)}')
     print('='*80)
+
+##################################################################
+### Ajustes para rodar o experimento - ponto de entrada principal
+##################################################################
+if __name__ == '__main__':
+
+    # [TAG: EXTRACTION_TEST_IDS]
+    # lista opcional de ids para rodadas de teste (None = todos os registros)
+    ids_fixos_teste = ['202202853462.20230510.', '202201555326.20220614.']
+    #ids_fixos_teste = None  # descomente para processar todos os registros
+
+    ''' Pasta                       ModelApi Openrouter       Api OpenAi
+        --------------------------------------------------------------------
+        espelhos_base_gpt5         or:openai/gpt-5           openai/gpt-5
+        espelhos_base_gemma3_12b   or:google/gemma-3-12b-it
+        espelhos_base_gemma3_27b   or:google/gemma-3-27b-it
+    '''
+    #####################################################################################################
+    # [TAG: EXTRACTION_AGENT_MODELS]
+    # Como usar: configure os pares (pasta, modelo) desejados na lista abaixo.
+    # O prefixo "or:" indica para a classe usar o openrouter.ai.
+    # rodada completa para todos os modelos do experimento
+    lista_modelo_pasta = [
+        ('espelhos_agentes_gpt5', 'or:openai/gpt-5'),
+        ('espelhos_agentes_gemma3_12b', 'or:google/gemma-3-12b-it'),
+        ('espelhos_agentes_gemma3_27b', 'or:google/gemma-3-27b-it')
+    ]
+
+    # loop de rodadas: executa extração completa para cada modelo configurado
+    for pasta, modelo in lista_modelo_pasta:
+        print(f'\n{"#"*20} INICIANDO RODADA PARA MODELO {modelo} {"#"*20}\n')
+        print(f'- Pasta de saída: {pasta}')
+        extrair_dados(pasta_raiz='../data',
+                      pasta_extracao=pasta,
+                      modelo=modelo,
+                      ids_fixos=ids_fixos_teste)
+
+    print('\n####################\nFIM')
