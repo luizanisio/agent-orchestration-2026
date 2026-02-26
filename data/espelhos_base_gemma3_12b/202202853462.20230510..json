@@ -1,0 +1,94 @@
+{
+  "teseJuridica": [
+    {
+      "id": "T1",
+      "descricao": "A condenação baseada unicamente em reconhecimento fotográfico e pessoal, com inconsistências e contradições, não é suficiente para sustentar a acusação, especialmente quando não há outras provas corroborativas e o reconhecimento é questionável devido a fatores como a distância temporal entre o crime e o reconhecimento, a falta de descrição precisa e a possibilidade de vieses cognitivos.",
+      "justificativas": [
+        "A condenação do Paciente encontra-se amparada tão somente no depoimento da Vítima e nos reconhecimentos realizados na fase extrajudicial e em juízo.",
+        "Constata-se, primo ictu oculi e sem a necessidade de incursão aprofundada no acervo probatório, que há diversas inconsistências e contradições nas descrições feitas pela Vítima a respeito dos aspectos fisionômicos do suspeito.",
+        "A vítima nem mesmo afirmou que havia reconhecido o Paciente, em sede policial, com absoluta certeza.",
+        "As graves incongruências no reconhecimento do ora Paciente não podem ser sanadas apenas em razão quantidade de vezes em que este foi reconhecido em outros feitos.",
+        "A condenação está amparada tão somente nos reconhecimentos formalizados pela Vítima, além das divergências e inconsistências na referida prova, aferíveis de plano e sem a necessidade de incursão no conjunto fático-probatório."
+      ]
+    },
+    {
+      "id": "T2",
+      "descricao": "A fragilidade do reconhecimento, somada à ausência de outras provas robustas e à possibilidade de vieses na identificação, exige a aplicação do princípio do 'in dubio pro reo', absolvendo o acusado em razão da dúvida razoável.",
+      "justificativas": [
+        "Considerando que, no caso em tela, o decreto condenatório está amparado tão somente nos reconhecimentos formalizados pela Vítima, além das divergências e inconsistências na referida prova, aferíveis de plano e sem a necessidade de incursão no conjunto fático-probatório, concluo que há dúvida razoável a respeito da autoria delitiva, razão pela qual é necessário adotar a regra de julgamento que decorre da máxima in dubio pro reo.",
+        "Não se pode enviar ao presídio alguém porque uma vítima, com todo o estresse causado pelo roubo, com uma arma apontada para sua cabeça, geralmente em ambiente escuro e, um mês, dois meses, três meses depois, indica alguém a partir de um álbum fotográfico, ou mesmo presencialmente."
+      ]
+    }
+  ],
+  "jurisprudenciaCitada": [
+    {
+      "teseId": "T1",
+      "referenciaCompleta": "STJ, HC n. 712.781/RJ, relator Ministro ROGERIO SCHIETTI CRUZ, Sexta Turma, julgado em 15/3/2022, DJe de 22/3/2022.",
+      "assunto": "Validade do reconhecimento de pessoas e a necessidade de outras provas.",
+      "repercussaoGeral": false,
+      "recursoRepetitivo": false,
+      "temaRepetitivo": null
+    },
+    {
+      "teseId": "T1",
+      "referenciaCompleta": "STJ, AgRg no HC n. 730.232/SP, relator Ministro ROGERIO SCHIETTI CRUZ, Sexta Turma, julgado em 13/12/2022, DJe de 16/12/2022.",
+      "assunto": "Análise da fundamentação para a condenação.",
+      "repercussaoGeral": false,
+      "recursoRepetitivo": false,
+      "temaRepetitivo": null
+    },
+    {
+      "teseId": "T2",
+      "referenciaCompleta": "STJ, HC n. 664.537/RS, relator Ministro ANTONIO SALDANHA PALHEIRO, Sexta Turma, julgado em 16/8/2022, DJe de 19/8/2022.",
+      "assunto": "Reconhecimento como única prova e aplicação do in dubio pro reo.",
+      "repercussaoGeral": false,
+      "recursoRepetitivo": false,
+      "temaRepetitivo": null
+    },
+    {
+      "teseId": "T2",
+      "referenciaCompleta": "STJ, AgRg no HC n. 641.267/RS, relator Ministro ROGERIO SCHIETTI CRUZ, Sexta Turma, julgado em 13/12/2022, DJe de 16/12/2022.",
+      "assunto": "Fragilidade do reconhecimento e necessidade de outras provas.",
+      "repercussaoGeral": false,
+      "recursoRepetitivo": false,
+      "temaRepetitivo": null
+    }
+  ],
+  "referenciasLegislativas": [
+    {
+      "diplomaLegal": "Código de Processo Penal",
+      "dispositivo": "Art. 386, inciso VII",
+      "redacaoPosterior": null
+    },
+    {
+      "diplomaLegal": "Código de Processo Penal",
+      "dispositivo": "Art. 226",
+      "redacaoPosterior": null
+    }
+  ],
+  "notas": [
+    "Quantidade de droga apreendida: Não consta na peça processual."
+  ],
+  "informacoesComplementares": [
+    "Concessão de ordem de habeas corpus de ofício para determinar a imediata suspensão das execuções penais e das prisões preventivas existentes em desfavor do réu."
+  ],
+  "termosAuxiliares": [
+    "reconhecimento",
+    "vítima",
+    "prova",
+    "in dubio pro reo",
+    "absolvição",
+    "contradição",
+    "fragilidade",
+    "justiça",
+    "erro",
+    "prisão"
+  ],
+  "tema": [
+    {
+      "tribunal": "STJ",
+      "numero": null,
+      "descricao": "Reconhecimento de pessoas e a necessidade de outras provas."
+    }
+  ]
+}

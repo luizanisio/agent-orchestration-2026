@@ -1,0 +1,12 @@
+{
+  "input_tokens": 49479,
+  "output_tokens": 1477,
+  "reasoning_tokens": null,
+  "cached_tokens": null,
+  "finish_reason": null,
+  "model": "or:google/gemma-3-12b-it",
+  "think": "medium",
+  "time": 37.74641942977905,
+  "id_peca": "202202853462.20230510.",
+  "model_id": "google/gemma-3-12b-it"
+}

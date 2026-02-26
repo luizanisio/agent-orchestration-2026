@@ -1,0 +1,150 @@
+{
+  "id_peca": "202202853462.20230510.",
+  "teseJuridica": [
+    {
+      "id": "T1",
+      "descricao": "O reconhecimento de pessoas pode ser valorado pelo Julgador, desde que respeitadas as exigências legais, mas não pode, por si só, induzir à certeza da autoria delitiva, pois a função dos órgãos de Estado encarregados da investigação e da acusação não pode ser relegada a segundo plano.",
+      "justificativas": [
+        "Desde que respeitadas as exigências legais, o reconhecimento de pessoas pode ser valorado pelo Julgador. Isso não significa admitir que, em todo e qualquer caso, a afirmação do ofendido de que identifica determinada pessoa como o agente do crime seja prova cabal e irrefutável. Do contrário, a função dos órgãos de Estado encarregados da investigação e da acusação (Polícia e Ministério Público) seria relegada a segundo plano. O Magistrado, por sua vez, estaria reduzido à função homologatória da acusação formalizada pelo ofendido."
+      ]
+    },
+    {
+      "id": "T2",
+      "descricao": "O reconhecimento de pessoas que obedece às disposições legais não prepondera sobre quaisquer outros meios de prova, devendo ser valorado como os demais.",
+      "justificativas": [
+        "O reconhecimento de pessoas que obedece às disposições legais (o que não as observa é nulo, consoante jurisprudência pacífica desta Corte) não prepondera sobre quaisquer outros meios de prova (confissão, testemunha, perícia, acareação, etc.); ao contrário, deve ser valorado como os demais."
+      ]
+    },
+    {
+      "id": "T3",
+      "descricao": "Em hipóteses de contradições na descrição declarada pela vítima e falta de correspondência entre o relato e as características físicas do suspeito, o reconhecimento deve ser valorado com cautela, indicando a possibilidade de reconhecimento falho.",
+      "justificativas": [
+        "No entanto, em algumas hipóteses o reconhecimento deve ser valorado com maior cautela, como, por exemplo, nos casos em que já decorrido muito tempo desde a prática do delito, quando há contradições na descrição declarada pela vítima e até mesmo na situação em que esse relato porventura não venha a corresponder às reais características físicas do suspeito apontado."
+      ]
+    },
+    {
+      "id": "T4",
+      "descricao": "Em casos de dúvida razoável, especialmente quando a condenação se baseia em provas frágeis, deve-se aplicar o princípio in dubio pro reo, tendo em vista que o ônus da prova recai sobre a acusação.",
+      "justificativas": [
+        "Considerando que o decreto condenatório está amparado tão somente nos reconhecimentos formalizados pela Vítima e, ainda, as divergências e inconsistências na referida prova, aferíveis de plano e sem a necessidade de incursão no conjunto fático-probatório, concluo que há dúvida razoável a respeito da autoria delitiva, razão pela qual é necessário adotar a regra de julgamento que decorre da máxima in dubio pro reo, tendo em vista que o ônus de provar a imputação recai sobre a Acusação."
+      ]
+    },
+    {
+      "id": "T5",
+      "descricao": "A confirmação do reconhecimento fotográfico em juízo não torna o ato seguro e isento de erros involuntários, pois há tendência de repetir a mesma resposta em reconhecimentos futuros, devido à memória ativa e predisposta.",
+      "justificativas": [
+        "A confirmação, em juízo, do reconhecimento fotográfico extrajudicial, por si só, não torna o ato seguro e isento de erros involuntários, pois \"uma vez que a testemunha ou a vítima reconhece alguém como o autor do delito, há tendência, por um viés de confirmação, a repetir a mesma resposta em reconhecimentos futuros, pois sua memória estará mais ativa e predisposta a tanto\" (STJ, HC n. 712.781/RJ, relator Ministro ROGERIO SCHIETTI CRUZ, Sexta Turma, julgado em 15/3/2022, DJe de 22/3/2022)."
+      ]
+    }
+  ],
+  "jurisprudenciaCitada": [
+    {
+      "teseId": "T1",
+      "referenciaCompleta": "STJ, HC n. 712.781/RJ, relator Ministro ROGERIO SCHIETTI CRUZ, Sexta Turma, julgado em 15/3/2022, DJe de 22/3/2022.",
+      "assunto": "Fundamenta a tese sobre a importância de não relegar a função dos órgãos de investigação e acusação à homologação da acusação formalizada pelo ofendido.",
+      "repercussaoGeral": false,
+      "recursoRepetitivo": false,
+      "temaRepetitivo": null
+    },
+    {
+      "teseId": "T2",
+      "referenciaCompleta": "STJ, HC n. 712.781/RJ, relator Ministro ROGERIO SCHIETTI CRUZ, Sexta Turma, julgado em 15/3/2022, DJe de 22/3/2022.",
+      "assunto": "Enfatiza que o reconhecimento de pessoas, mesmo positivo, não pode induzir à certeza da autoria delitiva.",
+      "repercussaoGeral": false,
+      "recursoRepetitivo": false,
+      "temaRepetitivo": null
+    },
+    {
+      "teseId": "T3",
+      "referenciaCompleta": "STJ, HC n. 712.781/RJ, relator Ministro ROGERIO SCHIETTI CRUZ, Sexta Turma, julgado em 15/3/2022, DJe de 22/3/2022.",
+      "assunto": "Salienta a necessidade de cautela na valoração do reconhecimento em casos de contradições e falta de correspondência entre o relato e as características físicas do suspeito.",
+      "repercussaoGeral": false,
+      "recursoRepetitivo": false,
+      "temaRepetitivo": null
+    },
+    {
+      "teseId": "T4",
+      "referenciaCompleta": "STJ, HC n. 674.139/SP, relator Ministro ROGERIO SCHIETTI CRUZ, Sexta Turma, julgado em 15/2/2022, DJe de 19/2/2022.",
+      "assunto": "Aplica o princípio in dubio pro reo em casos de dúvida razoável, especialmente quando a condenação se baseia em provas frágeis.",
+      "repercussaoGeral": false,
+      "recursoRepetitivo": false,
+      "temaRepetitivo": null
+    },
+    {
+      "teseId": "T5",
+      "referenciaCompleta": "STJ, HC n. 712.781/RJ, relator Ministro ROGERIO SCHIETTI CRUZ, Sexta Turma, julgado em 15/3/2022, DJe de 22/3/2022.",
+      "assunto": "Alerta sobre o viés de confirmação em reconhecimentos futuros, devido à memória ativa e predisposta.",
+      "repercussaoGeral": false,
+      "recursoRepetitivo": false,
+      "temaRepetitivo": null
+    }
+  ],
+  "referenciasLegislativas": [
+    {
+      "diplomaLegal": "Código de Processo Penal",
+      "dispositivo": "Art. 386, inciso VII",
+      "redacaoPosterior": null
+    },
+    {
+      "diplomaLegal": "Código de Processo Penal",
+      "dispositivo": "Art. 226",
+      "redacaoPosterior": null
+    },
+    {
+      "diplomaLegal": "Código de Processo Penal",
+      "dispositivo": "Art. 227",
+      "redacaoPosterior": null
+    }
+  ],
+  "notas": [
+    "Quantidade de droga apreendida: [QTD] de [TIPO]; [QTD] de [TIPO].",
+    "Direito Ambiental.",
+    "Julgado conforme procedimento previsto para Recursos Repetitivos no âmbito do STJ.",
+    "Reafirmação de jurisprudência."
+  ],
+  "informacoesComplementares": [
+    "Julgado conforme procedimento previsto para Recursos Repetitivos no âmbito do STJ.",
+    "Reafirmação de jurisprudência.",
+    "Aplicada técnica de distinção (distinguishing) em relação a [Recurso Repetitivo REsp XXXX / Repercussão Geral / Súmula XXX].",
+    "Julgamento de mérito de Pedido de Uniformização de Interpretação de Lei (PUIL).",
+    "Acórdão com decisão de admissão para julgamento de recurso conforme procedimento previsto para Incidente de Assunção de Competência (IAC) no âmbito do STJ."
+  ],
+  "termosAuxiliares": [
+    "sumula 7 stj",
+    "repercussao geral",
+    "prisao preventiva",
+    "art 312 cpp",
+    "habeas corpus",
+    "in dubio pro reo",
+    "reconhecimento fotográfico",
+    "reconhecimento pessoal",
+    "<DADOS PESSOAIS REMOVIDOS>",
+    "depoimento da vitima",
+    "dinamica probatoria",
+    "corregedoria de policia",
+    "cross race effect",
+    "falsas memorias"
+  ],
+  "tema": [
+    {
+      "tribunal": "STJ",
+      "numero": 0,
+      "descricao": null
+    }
+  ],
+  "metadados": {
+    "campos_identificados": [
+      "AgenteReferenciasLegislativas",
+      "AgenteInformacoesComplementares",
+      "AgenteTermosAuxiliares",
+      "AgenteJurisprudenciasCitadas",
+      "AgenteNotas",
+      "AgenteTema",
+      "AgenteTeses"
+    ],
+    "loops_revisao": 2,
+    "validacao_aprovada": false,
+    "duracao_total_segundos": 191.180593,
+    "timestamp_extracao": "2026-02-25T22:42:08.838721"
+  }
+}

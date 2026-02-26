@@ -1,0 +1,95 @@
+{
+  "id_peca": "202202853462.20230510.",
+  "total_geral": {
+    "prompt_tokens": 363359,
+    "completion_tokens": 6663,
+    "cached_tokens": 0,
+    "reasoning_tokens": 0,
+    "total_tokens": 370022,
+    "time": 191.180593,
+    "time_linear": 212.97030600000005
+  },
+  "por_agente": {
+    "AgenteCampos": {
+      "prompt_tokens": 20643,
+      "completion_tokens": 299,
+      "cached_tokens": 0,
+      "reasoning_tokens": 0,
+      "total_tokens": 20942,
+      "execucoes": 1,
+      "time": 13.56254
+    },
+    "AgenteTeses": {
+      "prompt_tokens": 63156,
+      "completion_tokens": 2511,
+      "cached_tokens": 0,
+      "reasoning_tokens": 0,
+      "total_tokens": 65667,
+      "execucoes": 3,
+      "time": 75.97524
+    },
+    "AgenteJurisprudenciasCitadas": {
+      "prompt_tokens": 65183,
+      "completion_tokens": 2114,
+      "cached_tokens": 0,
+      "reasoning_tokens": 0,
+      "total_tokens": 67297,
+      "execucoes": 3,
+      "time": 51.029712
+    },
+    "AgenteTema": {
+      "prompt_tokens": 20419,
+      "completion_tokens": 54,
+      "cached_tokens": 0,
+      "reasoning_tokens": 0,
+      "total_tokens": 20473,
+      "execucoes": 1,
+      "time": 3.986592
+    },
+    "AgenteTermosAuxiliares": {
+      "prompt_tokens": 61362,
+      "completion_tokens": 419,
+      "cached_tokens": 0,
+      "reasoning_tokens": 0,
+      "total_tokens": 61781,
+      "execucoes": 3,
+      "time": 18.761716
+    },
+    "AgenteNotas": {
+      "prompt_tokens": 20841,
+      "completion_tokens": 91,
+      "cached_tokens": 0,
+      "reasoning_tokens": 0,
+      "total_tokens": 20932,
+      "execucoes": 1,
+      "time": 5.952222
+    },
+    "AgenteInformacoesComplementares": {
+      "prompt_tokens": 20541,
+      "completion_tokens": 163,
+      "cached_tokens": 0,
+      "reasoning_tokens": 0,
+      "total_tokens": 20704,
+      "execucoes": 1,
+      "time": 6.282545
+    },
+    "AgenteReferenciasLegislativas": {
+      "prompt_tokens": 20591,
+      "completion_tokens": 159,
+      "cached_tokens": 0,
+      "reasoning_tokens": 0,
+      "total_tokens": 20750,
+      "execucoes": 1,
+      "time": 7.641648
+    },
+    "AgenteValidacaoFinal": {
+      "prompt_tokens": 70623,
+      "completion_tokens": 853,
+      "cached_tokens": 0,
+      "reasoning_tokens": 0,
+      "total_tokens": 71476,
+      "execucoes": 3,
+      "time": 29.778091000000003
+    }
+  }
+}

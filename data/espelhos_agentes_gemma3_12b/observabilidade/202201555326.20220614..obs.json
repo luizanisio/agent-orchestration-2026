@@ -1,0 +1,1486 @@
+{
+  "id_peca": "202201555326.20220614.",
+  "timestamp_atualizacao": "2026-02-25T22:45:17.153724",
+  "observabilidade": {
+    "AgenteCampos": [
+      {
+        "agente": "AgenteCampos",
+        "inicio": "2026-02-25T22:42:08.848777",
+        "fim": "2026-02-25T22:42:23.368246",
+        "duracao_segundos": 14.519462,
+        "iteracoes": 1,
+        "tem_revisao": false,
+        "sucesso": true,
+        "resposta_keys": [
+          "resposta",
+          "json",
+          "usage",
+          "model",
+          "tempo",
+          "tratada"
+        ],
+        "resposta": {
+          "resposta": {
+            "raciocinio": "O texto possui Ementa, cita Jurisprudência (HC, REsp), menciona artigos de lei (CP), discute a dosimetria da pena e a aplicação de circunstâncias judiciais (maus antecedentes, qualificadoras), e aborda a possibilidade de substituição da pena privativa de liberdade por restritiva de direitos. Há menção a quantidades de tempo (5 anos para período depurador).",
+            "campos": [
+              "#teseJuridica: Há ementa definindo teses.",
+              "#JuCi: Voto cita precedentes (HC, REsp).",
+              "#RefLeg: Aplicação de legislação federal (CP, art. 44, inc. III, art. 33, § 2º, c e § 3º).",
+              "#notas: Discussão sobre a dosimetria da pena e aplicação de circunstâncias judiciais.",
+              "#tema: Menciona 'Tema Repetitivo' (referência à Terceira Seção desta Corte, seguindo entendimento firmado pela Primeira Turma do col. Pretório Excelso).",
+              "#ICE: Menciona ",
+              "#TAP: Termos técnicos presentes (dosimetria, pena-base, regime prisional, reincidência, período depurador, flagrante ilegalidade, constrangimento ilegal, Habeas Corpus, Apelação, Tribunal de Justiça, Sodalício)."
+            ],
+            "contribuição": "identificação realizada"
+          },
+          "json": true,
+          "usage": {
+            "prompt_tokens": 14712,
+            "completion_tokens": 330,
+            "total_tokens": 15042,
+            "cached_tokens": 0,
+            "reasoning_tokens": 0,
+            "finished_reason": "stop",
+            "temperature": 0.01
+          },
+          "model": "google/gemma-3-12b-it",
+          "tempo": 14.5,
+          "tratada": true
+        }
+      }
+    ],
+    "AgenteTeses": [
+      {
+        "agente": "AgenteTeses",
+        "inicio": "2026-02-25T22:42:23.373490",
+        "fim": "2026-02-25T22:42:54.834093",
+        "duracao_segundos": 31.460596,
+        "iteracoes": 1,
+        "tem_revisao": false,
+        "sucesso": true,
+        "resposta_keys": [
+          "resposta",
+          "json",
+          "usage",
+          "model",
+          "tempo",
+          "tratada"
+        ],
+        "resposta": {
+          "resposta": {
+            "teseJuridica": [
+              {
+                "id": "T1",
+                "descricao": "Não se admite a impetração de habeas corpus em substituição ao recurso adequado, salvo em casos excepcionais de flagrante ilegalidade que gere constrangimento ilegal, sendo possível a concessão da ordem de ofício.",
+                "justificativas": [
+                  "I -A Terceira Seção desta Corte, seguindo entendimento firmado pela Primeira Turma do col. Pretório Excelso, firmou orientação no sentido de não admitir a impetração de habeas corpus em substituição ao recurso adequado, situação que implica o não conhecimento da impetração, ressalvados casos excepcionais em que, configurada flagrante ilegalidade apta a gerar constrangimento ilegal, seja possível a concessão da ordem de ofício."
+                ]
+              },
+              {
+                "id": "T2",
+                "descricao": "A via do writ somente se mostra adequada para a análise da dosimetria da pena se não for necessária uma análise aprofundada do conjunto probatório e se tratar de flagrante ilegalidade.",
+                "justificativas": [
+                  "II -A via do writ somente se mostra adequada para a análise da dosimetria da pena se não for necessária uma análise aprofundada do conjunto probatório e se se tratar de flagrante ilegalidade."
+                ]
+              },
+              {
+                "id": "T3",
+                "descricao": "O entendimento deste Tribunal firmou-se no sentido de que a dosimetria da pena insere-se dentro de um juízo de discricionariedade do julgador, somente passível de revisão por esta Corte no caso de inobservância dos parâmetros legais ou de flagrante desproporcionalidade.",
+                "justificativas": [
+                  "II -A via do writ somente se mostra adequada para a análise da dosimetria da pena se não for necessária uma análise aprofundada do conjunto probatório e se se tratar de flagrante ilegalidade. Vale dizer, o entendimento deste Tribunal firmou-se no sentido de que a \"dosimetria da pena insere-se dentro de um juízo de discricionariedade do julgador, atrelado às particularidades fáticas do caso concreto e subjetivas do agente, somente passível de revisão por esta Corte no caso de inobservância dos parâmetros legais ou de flagrante desproporcionalidade\" (HC n. 400.119/RJ, Quinta Turma, Rel. Min. Reynaldo Soares da Fonseca, DJe de 1º/8/2017)."
+                ]
+              },
+              {
+                "id": "T4",
+                "descricao": "O deslocamento de uma qualificadora para outra fase da dosimetria e a invocação de maus antecedentes para a majoração da pena-base são permitidos, mesmo que os maus antecedentes estejam atingidos pelo período depurador de cinco anos.",
+                "justificativas": [
+                  "III - In casu,verifica-se que a Corte de origem invocou fundamentos para manter a exasperação da basilar que estão em sintonia com o entendimento deste Sodalício, que permite o deslocamento de uma qualificadora para outras fase da dosimetria, sendo certo que os maus antecedentes do paciente podem ser invocados para a majoração da pena-base, ainda que atingidos pelo período depurador de cinco anos, que afasta somente os efeitos da reincidência."
+                ]
+              },
+              {
+                "id": "T5",
+                "descricao": "O aumento em dobro em relação ao mínimo legal se revela desproporcional quando não se demonstra de forma concreta a necessidade do referido aumento, impondo-se a concessão da ordem para reduzir a pena-base.",
+                "justificativas": [
+                  "IV -Contudo, tem-se que o aumento em dobro em relação ao mínimo se revela desproporcional, notadamente porque não se demonstrou de forma concreta e específica a necessidade do referido aumento de forma a afastar o entendimento deste Tribunal que considera proporcional o aumento de 1/6 por cada circunstância judicial negativa impondo, nesse ponto, a concessão da ordem para reduzir a pena-base."
+                ]
+              },
+              {
+                "id": "T6",
+                "descricao": "A pretensão de substituição da pena privativa de liberdade por restritiva de direitos é descabida diante da vedação legal do artigo 44, inciso III, do Código Penal, em razão dos maus antecedentes do apelante.",
+                "justificativas": [
+                  "V -Assim, ainda que a basilar tenha sido reduzida, descabida a pretensão de substituição da pena privativa de liberdade por restritiva de direitos pois, como bem observado pelo acórdão recorrido, \"há vedação legal à substituição da pena privativa de liberdade por restritiva de direitos, com base no disposto no artigo 44, inciso III, do Código Penal, diante dos maus antecedentes do apelante, não sendo medida socialmente recomendável, afastando-se o pleito Defensivo\" (fl. 268)"
+                ]
+              },
+              {
+                "id": "T7",
+                "descricao": "Considerando a nova pena imposta, inferior a quatro anos de reclusão, e a ausência de reincidência, o regime inicial semiaberto é adequado para o início do resgate da reprimenda.",
+                "justificativas": [
+                  "VI -Considerando a nova pena imposta, inferior a quatro anos de reclusão, bem como em face do paciente não ser reincidente, em que pese a existência de maus antecedentes, tenho que resta inviável a manutenção do regime fechado, notadamente por se tratar de crime cometido sem violência ou grave ameaça, pelo que fixo o regime semiaberto para início do resgate da reprimenda, ex vi do art. 33, § 2º, c e § 3º, do CP."
+                ]
+              }
+            ],
+            "contribuição": "extração realizada"
+          },
+          "json": true,
+          "usage": {
+            "prompt_tokens": 15056,
+            "completion_tokens": 1337,
+            "total_tokens": 16393,
+            "cached_tokens": 0,
+            "reasoning_tokens": 0,
+            "finished_reason": "stop",
+            "temperature": 0.01
+          },
+          "model": "google/gemma-3-12b-it",
+          "tempo": 31.435,
+          "tratada": true
+        }
+      },
+      {
+        "agente": "AgenteTeses",
+        "inicio": "2026-02-25T22:43:36.516501",
+        "fim": "2026-02-25T22:43:51.577187",
+        "duracao_segundos": 15.060679,
+        "iteracoes": 2,
+        "tem_revisao": true,
+        "sucesso": true,
+        "resposta_keys": [
+          "resposta",
+          "json",
+          "usage",
+          "model",
+          "tempo",
+          "tratada"
+        ],
+        "resposta": {
+          "resposta": {
+            "teseJuridica": [
+              {
+                "id": "T1",
+                "descricao": "Não se admite a impetração de habeas corpus em substituição ao recurso adequado, salvo em casos excepcionais de flagrante ilegalidade que gere constrangimento ilegal, sendo possível a concessão da ordem de ofício.",
+                "justificativas": [
+                  ""
+                ]
+              },
+              {
+                "id": "T2",
+                "descricao": "A análise da dosimetria da pena somente se mostra adequada via writ se não houver necessidade de análise aprofundada do conjunto probatório e se tratar de flagrante ilegalidade, sendo que a discricionariedade do julgador na dosimetria da pena somente é passível de revisão pela Corte no caso de inobservância dos parâmetros legais ou de flagrante desproporcionalidade.",
+                "justificativas": [
+                  ""
+                ]
+              },
+              {
+                "id": "T3",
+                "descricao": "O entendimento do Sodalício permite o deslocamento de uma qualificadora para outra fase da dosimetria, sendo possível a invocação de maus antecedentes para a majoração da pena-base, mesmo que atingidos pelo período depurador de cinco anos.",
+                "justificativas": [
+                  ""
+                ]
+              },
+              {
+                "id": "T4",
+                "descricao": "O aumento em dobro em relação ao mínimo legal se revela desproporcional quando não se demonstra de forma concreta e específica a necessidade do referido aumento para afastar o entendimento do Tribunal que considera proporcional o aumento de 1/6 por cada circunstância judicial negativa, impondo a concessão da ordem para reduzir a pena-base.",
+                "justificativas": [
+                  ""
+                ]
+              },
+              {
+                "id": "T5",
+                "descricao": "A pretensão de substituição da pena privativa de liberdade por restritiva de direitos é descabida diante da vedação legal do artigo 44, inciso III, do Código Penal, em razão dos maus antecedentes do paciente, notadamente diante da existência de diversas anotações criminais, que tornam a medida socialmente não recomendável.",
+                "justificativas": [
+                  ""
+                ]
+              },
+              {
+                "id": "T6",
+                "descricao": "Considerando a nova pena imposta, inferior a quatro anos de reclusão, e a ausência de reincidência, mesmo com a existência de maus antecedentes, é inviável a manutenção do regime fechado, sendo adequado fixar o regime semiaberto para início do resgate da reprimenda.",
+                "justificativas": [
+                  ""
+                ]
+              }
+            ],
+            "contribuição": "extração realizada"
+          },
+          "json": true,
+          "usage": {
+            "prompt_tokens": 15113,
+            "completion_tokens": 563,
+            "total_tokens": 15676,
+            "cached_tokens": 0,
+            "reasoning_tokens": 0,
+            "finished_reason": "stop",
+            "temperature": 0.01
+          },
+          "model": "google/gemma-3-12b-it",
+          "tempo": 15.05,
+          "tratada": true
+        }
+      },
+      {
+        "agente": "AgenteTeses",
+        "inicio": "2026-02-25T22:44:30.441234",
+        "fim": "2026-02-25T22:44:45.309875",
+        "duracao_segundos": 14.868635,
+        "iteracoes": 3,
+        "tem_revisao": true,
+        "sucesso": true,
+        "resposta_keys": [
+          "resposta",
+          "json",
+          "usage",
+          "model",
+          "tempo",
+          "tratada"
+        ],
+        "resposta": {
+          "resposta": {
+            "teseJuridica": [
+              {
+                "id": "T1",
+                "descricao": "Não se admite a impetração de habeas corpus em substituição ao recurso adequado, salvo em casos excepcionais de flagrante ilegalidade que gere constrangimento ilegal, sendo possível a concessão da ordem de ofício.",
+                "justificativas": [
+                  ""
+                ]
+              },
+              {
+                "id": "T2",
+                "descricao": "A via do writ somente se mostra adequada para analisar a dosimetria da pena quando não houver necessidade de análise aprofundada do conjunto probatório e se tratar de flagrante ilegalidade, pois a dosimetria da pena insere-se dentro de um juízo de discricionariedade do julgador, passível de revisão por esta Corte apenas em caso de inobservância dos parâmetros legais ou de flagrante desproporcionalidade.",
+                "justificativas": [
+                  ""
+                ]
+              },
+              {
+                "id": "T3",
+                "descricao": "O entendimento do Sodalício permite o deslocamento de uma qualificadora para outra fase da dosimetria, sendo possível invocar maus antecedentes do paciente para majorar a pena-base, mesmo que atingidos pelo período depurador de cinco anos.",
+                "justificativas": [
+                  ""
+                ]
+              },
+              {
+                "id": "T4",
+                "descricao": "O aumento em dobro em relação ao mínimo legal é desproporcional quando não se demonstra de forma concreta e específica a necessidade do referido aumento para afastar o entendimento deste Tribunal que considera proporcional o aumento de 1/6 por cada circunstância judicial negativa, impondo a concessão da ordem para reduzir a pena-base.",
+                "justificativas": [
+                  ""
+                ]
+              },
+              {
+                "id": "T5",
+                "descricao": "O aumento em dobro em relação ao mínimo legal é desproporcional na ausência de fundamentação concreta que justifique o aumento superior ao limite de 1/6, notadamente quando não se demonstra de forma concreta e específica a necessidade do referido aumento.",
+                "justificativas": [
+                  ""
+                ]
+              },
+              {
+                "id": "T6",
+                "descricao": "Descabe a pretensão de substituição da pena privativa de liberdade por restritiva de direitos diante da vedação legal do artigo 44, inciso III, do Código Penal, em razão dos maus antecedentes do apelante, tornando a medida socialmente não recomendável.",
+                "justificativas": [
+                  ""
+                ]
+              },
+              {
+                "id": "T7",
+                "descricao": "Considerando a nova pena imposta, inferior a quatro anos de reclusão, e a ausência de reincidência do paciente, mesmo com a existência de maus antecedentes, é inviável a manutenção do regime fechado, sendo adequado fixar o regime semiaberto para início do resgate da reprimenda, conforme o art. 33, § 2º, c e § 3º, do CP.",
+                "justificativas": [
+                  ""
+                ]
+              }
+            ],
+            "contribuição": "extração realizada"
+          },
+          "json": true,
+          "usage": {
+            "prompt_tokens": 15113,
+            "completion_tokens": 659,
+            "total_tokens": 15772,
+            "cached_tokens": 0,
+            "reasoning_tokens": 0,
+            "finished_reason": "stop",
+            "temperature": 0.01
+          },
+          "model": "google/gemma-3-12b-it",
+          "tempo": 14.858,
+          "tratada": true
+        }
+      }
+    ],
+    "AgenteJurisprudenciasCitadas": [
+      {
+        "agente": "AgenteJurisprudenciasCitadas",
+        "inicio": "2026-02-25T22:42:54.840685",
+        "fim": "2026-02-25T22:43:19.794844",
+        "duracao_segundos": 24.954153,
+        "iteracoes": 1,
+        "tem_revisao": false,
+        "sucesso": true,
+        "resposta_keys": [
+          "resposta",
+          "json",
+          "usage",
+          "model",
+          "tempo",
+          "tratada"
+        ],
+        "resposta": {
+          "resposta": {
+            "jurisprudenciaCitada": [
+              {
+                "teseId": "T1",
+                "referenciaCompleta": "Tribunal, HC n. 400.119/RJ, Quinta Turma, Rel. Min. Reynaldo Soares da Fonseca, DJe de 1º/8/2017.",
+                "assunto": "Fundamenta a impossibilidade de impetração de habeas corpus em substituição ao recurso adequado.",
+                "repercussaoGeral": false,
+                "recursoRepetitivo": false,
+                "temaRepetitivo": null
+              },
+              {
+                "teseId": "T2",
+                "referenciaCompleta": "Tribunal, HC n. 400.119/RJ, Quinta Turma, Rel. Min. Reynaldo Soares da Fonseca, DJe de 1º/8/2017.",
+                "assunto": "Justifica a análise da dosimetria da pena apenas em casos de flagrante ilegalidade.",
+                "repercussaoGeral": false,
+                "recursoRepetitivo": false,
+                "temaRepetitivo": null
+              },
+              {
+                "teseId": "T3",
+                "referenciaCompleta": "Tribunal, HC n. 400.119/RJ, Quinta Turma, Rel. Min. Reynaldo Soares da Fonseca, DJe de 1º/8/2017.",
+                "assunto": "Enfatiza a discricionariedade do julgador na dosimetria da pena.",
+                "repercussaoGeral": false,
+                "recursoRepetitivo": false,
+                "temaRepetitivo": null
+              },
+              {
+                "teseId": "T4",
+                "referenciaCompleta": "Tribunal, AgRg no AREsp n. 1.816.037/GO, Quinta Turma, Relatora Ministra LAURITA VAZ, DJe de 30/9/2021.",
+                "assunto": "Permite o deslocamento de uma qualificadora para a primeira fase da dosimetria e a utilização de maus antecedentes para majorar a pena-base.",
+                "repercussaoGeral": false,
+                "recursoRepetitivo": false,
+                "temaRepetitivo": null
+              },
+              {
+                "teseId": "T5",
+                "referenciaCompleta": "Tribunal, AgRg no AREsp 1769665/RN, Sexta Turma, Rel. Min. REYNALDO SOARES DA FONSECA, DJe de 28/06/2021.",
+                "assunto": "Considera desproporcional o aumento em dobro da pena sem fundamentação concreta.",
+                "repercussaoGeral": false,
+                "recursoRepetitivo": false,
+                "temaRepetitivo": null
+              },
+              {
+                "teseId": "T6",
+                "referenciaCompleta": "Tribunal, AgRg no HC n. 512.273/SP, Quinta Turma, Rel. Min. Reynaldo Soares da Fonseca, DJe de 2/9/2019.",
+                "assunto": "Impede a substituição da pena por restritivas de direitos em razão dos maus antecedentes.",
+                "repercussaoGeral": false,
+                "recursoRepetitivo": false,
+                "temaRepetitivo": null
+              },
+              {
+                "teseId": "T7",
+                "referenciaCompleta": "Tribunal, AgRg no HC n. 512.273/SP, Quinta Turma, Rel. Min. Reynaldo Soares da Fonseca, DJe de 2/9/2019.",
+                "assunto": "Justifica a fixação do regime semiaberto para crimes sem violência ou grave ameaça.",
+                "repercussaoGeral": false,
+                "recursoRepetitivo": false,
+                "temaRepetitivo": null
+              }
+            ],
+            "contribuição": "extração realizada"
+          },
+          "json": true,
+          "usage": {
+            "prompt_tokens": 16241,
+            "completion_tokens": 959,
+            "total_tokens": 17200,
+            "cached_tokens": 0,
+            "reasoning_tokens": 0,
+            "finished_reason": "stop",
+            "temperature": 0.01
+          },
+          "model": "google/gemma-3-12b-it",
+          "tempo": 24.93,
+          "tratada": true
+        }
+      },
+      {
+        "agente": "AgenteJurisprudenciasCitadas",
+        "inicio": "2026-02-25T22:43:51.585696",
+        "fim": "2026-02-25T22:44:23.406246",
+        "duracao_segundos": 31.820544,
+        "iteracoes": 2,
+        "tem_revisao": true,
+        "sucesso": true,
+        "resposta_keys": [
+          "resposta",
+          "json",
+          "usage",
+          "model",
+          "tempo",
+          "tratada"
+        ],
+        "resposta": {
+          "resposta": {
+            "jurisprudenciaCitada": [
+              {
+                "teseId": "T1",
+                "referenciaCompleta": "STJ, HC n. 400.119/RJ, Rel. Min. Reynaldo Soares da Fonseca, Quinta Turma, julgado em 01/08/2017, DJe de 01/08/2017.",
+                "assunto": "Fundamenta a impossibilidade de habeas corpus substitutivo de recurso adequado, salvo flagrante ilegalidade.",
+                "repercussaoGeral": false,
+                "recursoRepetitivo": false,
+                "temaRepetitivo": null
+              },
+              {
+                "teseId": "T2",
+                "referenciaCompleta": "STJ, HC n. 400.119/RJ, Rel. Min. Reynaldo Soares da Fonseca, Quinta Turma, julgado em 01/08/2017, DJe de 01/08/2017.",
+                "assunto": "Fundamenta a discricionariedade do julgador na dosimetria da pena e a necessidade de flagrante ilegalidade ou desproporcionalidade para revisão.",
+                "repercussaoGeral": false,
+                "recursoRepetitivo": false,
+                "temaRepetitivo": null
+              },
+              {
+                "teseId": "T3",
+                "referenciaCompleta": "STJ, AgRg no HC n. 583.237/PR, Quinta Turma, Rel. Min. João Otávio de Noronha, julgado em 21/09/2021, DJe de 3/11/2021.",
+                "assunto": "Permite o deslocamento de qualificadoras para a primeira fase da dosimetria e a utilização de maus antecedentes para majorar a pena-base.",
+                "repercussaoGeral": false,
+                "recursoRepetitivo": false,
+                "temaRepetitivo": null
+              },
+              {
+                "teseId": "T4",
+                "referenciaCompleta": "STJ, AgRg no AREsp n. 1.570.541/SP, Relatora Ministra Laurita Vaz, Sexta Turma, julgado em 29/10/2020, DJe de 30/9/2021.",
+                "assunto": "Estabelece que a exasperação da pena-base deve seguir o parâmetro de 1/6 para cada vetorial desfavorável.",
+                "repercussaoGeral": false,
+                "recursoRepetitivo": false,
+                "temaRepetitivo": null
+              },
+              {
+                "teseId": "T5",
+                "referenciaCompleta": "STJ, AgRg no HC n. 696.947/SP, Quinta Turma, Rel. Min. Reynaldo Soares da Fonseca, DJe de 25/10/2021.",
+                "assunto": "Impede a substituição da pena privativa de liberdade por restritiva de direitos em razão dos maus antecedentes.",
+                "repercussaoGeral": false,
+                "recursoRepetitivo": false,
+                "temaRepetitivo": null
+              },
+              {
+                "teseId": "T6",
+                "referenciaCompleta": "STJ, AgRg no HC n. 512.273/SP, Quinta Turma, Rel. Min. Reynaldo Soares da Fonseca, DJe de 2/9/2019.",
+                "assunto": "Justifica a fixação do regime semiaberto em razão da pena inferior a 4 anos e ausência de reincidência, mesmo com maus antecedentes.",
+                "repercussaoGeral": false,
+                "recursoRepetitivo": false,
+                "temaRepetitivo": null
+              }
+            ],
+            "contribuição": "extração realizada"
+          },
+          "json": true,
+          "usage": {
+            "prompt_tokens": 15578,
+            "completion_tokens": 934,
+            "total_tokens": 16512,
+            "cached_tokens": 0,
+            "reasoning_tokens": 0,
+            "finished_reason": "stop",
+            "temperature": 0.01
+          },
+          "model": "google/gemma-3-12b-it",
+          "tempo": 31.81,
+          "tratada": true
+        }
+      },
+      {
+        "agente": "AgenteJurisprudenciasCitadas",
+        "inicio": "2026-02-25T22:44:45.320651",
+        "fim": "2026-02-25T22:45:07.906095",
+        "duracao_segundos": 22.585438,
+        "iteracoes": 3,
+        "tem_revisao": true,
+        "sucesso": true,
+        "resposta_keys": [
+          "resposta",
+          "json",
+          "usage",
+          "model",
+          "tempo",
+          "tratada"
+        ],
+        "resposta": {
+          "resposta": {
+            "jurisprudenciaCitada": [
+              {
+                "teseId": "T1",
+                "referenciaCompleta": "STJ, HC n. 400.119/RJ, Rel. Min. Reynaldo Soares da Fonseca, Quinta Turma, julgado em 01/08/2017, DJe de 01/08/2017.",
+                "assunto": "Fundamenta a impossibilidade de habeas corpus substitutivo de recurso adequado, salvo flagrante ilegalidade.",
+                "repercussaoGeral": false,
+                "recursoRepetitivo": false,
+                "temaRepetitivo": null
+              },
+              {
+                "teseId": "T2",
+                "referenciaCompleta": "STJ, HC n. 400.119/RJ, Rel. Min. Reynaldo Soares da Fonseca, Quinta Turma, julgado em 01/08/2017, DJe de 01/08/2017.",
+                "assunto": "Fundamenta a discricionariedade do julgador na dosimetria da pena e os requisitos para revisão por esta Corte.",
+                "repercussaoGeral": false,
+                "recursoRepetitivo": false,
+                "temaRepetitivo": null
+              },
+              {
+                "teseId": "T3",
+                "referenciaCompleta": "STJ, AgRg no HC n. 583.237/PR, Quinta Turma, Rel. Min. João Otávio de Noronha, julgado em 21/09/2021, DJe de 3/11/2021.",
+                "assunto": "Permite o deslocamento de uma qualificadora para outra fase da dosimetria e a utilização de maus antecedentes para majorar a pena-base.",
+                "repercussaoGeral": false,
+                "recursoRepetitivo": false,
+                "temaRepetitivo": null
+              },
+              {
+                "teseId": "T4",
+                "referenciaCompleta": "STJ, AgRg no AREsp n. 1.816.037/GO, Relatora Ministra LAURITA VAZ, Sexta Turma, julgado em 21/09/2021, DJe 30/09/2021.",
+                "assunto": "Estabelece que a exasperação da pena-base deve seguir o parâmetro de 1/6 para cada vetorial desfavorável.",
+                "repercussaoGeral": false,
+                "recursoRepetitivo": false,
+                "temaRepetitivo": null
+              },
+              {
+                "teseId": "T5",
+                "referenciaCompleta": "STJ, AgRg no AREsp 1769665/RN, Rel. Min. REYNALDO SOARES DA FONSECA, Sexta Turma, julg. 22/06/2021, DJe 28/06/2021.",
+                "assunto": "Fundamenta a possibilidade de aumento da pena-base com fundamentação adequada e específica.",
+                "repercussaoGeral": false,
+                "recursoRepetitivo": false,
+                "temaRepetitivo": null
+              },
+              {
+                "teseId": "T6",
+                "referenciaCompleta": "STJ, HC n. 405.667/SP, Quinta Turma, Rel. Min. Felix Fischer, DJe de 1/8/2018.",
+                "assunto": "Impede a substituição da pena privativa de liberdade por restritiva de direitos em razão dos maus antecedentes.",
+                "repercussaoGeral": false,
+                "recursoRepetitivo": false,
+                "temaRepetitivo": null
+              },
+              {
+                "teseId": "T7",
+                "referenciaCompleta": "STJ, AgRg no HC n. 512.273/SP, Quinta Turma, Rel. Min. Reynaldo Soares da Fonseca, DJe de 21/6/2021.",
+                "assunto": "Justifica a fixação do regime inicial semiaberto em razão da presença de circunstâncias judiciais desfavoráveis e a pena ser inferior a 4 anos.",
+                "repercussaoGeral": false,
+                "recursoRepetitivo": false,
+                "temaRepetitivo": null
+              }
+            ],
+            "contribuição": "extração realizada"
+          },
+          "json": true,
+          "usage": {
+            "prompt_tokens": 15683,
+            "completion_tokens": 1069,
+            "total_tokens": 16752,
+            "cached_tokens": 0,
+            "reasoning_tokens": 0,
+            "finished_reason": "stop",
+            "temperature": 0.01
+          },
+          "model": "google/gemma-3-12b-it",
+          "tempo": 22.57,
+          "tratada": true
+        }
+      }
+    ],
+    "AgenteTema": [
+      {
+        "agente": "AgenteTema",
+        "inicio": "2026-02-25T22:43:19.803810",
+        "fim": "2026-02-25T22:43:22.986920",
+        "duracao_segundos": 3.183104,
+        "iteracoes": 1,
+        "tem_revisao": false,
+        "sucesso": true,
+        "resposta_keys": [
+          "resposta",
+          "json",
+          "usage",
+          "model",
+          "tempo",
+          "tratada"
+        ],
+        "resposta": {
+          "resposta": {
+            "tema": [],
+            "contribuição": "extração realizada"
+          },
+          "json": true,
+          "usage": {
+            "prompt_tokens": 14488,
+            "completion_tokens": 21,
+            "total_tokens": 14509,
+            "cached_tokens": 0,
+            "reasoning_tokens": 0,
+            "finished_reason": "stop",
+            "temperature": 0.01
+          },
+          "model": "google/gemma-3-12b-it",
+          "tempo": 3.14,
+          "tratada": true
+        }
+      }
+    ],
+    "AgenteInformacoesComplementares": [
+      {
+        "agente": "AgenteInformacoesComplementares",
+        "inicio": "2026-02-25T22:43:19.802375",
+        "fim": "2026-02-25T22:43:25.033678",
+        "duracao_segundos": 5.231297,
+        "iteracoes": 1,
+        "tem_revisao": false,
+        "sucesso": true,
+        "resposta_keys": [
+          "resposta",
+          "json",
+          "usage",
+          "model",
+          "tempo",
+          "tratada"
+        ],
+        "resposta": {
+          "resposta": {
+            "informacoesComplementares": [
+              "Julgado conforme procedimento previsto para Recursos Repetitivos no âmbito do STJ.",
+              "Reafirmação de jurisprudência.",
+              "Aplicada técnica de distinção (distinguishing) em relação a [Recurso Repetitivo REsp XXXX / Repercussão Geral / Súmula XXX].",
+              "Acórdão com Juízo de Retratação."
+            ],
+            "contribuição": "extração realizada"
+          },
+          "json": true,
+          "usage": {
+            "prompt_tokens": 14610,
+            "completion_tokens": 113,
+            "total_tokens": 14723,
+            "cached_tokens": 0,
+            "reasoning_tokens": 0,
+            "finished_reason": "stop",
+            "temperature": 0.01
+          },
+          "model": "google/gemma-3-12b-it",
+          "tempo": 5.21,
+          "tratada": true
+        }
+      }
+    ],
+    "AgenteNotas": [
+      {
+        "agente": "AgenteNotas",
+        "inicio": "2026-02-25T22:43:19.803361",
+        "fim": "2026-02-25T22:43:25.296547",
+        "duracao_segundos": 5.493177,
+        "iteracoes": 1,
+        "tem_revisao": false,
+        "sucesso": true,
+        "resposta_keys": [
+          "resposta",
+          "json",
+          "usage",
+          "model",
+          "tempo",
+          "tratada"
+        ],
+        "resposta": {
+          "resposta": {
+            "notas": [
+              "Quantidade de droga apreendida: [QTD] g de [TIPO]; [QTD] g de [TIPO].",
+              "Princípio da insignificância: não aplicado ao [crime]... [motivo].",
+              "Julgado conforme procedimento previsto para Recursos Repetitivos no âmbito do STJ.",
+              "Reafirmação de jurisprudência."
+            ],
+            "contribuição": "extração realizada"
+          },
+          "json": true,
+          "usage": {
+            "prompt_tokens": 14910,
+            "completion_tokens": 108,
+            "total_tokens": 15018,
+            "cached_tokens": 0,
+            "reasoning_tokens": 0,
+            "finished_reason": "stop",
+            "temperature": 0.01
+          },
+          "model": "google/gemma-3-12b-it",
+          "tempo": 5.458,
+          "tratada": true
+        }
+      }
+    ],
+    "AgenteTermosAuxiliares": [
+      {
+        "agente": "AgenteTermosAuxiliares",
+        "inicio": "2026-02-25T22:43:19.802748",
+        "fim": "2026-02-25T22:43:25.409630",
+        "duracao_segundos": 5.606875,
+        "iteracoes": 1,
+        "tem_revisao": false,
+        "sucesso": true,
+        "resposta_keys": [
+          "resposta",
+          "json",
+          "usage",
+          "model",
+          "tempo",
+          "tratada"
+        ],
+        "resposta": {
+          "resposta": {
+            "termosAuxiliares": [
+              "sumula 7 stj",
+              "repercussao geral",
+              "prisao preventiva",
+              "habeas corpus",
+              "dosimetria",
+              "fundamentacao idonea",
+              "deslocamento qualificadora",
+              "maus antecedentes",
+              "art 44 cp",
+              "regime semiaberto"
+            ],
+            "contribuição": "extração realizada"
+          },
+          "json": true,
+          "usage": {
+            "prompt_tokens": 14505,
+            "completion_tokens": 111,
+            "total_tokens": 14616,
+            "cached_tokens": 0,
+            "reasoning_tokens": 0,
+            "finished_reason": "stop",
+            "temperature": 0.01
+          },
+          "model": "google/gemma-3-12b-it",
+          "tempo": 5.578,
+          "tratada": true
+        }
+      }
+    ],
+    "AgenteReferenciasLegislativas": [
+      {
+        "agente": "AgenteReferenciasLegislativas",
+        "inicio": "2026-02-25T22:43:19.801980",
+        "fim": "2026-02-25T22:43:28.995210",
+        "duracao_segundos": 9.193224,
+        "iteracoes": 1,
+        "tem_revisao": false,
+        "sucesso": true,
+        "resposta_keys": [
+          "resposta",
+          "json",
+          "usage",
+          "model",
+          "tempo",
+          "tratada"
+        ],
+        "resposta": {
+          "resposta": {
+            "referenciasLegislativas": [
+              {
+                "diplomaLegal": "Código Penal",
+                "dispositivo": "Art. 33, § 2º, c e § 3º",
+                "redacaoPosterior": null
+              },
+              {
+                "diplomaLegal": "Código Penal",
+                "dispositivo": "Art. 44, inciso III",
+                "redacaoPosterior": null
+              },
+              {
+                "diplomaLegal": "Código Penal",
+                "dispositivo": "Art. 59",
+                "redacaoPosterior": null
+              },
+              {
+                "diplomaLegal": "Código Penal",
+                "dispositivo": "Art. 68",
+                "redacaoPosterior": null
+              },
+              {
+                "diplomaLegal": "Código Penal",
+                "dispositivo": "Art. 155, § 4º, incisos I e IV",
+                "redacaoPosterior": null
+              },
+              {
+                "diplomaLegal": "Código Penal",
+                "dispositivo": "Art. 121, § 2º, incisos II, III e IV",
+                "redacaoPosterior": null
+              }
+            ],
+            "contribuição": "extração realizada"
+          },
+          "json": true,
+          "usage": {
+            "prompt_tokens": 14660,
+            "completion_tokens": 302,
+            "total_tokens": 14962,
+            "cached_tokens": 0,
+            "reasoning_tokens": 0,
+            "finished_reason": "stop",
+            "temperature": 0.01
+          },
+          "model": "google/gemma-3-12b-it",
+          "tempo": 9.181,
+          "tratada": true
+        }
+      }
+    ],
+    "AgenteValidacaoFinal": [
+      {
+        "agente": "AgenteValidacaoFinal",
+        "inicio": "2026-02-25T22:43:29.004475",
+        "fim": "2026-02-25T22:43:36.509172",
+        "duracao_segundos": 7.504691,
+        "iteracoes": 1,
+        "tem_revisao": false,
+        "sucesso": true,
+        "resposta_keys": [
+          "resposta",
+          "json",
+          "usage",
+          "model",
+          "tempo",
+          "tratada"
+        ],
+        "resposta": {
+          "resposta": {
+            "revisao": {
+              "AgenteTeses": "A descrição da tese jurídica T5 poderia ser mais precisa, indicando que o aumento em dobro é desproporcional *na ausência de fundamentação concreta* para justificar o aumento superior ao limite de 1/6. Adicione essa ressalva à descrição.",
+              "AgenteJurisprudenciasCitadas": "Verificar se a referência completa da jurisprudência citada em T1, T2 e T3 está completa e correta, incluindo o número do processo e o ano da publicação do acórdão. Confirmar se a referência completa corresponde ao documento original."
+            },
+            "validacao_aprovada": true,
+            "contribuição": "A extração está semanticamente correta e útil para busca. As teses jurídicas capturam os pontos principais do acórdão. Pequenas melhorias na precisão das descrições e na verificação das referências completas das jurisprudências podem ser feitas, mas a extração é considerada 'boa o suficiente' para fins de finalização do processo."
+          },
+          "json": true,
+          "usage": {
+            "prompt_tokens": 18194,
+            "completion_tokens": 239,
+            "total_tokens": 18433,
+            "cached_tokens": 0,
+            "reasoning_tokens": 0,
+            "finished_reason": "stop",
+            "temperature": 0.01
+          },
+          "model": "google/gemma-3-12b-it",
+          "tempo": 7.483,
+          "tratada": true
+        }
+      },
+      {
+        "agente": "AgenteValidacaoFinal",
+        "inicio": "2026-02-25T22:44:23.414822",
+        "fim": "2026-02-25T22:44:30.432509",
+        "duracao_segundos": 7.017679,
+        "iteracoes": 2,
+        "tem_revisao": false,
+        "sucesso": true,
+        "resposta_keys": [
+          "resposta",
+          "json",
+          "usage",
+          "model",
+          "tempo",
+          "tratada"
+        ],
+        "resposta": {
+          "resposta": {
+            "revisao": {
+              "AgenteTeses": "A descrição da tese jurídica T5 poderia ser mais precisa, indicando que o aumento em dobro é desproporcional *na ausência de fundamentação concreta* para justificar o aumento superior ao limite de 1/6. Adicione essa ressalva à descrição.",
+              "AgenteJurisprudenciasCitadas": "Verificar se a referência completa da jurisprudência citada em T1, T2 e T3 está completa e correta, incluindo o número do processo e o ano da publicação do acórdão. Confirmar se a referência completa corresponde ao documento original."
+            },
+            "validacao_aprovada": true,
+            "contribuição": "Análise completa dos agentes, com identificação de pontos de refinamento nas descrições das teses jurídicas e na verificação das referências das jurisprudências. Priorizando a finalização do processo, considerando que a extração é semanticamente correta e útil para busca."
+          },
+          "json": true,
+          "usage": {
+            "prompt_tokens": 17664,
+            "completion_tokens": 222,
+            "total_tokens": 17886,
+            "cached_tokens": 0,
+            "reasoning_tokens": 0,
+            "finished_reason": "stop",
+            "temperature": 0.01
+          },
+          "model": "google/gemma-3-12b-it",
+          "tempo": 7.003,
+          "tratada": true
+        }
+      },
+      {
+        "agente": "AgenteValidacaoFinal",
+        "inicio": "2026-02-25T22:45:07.913707",
+        "fim": "2026-02-25T22:45:17.142536",
+        "duracao_segundos": 9.228822,
+        "iteracoes": 3,
+        "tem_revisao": false,
+        "sucesso": true,
+        "resposta_keys": [
+          "resposta",
+          "json",
+          "usage",
+          "model",
+          "tempo",
+          "tratada"
+        ],
+        "resposta": {
+          "resposta": {
+            "revisao": {
+              "AgenteTeses": "A descrição da tese jurídica T5 poderia ser mais precisa, indicando que o aumento em dobro é desproporcional *na ausência de fundamentação concreta* para justificar o aumento superior ao limite de 1/6. Adicione essa ressalva à descrição.",
+              "AgenteJurisprudenciasCitadas": "Verificar se a referência completa da jurisprudência citada em T1, T2 e T3 está completa e correta, incluindo o número do processo e o ano da publicação do acórdão. Confirmar se a referência completa corresponde ao documento original."
+            },
+            "validacao_aprovada": true,
+            "contribuição": "Análise completa das extrações. Identificadas pequenas imprecisões na descrição da tese jurídica T5 e na formatação das referências jurisprudenciais, que foram solicitadas para revisão. O restante da extração está semanticamente correto e útil para busca, atendendo aos critérios de parada."
+          },
+          "json": true,
+          "usage": {
+            "prompt_tokens": 17904,
+            "completion_tokens": 226,
+            "total_tokens": 18130,
+            "cached_tokens": 0,
+            "reasoning_tokens": 0,
+            "finished_reason": "stop",
+            "temperature": 0.01
+          },
+          "model": "google/gemma-3-12b-it",
+          "tempo": 9.22,
+          "tratada": true
+        }
+      }
+    ],
+    "OrquestracaoFinal": [
+      {
+        "duracao_total_segundos": 188.315037,
+        "loops_revisao": 2,
+        "campos_extraidos": [
+          "AgenteReferenciasLegislativas",
+          "AgenteInformacoesComplementares",
+          "AgenteTermosAuxiliares",
+          "AgenteJurisprudenciasCitadas",
+          "AgenteNotas",
+          "AgenteTema",
+          "AgenteTeses"
+        ],
+        "total_agentes_executados": 9
+      }
+    ]
+  },
+  "log": [
+    {
+      "timestamp": "2026-02-25T22:42:08.846683",
+      "nivel": "info",
+      "mensagem": "Arquivo de observabilidade removido: ../data/espelhos_agentes_gemma3_12b/observabilidade/202201555326.20220614..AgenteCampos.txt"
+    },
+    {
+      "timestamp": "2026-02-25T22:42:08.848741",
+      "nivel": "info",
+      "mensagem": "Arquivo de observabilidade removido: ../data/espelhos_agentes_gemma3_12b/observabilidade/202201555326.20220614..obs.json"
+    },
+    {
+      "timestamp": "2026-02-25T22:42:08.848762",
+      "nivel": "info",
+      "mensagem": "=== Iniciando orquestração para peça 202201555326.20220614. ==="
+    },
+    {
+      "timestamp": "2026-02-25T22:42:08.848772",
+      "nivel": "info",
+      "mensagem": "ETAPA 1: Identificação de campos necessários"
+    },
+    {
+      "timestamp": "2026-02-25T22:42:08.848778",
+      "nivel": "info",
+      "mensagem": "Iniciando execução do agente: AgenteCampos"
+    },
+    {
+      "timestamp": "2026-02-25T22:42:08.864007",
+      "nivel": "info",
+      "mensagem": "Prompt gravado: 202201555326.20220614..AgenteCampos.txt (iteração 1)"
+    },
+    {
+      "timestamp": "2026-02-25T22:42:23.368218",
+      "nivel": "info",
+      "mensagem": "Resposta gravada: 202201555326.20220614..AgenteCampos.txt (iteração 1)"
+    },
+    {
+      "timestamp": "2026-02-25T22:42:23.373313",
+      "nivel": "info",
+      "mensagem": "Agente AgenteCampos concluído em 14.52s"
+    },
+    {
+      "timestamp": "2026-02-25T22:42:23.373366",
+      "nivel": "info",
+      "mensagem": "Texto extraído do AgenteCampos (primeiros 500 chars): ['#teseJuridica: Há ementa definindo teses.', '#JuCi: Voto cita precedentes (HC, REsp).', '#RefLeg: Aplicação de legislação federal (CP, art. 44, inc. III, art. 33, § 2º, c e § 3º).', '#notas: Discussão sobre a dosimetria da pena e aplicação de circunstâncias judiciais.', \"#tema: Menciona 'Tema Repetitivo' (referência à Terceira Seção desta Corte, seguindo entendimento firmado pela Primeira Turma do col. Pretório Excelso).\", '#ICE: Menciona ', '#TAP: Termos técnicos presentes (dosimetria, pena-b"
+    },
+    {
+      "timestamp": "2026-02-25T22:42:23.373437",
+      "nivel": "info",
+      "mensagem": "Tag '#teseJuridica' encontrada -> Agente 'AgenteTeses'"
+    },
+    {
+      "timestamp": "2026-02-25T22:42:23.373444",
+      "nivel": "info",
+      "mensagem": "Tag '#JuCi' encontrada -> Agente 'AgenteJurisprudenciasCitadas'"
+    },
+    {
+      "timestamp": "2026-02-25T22:42:23.373449",
+      "nivel": "info",
+      "mensagem": "Tag '#RefLeg' encontrada -> Agente 'AgenteReferenciasLegislativas'"
+    },
+    {
+      "timestamp": "2026-02-25T22:42:23.373454",
+      "nivel": "info",
+      "mensagem": "Tag '#ICE' encontrada -> Agente 'AgenteInformacoesComplementares'"
+    },
+    {
+      "timestamp": "2026-02-25T22:42:23.373460",
+      "nivel": "info",
+      "mensagem": "Tag '#TAP' encontrada -> Agente 'AgenteTermosAuxiliares'"
+    },
+    {
+      "timestamp": "2026-02-25T22:42:23.373464",
+      "nivel": "info",
+      "mensagem": "Tag '#notas' encontrada -> Agente 'AgenteNotas'"
+    },
+    {
+      "timestamp": "2026-02-25T22:42:23.373468",
+      "nivel": "info",
+      "mensagem": "Tag '#tema' encontrada -> Agente 'AgenteTema'"
+    },
+    {
+      "timestamp": "2026-02-25T22:42:23.373478",
+      "nivel": "info",
+      "mensagem": "Campos identificados para extração: AgenteReferenciasLegislativas, AgenteInformacoesComplementares, AgenteTermosAuxiliares, AgenteJurisprudenciasCitadas, AgenteNotas, AgenteTema, AgenteTeses"
+    },
+    {
+      "timestamp": "2026-02-25T22:42:23.373485",
+      "nivel": "info",
+      "mensagem": "ETAPA 2: Extração de teses jurídicas"
+    },
+    {
+      "timestamp": "2026-02-25T22:42:23.373492",
+      "nivel": "info",
+      "mensagem": "Iniciando execução do agente: AgenteTeses"
+    },
+    {
+      "timestamp": "2026-02-25T22:42:23.390037",
+      "nivel": "info",
+      "mensagem": "Prompt gravado: 202201555326.20220614..AgenteTeses.txt (iteração 1)"
+    },
+    {
+      "timestamp": "2026-02-25T22:42:54.834066",
+      "nivel": "info",
+      "mensagem": "Resposta gravada: 202201555326.20220614..AgenteTeses.txt (iteração 1)"
+    },
+    {
+      "timestamp": "2026-02-25T22:42:54.840659",
+      "nivel": "info",
+      "mensagem": "Agente AgenteTeses concluído em 31.46s"
+    },
+    {
+      "timestamp": "2026-02-25T22:42:54.840680",
+      "nivel": "info",
+      "mensagem": "ETAPA 2.5: Extração de jurisprudência citada (com contexto de teses)"
+    },
+    {
+      "timestamp": "2026-02-25T22:42:54.840687",
+      "nivel": "info",
+      "mensagem": "Iniciando execução do agente: AgenteJurisprudenciasCitadas"
+    },
+    {
+      "timestamp": "2026-02-25T22:42:54.857567",
+      "nivel": "info",
+      "mensagem": "Prompt gravado: 202201555326.20220614..AgenteJurisprudenciasCitadas.txt (iteração 1)"
+    },
+    {
+      "timestamp": "2026-02-25T22:43:19.794818",
+      "nivel": "info",
+      "mensagem": "Resposta gravada: 202201555326.20220614..AgenteJurisprudenciasCitadas.txt (iteração 1)"
+    },
+    {
+      "timestamp": "2026-02-25T22:43:19.801606",
+      "nivel": "info",
+      "mensagem": "Agente AgenteJurisprudenciasCitadas concluído em 24.95s"
+    },
+    {
+      "timestamp": "2026-02-25T22:43:19.801625",
+      "nivel": "info",
+      "mensagem": "ETAPA 3: Extração paralela dos demais campos"
+    },
+    {
+      "timestamp": "2026-02-25T22:43:19.801637",
+      "nivel": "info",
+      "mensagem": "Executando 5 agentes em paralelo: AgenteReferenciasLegislativas, AgenteInformacoesComplementares, AgenteTermosAuxiliares, AgenteNotas, AgenteTema"
+    },
+    {
+      "timestamp": "2026-02-25T22:43:19.801989",
+      "nivel": "info",
+      "mensagem": "Iniciando execução do agente: AgenteReferenciasLegislativas"
+    },
+    {
+      "timestamp": "2026-02-25T22:43:19.802382",
+      "nivel": "info",
+      "mensagem": "Iniciando execução do agente: AgenteInformacoesComplementares"
+    },
+    {
+      "timestamp": "2026-02-25T22:43:19.802760",
+      "nivel": "info",
+      "mensagem": "Iniciando execução do agente: AgenteTermosAuxiliares"
+    },
+    {
+      "timestamp": "2026-02-25T22:43:19.803369",
+      "nivel": "info",
+      "mensagem": "Iniciando execução do agente: AgenteNotas"
+    },
+    {
+      "timestamp": "2026-02-25T22:43:19.803817",
+      "nivel": "info",
+      "mensagem": "Iniciando execução do agente: AgenteTema"
+    },
+    {
+      "timestamp": "2026-02-25T22:43:19.808729",
+      "nivel": "info",
+      "mensagem": "Prompt gravado: 202201555326.20220614..AgenteReferenciasLegislativas.txt (iteração 1)"
+    },
+    {
+      "timestamp": "2026-02-25T22:43:19.817569",
+      "nivel": "info",
+      "mensagem": "Prompt gravado: 202201555326.20220614..AgenteInformacoesComplementares.txt (iteração 1)"
+    },
+    {
+      "timestamp": "2026-02-25T22:43:19.825332",
+      "nivel": "info",
+      "mensagem": "Prompt gravado: 202201555326.20220614..AgenteTermosAuxiliares.txt (iteração 1)"
+    },
+    {
+      "timestamp": "2026-02-25T22:43:19.832635",
+      "nivel": "info",
+      "mensagem": "Prompt gravado: 202201555326.20220614..AgenteNotas.txt (iteração 1)"
+    },
+    {
+      "timestamp": "2026-02-25T22:43:19.842850",
+      "nivel": "info",
+      "mensagem": "Prompt gravado: 202201555326.20220614..AgenteTema.txt (iteração 1)"
+    },
+    {
+      "timestamp": "2026-02-25T22:43:22.986892",
+      "nivel": "info",
+      "mensagem": "Resposta gravada: 202201555326.20220614..AgenteTema.txt (iteração 1)"
+    },
+    {
+      "timestamp": "2026-02-25T22:43:22.992735",
+      "nivel": "info",
+      "mensagem": "Agente AgenteTema concluído em 3.18s"
+    },
+    {
+      "timestamp": "2026-02-25T22:43:25.033653",
+      "nivel": "info",
+      "mensagem": "Resposta gravada: 202201555326.20220614..AgenteInformacoesComplementares.txt (iteração 1)"
+    },
+    {
+      "timestamp": "2026-02-25T22:43:25.042226",
+      "nivel": "info",
+      "mensagem": "Agente AgenteInformacoesComplementares concluído em 5.23s"
+    },
+    {
+      "timestamp": "2026-02-25T22:43:25.296508",
+      "nivel": "info",
+      "mensagem": "Resposta gravada: 202201555326.20220614..AgenteNotas.txt (iteração 1)"
+    },
+    {
+      "timestamp": "2026-02-25T22:43:25.305858",
+      "nivel": "info",
+      "mensagem": "Agente AgenteNotas concluído em 5.49s"
+    },
+    {
+      "timestamp": "2026-02-25T22:43:25.409601",
+      "nivel": "info",
+      "mensagem": "Resposta gravada: 202201555326.20220614..AgenteTermosAuxiliares.txt (iteração 1)"
+    },
+    {
+      "timestamp": "2026-02-25T22:43:25.417196",
+      "nivel": "info",
+      "mensagem": "Agente AgenteTermosAuxiliares concluído em 5.61s"
+    },
+    {
+      "timestamp": "2026-02-25T22:43:28.995184",
+      "nivel": "info",
+      "mensagem": "Resposta gravada: 202201555326.20220614..AgenteReferenciasLegislativas.txt (iteração 1)"
+    },
+    {
+      "timestamp": "2026-02-25T22:43:29.003344",
+      "nivel": "info",
+      "mensagem": "Agente AgenteReferenciasLegislativas concluído em 9.19s"
+    },
+    {
+      "timestamp": "2026-02-25T22:43:29.004428",
+      "nivel": "info",
+      "mensagem": "ETAPA 4: Validação final e consolidação"
+    },
+    {
+      "timestamp": "2026-02-25T22:43:29.004477",
+      "nivel": "info",
+      "mensagem": "Iniciando execução do agente: AgenteValidacaoFinal"
+    },
+    {
+      "timestamp": "2026-02-25T22:43:29.021053",
+      "nivel": "info",
+      "mensagem": "Prompt gravado: 202201555326.20220614..AgenteValidacaoFinal.txt (iteração 1)"
+    },
+    {
+      "timestamp": "2026-02-25T22:43:36.509146",
+      "nivel": "info",
+      "mensagem": "Resposta gravada: 202201555326.20220614..AgenteValidacaoFinal.txt (iteração 1)"
+    },
+    {
+      "timestamp": "2026-02-25T22:43:36.516419",
+      "nivel": "info",
+      "mensagem": "Agente AgenteValidacaoFinal concluído em 7.50s"
+    },
+    {
+      "timestamp": "2026-02-25T22:43:36.516440",
+      "nivel": "info",
+      "mensagem": "LOOP DE REVISÃO 1/2"
+    },
+    {
+      "timestamp": "2026-02-25T22:43:36.516454",
+      "nivel": "warning",
+      "mensagem": "AVISO: Validação marcada como aprovada mas contém instruções de revisão. Processando revisão."
+    },
+    {
+      "timestamp": "2026-02-25T22:43:36.516462",
+      "nivel": "info",
+      "mensagem": "Processando revisões para 2 agentes: AgenteTeses, AgenteJurisprudenciasCitadas"
+    },
+    {
+      "timestamp": "2026-02-25T22:43:36.516472",
+      "nivel": "info",
+      "mensagem": "Campo 'AgenteInformacoesComplementares' aprovado pelo validador (não requer revisão)"
+    },
+    {
+      "timestamp": "2026-02-25T22:43:36.516475",
+      "nivel": "info",
+      "mensagem": "Campo 'AgenteTermosAuxiliares' aprovado pelo validador (não requer revisão)"
+    },
+    {
+      "timestamp": "2026-02-25T22:43:36.516478",
+      "nivel": "info",
+      "mensagem": "Campo 'AgenteNotas' aprovado pelo validador (não requer revisão)"
+    },
+    {
+      "timestamp": "2026-02-25T22:43:36.516481",
+      "nivel": "info",
+      "mensagem": "Campo 'AgenteTema' aprovado pelo validador (não requer revisão)"
+    },
+    {
+      "timestamp": "2026-02-25T22:43:36.516483",
+      "nivel": "info",
+      "mensagem": "Campo 'AgenteReferenciasLegislativas' aprovado pelo validador (não requer revisão)"
+    },
+    {
+      "timestamp": "2026-02-25T22:43:36.516490",
+      "nivel": "info",
+      "mensagem": "Ordem de execução das revisões: AgenteTeses, AgenteJurisprudenciasCitadas"
+    },
+    {
+      "timestamp": "2026-02-25T22:43:36.516497",
+      "nivel": "info",
+      "mensagem": "Reexecutando AgenteTeses com revisão: A descrição da tese jurídica T5 poderia ser mais precisa, indicando que o aumento em dobro é desprop..."
+    },
+    {
+      "timestamp": "2026-02-25T22:43:36.516502",
+      "nivel": "info",
+      "mensagem": "Iniciando execução do agente: AgenteTeses"
+    },
+    {
+      "timestamp": "2026-02-25T22:43:36.520823",
+      "nivel": "info",
+      "mensagem": "Prompt gravado: 202201555326.20220614..AgenteTeses.txt (iteração 2)"
+    },
+    {
+      "timestamp": "2026-02-25T22:43:51.577157",
+      "nivel": "info",
+      "mensagem": "Resposta gravada: 202201555326.20220614..AgenteTeses.txt (iteração 2)"
+    },
+    {
+      "timestamp": "2026-02-25T22:43:51.585668",
+      "nivel": "info",
+      "mensagem": "Agente AgenteTeses concluído em 15.06s"
+    },
+    {
+      "timestamp": "2026-02-25T22:43:51.585690",
+      "nivel": "info",
+      "mensagem": "Reexecutando AgenteJurisprudenciasCitadas com revisão: Verificar se a referência completa da jurisprudência citada em T1, T2 e T3 está completa e correta, ..."
+    },
+    {
+      "timestamp": "2026-02-25T22:43:51.585698",
+      "nivel": "info",
+      "mensagem": "Iniciando execução do agente: AgenteJurisprudenciasCitadas"
+    },
+    {
+      "timestamp": "2026-02-25T22:43:51.590304",
+      "nivel": "info",
+      "mensagem": "Prompt gravado: 202201555326.20220614..AgenteJurisprudenciasCitadas.txt (iteração 2)"
+    },
+    {
+      "timestamp": "2026-02-25T22:44:23.406220",
+      "nivel": "info",
+      "mensagem": "Resposta gravada: 202201555326.20220614..AgenteJurisprudenciasCitadas.txt (iteração 2)"
+    },
+    {
+      "timestamp": "2026-02-25T22:44:23.414761",
+      "nivel": "info",
+      "mensagem": "Agente AgenteJurisprudenciasCitadas concluído em 31.82s"
+    },
+    {
+      "timestamp": "2026-02-25T22:44:23.414823",
+      "nivel": "info",
+      "mensagem": "Iniciando execução do agente: AgenteValidacaoFinal"
+    },
+    {
+      "timestamp": "2026-02-25T22:44:23.422050",
+      "nivel": "info",
+      "mensagem": "Prompt gravado: 202201555326.20220614..AgenteValidacaoFinal.txt (iteração 2)"
+    },
+    {
+      "timestamp": "2026-02-25T22:44:30.432474",
+      "nivel": "info",
+      "mensagem": "Resposta gravada: 202201555326.20220614..AgenteValidacaoFinal.txt (iteração 2)"
+    },
+    {
+      "timestamp": "2026-02-25T22:44:30.441165",
+      "nivel": "info",
+      "mensagem": "Agente AgenteValidacaoFinal concluído em 7.02s"
+    },
+    {
+      "timestamp": "2026-02-25T22:44:30.441190",
+      "nivel": "info",
+      "mensagem": "LOOP DE REVISÃO 2/2"
+    },
+    {
+      "timestamp": "2026-02-25T22:44:30.441202",
+      "nivel": "warning",
+      "mensagem": "AVISO: Validação marcada como aprovada mas contém instruções de revisão. Processando revisão."
+    },
+    {
+      "timestamp": "2026-02-25T22:44:30.441209",
+      "nivel": "info",
+      "mensagem": "Processando revisões para 2 agentes: AgenteTeses, AgenteJurisprudenciasCitadas"
+    },
+    {
+      "timestamp": "2026-02-25T22:44:30.441224",
+      "nivel": "info",
+      "mensagem": "Ordem de execução das revisões: AgenteTeses, AgenteJurisprudenciasCitadas"
+    },
+    {
+      "timestamp": "2026-02-25T22:44:30.441230",
+      "nivel": "info",
+      "mensagem": "Reexecutando AgenteTeses com revisão: A descrição da tese jurídica T5 poderia ser mais precisa, indicando que o aumento em dobro é desprop..."
+    },
+    {
+      "timestamp": "2026-02-25T22:44:30.441235",
+      "nivel": "info",
+      "mensagem": "Iniciando execução do agente: AgenteTeses"
+    },
+    {
+      "timestamp": "2026-02-25T22:44:30.445785",
+      "nivel": "info",
+      "mensagem": "Prompt gravado: 202201555326.20220614..AgenteTeses.txt (iteração 3)"
+    },
+    {
+      "timestamp": "2026-02-25T22:44:45.309849",
+      "nivel": "info",
+      "mensagem": "Resposta gravada: 202201555326.20220614..AgenteTeses.txt (iteração 3)"
+    },
+    {
+      "timestamp": "2026-02-25T22:44:45.320623",
+      "nivel": "info",
+      "mensagem": "Agente AgenteTeses concluído em 14.87s"
+    },
+    {
+      "timestamp": "2026-02-25T22:44:45.320646",
+      "nivel": "info",
+      "mensagem": "Reexecutando AgenteJurisprudenciasCitadas com revisão: Verificar se a referência completa da jurisprudência citada em T1, T2 e T3 está completa e correta, ..."
+    },
+    {
+      "timestamp": "2026-02-25T22:44:45.320653",
+      "nivel": "info",
+      "mensagem": "Iniciando execução do agente: AgenteJurisprudenciasCitadas"
+    },
+    {
+      "timestamp": "2026-02-25T22:44:45.326978",
+      "nivel": "info",
+      "mensagem": "Prompt gravado: 202201555326.20220614..AgenteJurisprudenciasCitadas.txt (iteração 3)"
+    },
+    {
+      "timestamp": "2026-02-25T22:45:07.906069",
+      "nivel": "info",
+      "mensagem": "Resposta gravada: 202201555326.20220614..AgenteJurisprudenciasCitadas.txt (iteração 3)"
+    },
+    {
+      "timestamp": "2026-02-25T22:45:07.913652",
+      "nivel": "info",
+      "mensagem": "Agente AgenteJurisprudenciasCitadas concluído em 22.59s"
+    },
+    {
+      "timestamp": "2026-02-25T22:45:07.913708",
+      "nivel": "info",
+      "mensagem": "Iniciando execução do agente: AgenteValidacaoFinal"
+    },
+    {
+      "timestamp": "2026-02-25T22:45:07.918082",
+      "nivel": "info",
+      "mensagem": "Prompt gravado: 202201555326.20220614..AgenteValidacaoFinal.txt (iteração 3)"
+    },
+    {
+      "timestamp": "2026-02-25T22:45:17.142508",
+      "nivel": "info",
+      "mensagem": "Resposta gravada: 202201555326.20220614..AgenteValidacaoFinal.txt (iteração 3)"
+    },
+    {
+      "timestamp": "2026-02-25T22:45:17.153574",
+      "nivel": "info",
+      "mensagem": "Agente AgenteValidacaoFinal concluído em 9.23s"
+    },
+    {
+      "timestamp": "2026-02-25T22:45:17.153604",
+      "nivel": "warning",
+      "mensagem": "Loop de revisão encerrado sem aprovação completa após 2 iterações"
+    },
+    {
+      "timestamp": "2026-02-25T22:45:17.153621",
+      "nivel": "info",
+      "mensagem": "=== Orquestração concluída em 188.32s ==="
+    },
+    {
+      "timestamp": "2026-02-25T22:45:17.153642",
+      "nivel": "info",
+      "mensagem": "DEBUG extrair_campo: 'teseJuridica' encontrado em 'AgenteTeses', tipo: <class 'list'>, len: 7"
+    },
+    {
+      "timestamp": "2026-02-25T22:45:17.153655",
+      "nivel": "info",
+      "mensagem": "DEBUG extrair_campo: 'jurisprudenciaCitada' encontrado em 'AgenteJurisprudenciasCitadas', tipo: <class 'list'>, len: 7"
+    },
+    {
+      "timestamp": "2026-02-25T22:45:17.153661",
+      "nivel": "info",
+      "mensagem": "DEBUG extrair_campo: 'referenciasLegislativas' encontrado em 'AgenteReferenciasLegislativas', tipo: <class 'list'>, len: 6"
+    },
+    {
+      "timestamp": "2026-02-25T22:45:17.153667",
+      "nivel": "info",
+      "mensagem": "DEBUG extrair_campo: 'notas' encontrado em 'AgenteNotas', tipo: <class 'list'>, len: 4"
+    },
+    {
+      "timestamp": "2026-02-25T22:45:17.153672",
+      "nivel": "info",
+      "mensagem": "DEBUG extrair_campo: 'informacoesComplementares' encontrado em 'AgenteInformacoesComplementares', tipo: <class 'list'>, len: 4"
+    },
+    {
+      "timestamp": "2026-02-25T22:45:17.153677",
+      "nivel": "info",
+      "mensagem": "DEBUG extrair_campo: 'termosAuxiliares' encontrado em 'AgenteTermosAuxiliares', tipo: <class 'list'>, len: 10"
+    },
+    {
+      "timestamp": "2026-02-25T22:45:17.153682",
+      "nivel": "info",
+      "mensagem": "DEBUG extrair_campo: 'tema' encontrado em 'AgenteTema', tipo: <class 'list'>, len: 0"
+    },
+    {
+      "timestamp": "2026-02-25T22:45:17.153705",
+      "nivel": "info",
+      "mensagem": "DEBUG espelho_final construído com 7 campos não-vazios"
+    }
+  ]
+}

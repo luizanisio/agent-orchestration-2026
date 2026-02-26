@@ -1,0 +1,128 @@
+{
+  "teseJuridica": [
+    {
+      "id": "T1",
+      "descricao": "Não cabe habeas corpus substitutivo de recurso adequado, salvo em casos de flagrante ilegalidade que gere constrangimento ilegal, justificando a concessão da ordem de ofício.",
+      "justificativas": [
+        "A Terceira Seção desta Corte, seguindo entendimento firmado pela Primeira Turma do col. Pretório Excelso, firmou orientação no sentido de não admitir a impetração de habeas corpus em substituição ao recurso adequado, situação que implica o não conhecimento da impetração, ressalvados casos excepcionais em que, configurada flagrante ilegalidade apta a gerar constrangimento ilegal, seja possível a concessão da ordem de ofício."
+      ]
+    },
+    {
+      "id": "T2",
+      "descricao": "A via do writ somente se mostra adequada para a análise da dosimetria da pena se não for necessária uma análise aprofundada do conjunto probatório e se se tratar de flagrante ilegalidade.",
+      "justificativas": [
+        "A via do writ somente se mostra adequada para a análise da dosimetria da pena se não for necessária uma análise aprofundada do conjunto probatório e se se tratar de flagrante ilegalidade."
+      ]
+    },
+    {
+      "id": "T3",
+      "descricao": "A exasperação da pena-base deve ser fundamentada em dados concretos e específicos que justifiquem a necessidade de elevação em patamar superior ao previsto em lei.",
+      "justificativas": [
+        "Contudo, tem-se que o aumento em dobro em relação ao mínimo se revela desproporcional, notadamente porque não se demonstrou de forma concreta e específica a necessidade do referido aumento de forma a afastar o entendimento deste Tribunal que considera proporcional o aumento de 1/6 por cada circunstância judicial negativa impondo, nesse ponto, a concessão da ordem para reduzir a pena-base."
+      ]
+    },
+    {
+      "id": "T4",
+      "descricao": "A substituição da pena privativa de liberdade por restritiva de direitos é descabida diante de maus antecedentes do acusado e da vedação legal expressa.",
+      "justificativas": [
+        "Assim, ainda que a basilar tenha sido reduzida, descabida a pretensão de substituição da pena privativa de liberdade por restritiva de direitos pois, como bem observado pelo acórdão recorrido, “há vedação legal à substituição da pena privativa de liberdade por restritiva de direitos, com base no disposto no artigo 44, inciso III, do Código Penal, diante dos maus antecedentes do apelante, não sendo medida socialmente recomendável, afastando-se o pleito Defensivo”"
+      ]
+    },
+    {
+      "id": "T5",
+      "descricao": "Considerando a nova pena imposta, inferior a quatro anos de reclusão, e a ausência de reincidência, o regime semiaberto é adequado para o início do cumprimento da pena.",
+      "justificativas": [
+        "Considerando a nova pena imposta, inferior a quatro anos de reclusão, bem como em face do paciente não ser reincidente, em que pese a existência de maus antecedentes, tenho que resta inviável a manutenção do regime fechado, notadamente por se tratar de crime cometido sem violência ou grave ameaça, pelo que fixo o regime semiaberto para início do resgate da reprimenda, ex vi do art. 33, § 2º, c e § 3º, do CP."
+      ]
+    }
+  ],
+  "jurisprudenciaCitada": [
+    {
+      "teseId": "T1",
+      "referenciaCompleta": "HC n. 400.119/RJ, Quinta Turma, Rel. Min. Reynaldo Soares da Fonseca, DJe de 1º/8/2017.",
+      "assunto": "Análise da dosimetria da pena",
+      "repercussaoGeral": false,
+      "recursoRepetitivo": false,
+      "temaRepetitivo": null
+    },
+    {
+      "teseId": "T3",
+      "referenciaCompleta": "AgRg no AREsp n. 1.816.037/GO, relatora Ministra LAURITA VAZ, SEXTA TURMA, julgado em 21/9/2021, DJe 30/9/2021.",
+      "assunto": "Exasperação da pena-base",
+      "repercussaoGeral": false,
+      "recursoRepetitivo": false,
+      "temaRepetitivo": null
+    },
+    {
+      "teseId": "T3",
+      "referenciaCompleta": "AgRg no AREsp 1769665/RN, Rel. Min. REYNALDO SOARES DA FONSECA, Quinta Turma, julg. 22/06/2021, DJe 28/06/2021",
+      "assunto": "Exasperação da pena-base",
+      "repercussaoGeral": false,
+      "recursoRepetitivo": false,
+      "temaRepetitivo": null
+    },
+    {
+      "teseId": "T4",
+      "referenciaCompleta": "AgRg no HC n. 696.947/SP, Quinta Turma, Rel. Min.Reynaldo Soares da Fonseca, DJe de 25/10/2021",
+      "assunto": "Substituição da pena",
+      "repercussaoGeral": false,
+      "recursoRepetitivo": false,
+      "temaRepetitivo": null
+    },
+    {
+      "teseId": "T5",
+      "referenciaCompleta": "AgRg no HC n. 512.273/SP, Quinta Turma, Rel. Min. Felix Fischer, DJe de 1/8/2018",
+      "assunto": "Regime prisional",
+      "repercussaoGeral": false,
+      "recursoRepetitivo": false,
+      "temaRepetitivo": null
+    }
+  ],
+  "referenciasLegislativas": [
+    {
+      "diplomaLegal": "Código de Processo Penal",
+      "dispositivo": "Art. 312"
+    },
+    {
+      "diplomaLegal": "Código de Processo Penal",
+      "dispositivo": "Art. 44, inc. III"
+    },
+    {
+      "diplomaLegal": "Código Penal",
+      "dispositivo": "Art. 33, § 2º, c e § 3º"
+    },
+    {
+      "diplomaLegal": "Código Penal",
+      "dispositivo": "Art. 59"
+    },
+    {
+      "diplomaLegal": "Código Penal",
+      "dispositivo": "Art. 64, I"
+    },
+    {
+      "diplomaLegal": "Código Penal",
+      "dispositivo": "Art. 68"
+    }
+  ],
+  "notas": [
+    "Quantidade de droga apreendida: [informação sobre a quantidade e o tipo de droga não consta no texto]."
+  ],
+  "informacoesComplementares": [],
+  "termosAuxiliares": [
+    "sumula 7 stj",
+    "dosimetria",
+    "pena",
+    "regime prisional",
+    "maus antecedentes",
+    "substituição da pena",
+    "reincidencia",
+    "habeas corpus"
+  ],
+  "tema": [
+    {
+      "tribunal": "STJ",
+      "numero": null,
+      "descricao": "Dosimetria da pena e aplicação de circunstâncias judiciais"
+    }
+  ]
+}

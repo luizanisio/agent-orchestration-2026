@@ -1,0 +1,64 @@
+{
+  "resposta": {
+    "precision": 0.36,
+    "recall": 0.76,
+    "metricas_por_campo": {
+      "teseJuridica": {
+        "precision": 0.0,
+        "recall": 1.0
+      },
+      "jurisprudenciaCitada": {
+        "precision": 0.55,
+        "recall": 0.5
+      },
+      "referenciasLegislativas": {
+        "precision": 0.75,
+        "recall": 0.7
+      },
+      "notas": {
+        "precision": 0.0,
+        "recall": 1.0
+      },
+      "informacoesComplementares": {
+        "precision": 0.0,
+        "recall": 1.0
+      },
+      "termosAuxiliares": {
+        "precision": 0.2,
+        "recall": 0.3
+      },
+      "tema": {
+        "precision": 1.0,
+        "recall": 1.0
+      }
+    },
+    "pontos_fortes": [
+      "Cobertura das teses materiais centrais constantes da ementa e confirmadas no voto (deslocamento de qualificadora/maus antecedentes; proporcionalidade da fração de 1/6; impossibilidade de substituição do art. 44, III; fixação de regime semiaberto).",
+      "Referências legislativas relevantes aplicadas/interpretadas foram capturadas (CP, art. 33, § 2º, c e § 3º; art. 44, III; arts. 59 e 68; art. 155, § 4º, I e IV).",
+      "Precedentes nucleares foram citados corretamente para a fração de 1/6 (AgRg no AREsp 1.816.037/GO) e para a qualificadora residual (AgRg no HC 583.237/PR)."
+    ],
+    "pontos_melhoria": [
+      "[PRECISION] Teses jurídicas com sérias falhas estruturais: nenhuma descrição trouxe os 4 elementos obrigatórios (entendimento + questão jurídica + contexto fático + fundamentos) e todas as justificativas vieram vazias; além disso, T1 e T2 não têm correlação com o RELATÓRIO (itens I e II são orientações processuais gerais, não questões suscitadas pela parte), e T5 é duplicação de T4.",
+      "[PRECISION] Jurisprudência com dados incorretos e associação equivocada: 'HC 405.667/SP' foi atribuído ao Min. Felix Fischer e DJe 1/8/2018, mas no voto consta Rel. Min. Joel Ilan Paciornik, DJe 4/9/2017; 'AgRg no HC 512.273/SP' tem DJe 2/9/2019 no texto, porém foi extraído como 21/6/2021; além disso, HC 400.119/RJ foi vinculado à tese T1 (substitutivo), quando o julgado ampara a discricionariedade na dosimetria (T2).",
+      "[RECALL] Jurisprudência omitida que fundamenta as teses: faltaram, por exemplo, AgRg nos EDcl no HC 670.440/SP (deslocamento de qualificadora e maus antecedentes), AgRg no REsp 1.970.791/RN (parâmetro de 1/6), AgRg no HC 711.280/MS e AgRg no HC 696.947/SP (fundamentação concreta para fração superior), HC 536.632/RJ e HC 430.248/SP (substituição e regime).",
+      "[PRECISION] Referências legislativas: inclusão indevida do art. 121, § 2º, II, III e IV, do CP (apenas citado em precedente ilustrativo, não interpretado no caso) e ausência de ordenação por artigo crescente dentro do diploma.",
+      "[RECALL] Referências legislativas: omissão de dispositivos efetivamente aplicados/interpretados no voto, como o art. 14, II, do CP (tentativa, usada para reduzir 1/3) e o art. 64, I, do CP (período depurador, base dos maus antecedentes).",
+      "[PRECISION] Notas e ICE completamente indevidos: foram inseridas categorias sem qualquer suporte no texto ('Quantidade de droga apreendida', 'Recursos Repetitivos', 'Reafirmação de jurisprudência', 'distinguishing', 'Juízo de Retratação') e com formato inválido (placeholders de droga), contrariando o Manual; deveriam estar vazios.",
+      "[PRECISION] Termos auxiliares incluem expressões já presentes na ementa ('habeas corpus', 'dosimetria', 'fundamentacao idonea', 'deslocamento qualificadora', 'maus antecedentes', 'art 44 cp', 'regime semiaberto') e termo irrelevante ao caso ('prisao preventiva'); normalização ok, mas seleção inadequada.",
+      "[RECALL] Termos auxiliares omitem expressões técnicas úteis que não constam na ementa/ICE, como 'periodo depurador', 'bis in idem', 'direito ao esquecimento', 'art 64 cp' e 'fracao de 1/6'."
+    ],
+    "explicacao": "A precisão ficou baixa porque as teses não seguiram a estrutura obrigatória (4 elementos e justificativas) e houve erros factuais/associativos em precedentes, além de notas/ICE indevidos. A cobertura é mediana-alta por ter capturado as teses materiais centrais e a maioria dos dispositivos aplicados, embora tenha omitido precedentes e alguns artigos relevantes. Para melhorar, seguir rigorosamente o formato das teses, incluir apenas notas/ICE com evidência inequívoca, revisar cuidadosamente os metadados das citações e completar referências legislativas e termos auxiliares pertinentes."
+  },
+  "json": true,
+  "usage": {
+    "prompt_tokens": 22590,
+    "completion_tokens": 9790,
+    "total_tokens": 32380,
+    "cached_tokens": 22528,
+    "reasoning_tokens": 8512,
+    "finished_reason": "stop"
+  },
+  "model": "openai/gpt-5",
+  "tempo": 253.006,
+  "tratada": true
+}
