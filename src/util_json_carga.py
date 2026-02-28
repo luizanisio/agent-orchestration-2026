@@ -118,6 +118,7 @@ class CargaDadosComparacao():
             mascara_tokens: Regex para arquivos de tokens (grupo 1 deve ser o ID)
             mascara_avaliacao: Regex para arquivos de avaliação (grupo 1 deve ser o ID)
             mascara_observabilidade: Regex para arquivos de observabilidade (grupo 1 deve ser o ID)
+            ignorar_erro_extracao: Se True, ignora erros de extração e contabiliza apenas extrações completas nos cálculos de métricas
         """
         assert len(pastas_destinos) == len(rotulos_destinos), \
             "Número de pastas_destinos deve ser igual ao número de rotulos_destinos"
