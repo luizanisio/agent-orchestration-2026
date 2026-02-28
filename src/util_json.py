@@ -2980,6 +2980,8 @@ class JsonAnaliseDataFrame():
         # Define pasta de saída
         if pasta_saida is None:
             pasta_saida = self.pasta_analises or '.'
+        if os.path.basename(os.path.normpath(pasta_saida)) != 'graficos':
+            pasta_saida = os.path.join(pasta_saida, 'graficos')
         os.makedirs(pasta_saida, exist_ok=True)
         
         # Carrega DataFrame
@@ -3040,6 +3042,8 @@ class JsonAnaliseDataFrame():
         # Define pasta de saída
         if pasta_saida is None:
             pasta_saida = os.path.dirname(arquivo_excel) or '.'
+        if os.path.basename(os.path.normpath(pasta_saida)) != 'graficos':
+            pasta_saida = os.path.join(pasta_saida, 'graficos')
         os.makedirs(pasta_saida, exist_ok=True)
         
         # Limpa gráficos antigos
@@ -3572,6 +3576,8 @@ class JsonAnaliseDataFrame():
         # Define pasta de saída
         if pasta_saida is None:
             pasta_saida = self.pasta_analises or '.'
+        if os.path.basename(os.path.normpath(pasta_saida)) != 'graficos':
+            pasta_saida = os.path.join(pasta_saida, 'graficos')
         os.makedirs(pasta_saida, exist_ok=True)
         
         # Carrega DataFrame de tokens
@@ -3903,6 +3909,8 @@ class JsonAnaliseDataFrame():
         # Define pasta de saída
         if pasta_saida is None:
             pasta_saida = self.pasta_analises or '.'
+        if os.path.basename(os.path.normpath(pasta_saida)) != 'graficos':
+            pasta_saida = os.path.join(pasta_saida, 'graficos')
         os.makedirs(pasta_saida, exist_ok=True)
         
         # Carrega DataFrames de avaliação LLM (agora são dois: global e campos)
@@ -4165,6 +4173,10 @@ class JsonAnaliseDataFrame():
         # Define pasta de saída
         if pasta_saida is None:
             pasta_saida = self.pasta_analises
+            if pasta_saida is None:
+                pasta_saida = '.'
+        if os.path.basename(os.path.normpath(pasta_saida)) != 'graficos':
+            pasta_saida = os.path.join(pasta_saida, 'graficos')
         os.makedirs(pasta_saida, exist_ok=True)
         
         # Mapeia string de paleta para enum

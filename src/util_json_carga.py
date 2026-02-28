@@ -387,12 +387,15 @@ class CargaDadosComparacao():
         if not dados_original:
             return None
 
+        # Suporte para formato onde as métricas estão dentro de "resposta"
+        root_data = dados_original.get('resposta', dados_original) if isinstance(dados_original, dict) else dados_original
+
         # ===== MÉTRICAS GLOBAIS =====
-        p = dados_original.get('precision', 0)
-        r = dados_original.get('recall', 0)
-        f1 = dados_original.get('f1', 0) or (harmonic_mean([p, r]) if (p + r) > 0 else 0)
-        nota = dados_original.get('nota', 0)
-        exp = dados_original.get('explicacao', '')
+        p = root_data.get('precision', 0)
+        r = root_data.get('recall', 0)
+        f1 = root_data.get('f1', 0) or (harmonic_mean([p, r]) if (p + r) > 0 else 0)
+        nota = root_data.get('nota', 0)
+        exp = root_data.get('explicacao', '')
         
         dados = {
             f'{rotulo}_P': p,
@@ -403,7 +406,7 @@ class CargaDadosComparacao():
         }
         
         # ===== MÉTRICAS POR CAMPO =====
-        metricas_por_campo = dados_original.get('metricas_por_campo', {})
+        metricas_por_campo = root_data.get('metricas_por_campo', {})
         if metricas_por_campo and isinstance(metricas_por_campo, dict):
             for campo, metricas in metricas_por_campo.items():
                 if not isinstance(metricas, dict):
