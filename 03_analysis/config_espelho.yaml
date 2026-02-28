@@ -16,7 +16,7 @@ execucao:
   max_workers: 10
   teste_rapido: false # Defina como true para pular métricas pesadas (BERTScore)
   gerar_graficos: true 
-  llm_as_a_judge: false
+  llm_as_a_judge: true
   analise_estatistica: true
   ignorar_erro_extracao: false
 

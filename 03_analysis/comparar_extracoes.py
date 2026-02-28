@@ -78,7 +78,6 @@ def processar_analise_estatistica(dados_analise, pasta_saida, config):
     rotulo_base = config['modelo_base']['rotulo']
     familia_base = config['modelo_base'].get('familia', 'Base')
     
-    # Itera sobre os modelos de comparação definidos no YAML
     # Itera sobre os modelos de comparação definidos no YAML (respeitando flag ativo)
     modelos_ativos = [m for m in config.get('modelos_comparacao', []) if m.get('ativo', True)]
     
@@ -191,6 +190,86 @@ def extrair_campos_unicos(config_metricas):
     return [c for c in todos_campos if not c.startswith('(')]
 
 # ============================================================================
+# Utilitários
+# ============================================================================
+
+import glob
+
+def listar_arquivos_compativeis( pasta = None, limite = 5) -> list[str]:
+    ''' lista na pasta informada, ou a pasta de execução do código, até "limite" arquivos yaml compatíveis
+        para mostrar opções para o usuário selecionar.
+    '''
+    pasta = pasta or '.'
+    arquivos = []
+    # Busca por .yaml e .yml
+    for ext in ['*.yaml', '*.yml']:
+        arquivos.extend(glob.glob(os.path.join(pasta, ext)))
+    
+    # Remove duplicatas e garante que são arquivos
+    arquivos = [f for f in set(arquivos) if os.path.isfile(f)]
+    
+    # Ordena alfabeticamente
+    arquivos = sorted(arquivos)
+    
+    # Retorna até o limite
+    return arquivos[:limite]
+
+def criar_menu_opcoes_de_configuracao() -> str:
+    ''' lista até 5 arquivos yaml, em ordem alfabética, e permite ao usuário selecionar um deles.
+        Retorna o caminho do arquivo selecionado.
+    '''
+    arquivos = listar_arquivos_compativeis(limite=5)
+    
+    if not arquivos:
+        print("\nNenhum arquivo YAML de configuração encontrado.")
+    else:
+        print("\nArquivos de configuração encontrados:")
+    
+    import datetime
+    idx_mais_recente = -1
+    if arquivos:
+        idx_mais_recente = max(range(len(arquivos)), key=lambda i: os.path.getmtime(arquivos[i]))
+    
+    for i, arq in enumerate(arquivos):
+        tempo_mod = os.path.getmtime(arq)
+        data_hora_str = datetime.datetime.fromtimestamp(tempo_mod).strftime('%Y-%m-%d %H:%M:%S')
+        
+        sufixo = ""
+        if i == idx_mais_recente:
+            sufixo = " \033[93m<<< último alterado\033[0m"
+            
+        print(f"[{i+1}] {os.path.basename(arq)} ({data_hora_str}){sufixo}")
+        
+    idx_criar_novo = len(arquivos) + 1
+    idx_sair = len(arquivos) + 2
+    
+    print(f"[{idx_criar_novo}] Criar um novo arquivo de configuração")
+    print(f"[{idx_sair}] Sair sem escolher")
+    
+    escolha_padrao = idx_mais_recente + 1 if arquivos else idx_sair
+    
+    while True:
+        try:
+            msg = f"\nEscolha uma opção (padrão {escolha_padrao}): "
+            escolha = input(msg).strip()
+            
+            if not escolha:
+                opcao = escolha_padrao
+            else:
+                opcao = int(escolha)
+                
+            if 1 <= opcao <= len(arquivos):
+                return arquivos[opcao - 1]
+            elif opcao == idx_criar_novo:
+                return "CRIAR_NOVO"
+            elif opcao == idx_sair:
+                return None
+            else:
+                print("⚠️  Opção inválida.")
+        except ValueError:
+            print("⚠️  Entrada inválida. Digite um número.")
+
+# ============================================================================
 # MAIN
 # ============================================================================
 
@@ -238,9 +317,12 @@ def _gerar_grafico_erros(dados_analise, pasta_saida):
         if c not in df_stats.columns:
             df_stats[c] = 0
             
+    pasta_graficos = os.path.join(pasta_saida, 'graficos')
+    os.makedirs(pasta_graficos, exist_ok=True)
+            
     df_stats = df_stats[cols_ordem]
     
-    arquivo = os.path.join(pasta_saida, 'status_modelos.png')
+    arquivo = os.path.join(pasta_graficos, 'status_modelos.png')
     UtilGraficos.gerar_grafico_empilhado(
         df_stats, 
         titulo='Status das Extrações por Modelo',
@@ -257,11 +339,45 @@ def _gerar_grafico_erros(dados_analise, pasta_saida):
 
 def main():
     parser = argparse.ArgumentParser(description="Comparador de Extrações JSON via YAML")
-    parser.add_argument('config_file', help="Caminho do arquivo de configuração YAML")
+    parser.add_argument('config_file', nargs='?', default=None, help="Caminho do arquivo de configuração YAML")
     args = parser.parse_args()
 
     # 1. Carregar configuração
-    caminho_yaml_abs = os.path.abspath(args.config_file)
+    caminho_yaml_abs = ""
+    if args.config_file:
+        caminho_yaml_abs = os.path.abspath(args.config_file)
+    else:
+        escolha = criar_menu_opcoes_de_configuracao()
+        if escolha is None:
+            print("\nSaindo sem escolher...")
+            sys.exit(0)
+        elif escolha == "CRIAR_NOVO":
+            nome = input("\nNome do novo arquivo (ex: config_novo.yaml): ").strip()
+            if not nome:
+                print("Nome não fornecido. Saindo...")
+                sys.exit(0)
+            if not nome.endswith(('.yaml', '.yml')):
+                nome += '.yaml'
+            caminho_yaml_abs = os.path.abspath(nome)
+            if os.path.exists(caminho_yaml_abs):
+                print(f"⚠️  O arquivo {nome} já existe. Edite-o e execute novamente.")
+                sys.exit(0)
+            
+            # Tentar copiar de um existente para facilitar
+            if os.path.exists('config_espelho.yaml'):
+                import shutil
+                shutil.copy('config_espelho.yaml', caminho_yaml_abs)
+                print(f"✅ Arquivo {nome} criado a partir de config_espelho.yaml!")
+            else:
+                with open(caminho_yaml_abs, 'w', encoding='utf-8') as f:
+                    f.write("# Novo arquivo de configuração YAML\n")
+                print(f"✅ Arquivo {nome} criado!")
+                
+            print(f"Edite-o e execute o script novamente com: python comparar_extracoes.py {nome}")
+            sys.exit(0)
+        else:
+            caminho_yaml_abs = os.path.abspath(escolha)
+
     base_dir_yaml = os.path.dirname(caminho_yaml_abs)
     config = ler_configuracao(caminho_yaml_abs)
     
