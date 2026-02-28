@@ -1,0 +1,92 @@
+{
+  "teseJuridica": [
+    {
+      "id": "T1",
+      "descricao": "A condenação baseada unicamente no depoimento da vítima e nos reconhecimentos realizados, sem outras provas robustas e diante de contradições e inconsistências nas descrições, viola o princípio do in dubio pro reo, levando à necessidade de absolvição do Paciente.",
+      "justificativas": [
+        "\"A condenação do Paciente encontra-se amparada tão somente no depoimento da Vítima e nos reconhecimentos realizados na fase extrajudicial e em juízo\"",
+        "\"Constata-se, primo ictu oculi e sem a necessidade de incursão aprofundada no acervo probatório, que há diversas inconsistências e contradições nas descrições feitas pela Vítima a respeito dos aspectos fisionômicos do suspeito\"",
+        "\"Diante do conjunto probatório, a condenação se impõe\",",
+        "\"Apesar de a vítima confirmar o reconhecimento fotográfico em juízo, essa confirmação, por si só, não torna o ato seguro e isento de erros involuntários\"",
+        "\"A dúvida razoável a respeito da autoria delitiva, razão pela qual é necessário adotar a regra de julgamento que decorre da máxima in dubio pro reo\""
+      ]
+    }
+  ],
+  "jurisprudenciaCitada": [
+    {
+      "teseId": "T1",
+      "referenciaCompleta": "STJ, HC n. 712.781/RJ, relator Ministro ROGERIO SCHIETTI CRUZ, Sexta Turma, julgado em 15/3/2022, DJe de 22/3/2022.",
+      "assunto": "Reconhecimento de pessoas e sua fragilidade epistêmica.",
+      "repercussaoGeral": false,
+      "recursoRepetitivo": false,
+      "temaRepetitivo": null
+    },
+    {
+      "teseId": "T1",
+      "referenciaCompleta": "STF, HC 170117, Relator(a): MARCO AURÉLIO, Primeira Turma, julgado em 19/05/2020, PROCESSO ELETRÔNICO DJe-244 DIVULG 06-10-2020 PUBLIC 07-10-2020.",
+      "assunto": "Necessidade de prova robusta para condenação.",
+      "repercussaoGeral": false,
+      "recursoRepetitivo": false,
+      "temaRepetitivo": null
+    },
+    {
+      "teseId": "T1",
+      "referenciaCompleta": "STJ, AgRg no AREsp n. 1.722.914/DF, relatora Ministra LAURITA VAZ, Sexta Turma, julgado em 13/4/2021, DJe de 28/4/2021.",
+      "assunto": "Insuficiência de prova para a condenação.",
+      "repercussaoGeral": false,
+      "recursoRepetitivo": false,
+      "temaRepetitivo": null
+    },
+    {
+      "teseId": "T1",
+      "referenciaCompleta": "STJ, HC n. 674.139/SP, relator Ministro ROGERIO SCHIETTI CRUZ, Sexta Turma, julgado em 16/8/2022, DJe de 19/8/2022.",
+      "assunto": "Fragilidade do reconhecimento como prova.",
+      "repercussaoGeral": false,
+      "recursoRepetitivo": false,
+      "temaRepetitivo": null
+    },
+    {
+      "teseId": "T1",
+      "referenciaCompleta": "STJ, AgRg no REsp n. 1.969.149/RS, relator Ministro JOEL ILAN PACIORNIK , Quinta Turma, julgado em 28/11/2022, DJe de 1/12/2022.",
+      "assunto": "Confirmação do reconhecimento e seus vícios.",
+      "repercussaoGeral": false,
+      "recursoRepetitivo": false,
+      "temaRepetitivo": null
+    }
+  ],
+  "referenciasLegislativas": [
+    {
+      "diplomaLegal": "Código de Processo Penal",
+      "dispositivo": "Art. 386, inciso VII",
+      "redacaoPosterior": null
+    },
+    {
+      "diplomaLegal": "Código de Processo Penal",
+      "dispositivo": "Art. 226",
+      "redacaoPosterior": null
+    }
+  ],
+  "notas": [
+    "Princípio da insignificância: não aplicado no caso.",
+    "Técnica de Distinção (distinguishing) aplicada em relação a casos com reconhecimento fotográfico falho."
+  ],
+  "informacoesComplementares": [
+    "Julgado conforme Recursos Repetitivos no STJ.",
+    "Habeas corpus concedido de ofício."
+  ],
+  "termosAuxiliares": [
+    "reconhecimento fotográfico",
+    "in dubio pro reo",
+    "fragilidade probatória",
+    "contradições",
+    "inconsistências",
+    "erro judiciário"
+  ],
+  "tema": [
+    {
+      "tribunal": "STJ",
+      "numero": null,
+      "descricao": "Reconhecimento de pessoas e a necessidade de outras provas robustas."
+    }
+  ]
+}

@@ -1,0 +1,64 @@
+{
+  "resposta": {
+    "precision": 0.44,
+    "recall": 0.46,
+    "metricas_por_campo": {
+      "teseJuridica": {
+        "precision": 0.85,
+        "recall": 0.35
+      },
+      "jurisprudenciaCitada": {
+        "precision": 0.45,
+        "recall": 0.38
+      },
+      "referenciasLegislativas": {
+        "precision": 1.0,
+        "recall": 0.55
+      },
+      "notas": {
+        "precision": 0.0,
+        "recall": 1.0
+      },
+      "informacoesComplementares": {
+        "precision": 0.0,
+        "recall": 1.0
+      },
+      "termosAuxiliares": {
+        "precision": 0.2,
+        "recall": 0.4
+      },
+      "tema": {
+        "precision": 0.0,
+        "recall": 1.0
+      }
+    },
+    "pontos_fortes": [
+      "A tese T1 está coerente com a EMENTA e o VOTO, em frase única e com os 4 elementos (entendimento: absolvição; questão: condenação baseada apenas em reconhecimento/depoimento; contexto: inconsistências e ausência de outras provas; fundamentos: in dubio pro reo).",
+      "As referências legislativas centrais foram corretamente extraídas e normalizadas: \"Código de Processo Penal, Art. 386, inciso VII\" e \"Código de Processo Penal, Art. 226\".",
+      "Ao menos um precedente fundamental foi corretamente citado e completo (STJ, HC n. 712.781/RJ, rel. Min. Rogerio Schietti Cruz), com metadados adequados (repercussaoGeral/recursoRepetitivo = false, temaRepetitivo = null)."
+    ],
+    "pontos_melhoria": [
+      "[RECALL] Campo teseJuridica omitiu teses claras da EMENTA com correlação no VOTO, como: (i) o reconhecimento, ainda que válido, não tem força probante absoluta e não pode, por si só, induzir certeza da autoria (EMENTA, item 2); (ii) a confirmação, em juízo, do reconhecimento fotográfico não torna o ato seguro, por viés de confirmação (EMENTA, item 5); (iii) desnecessidade de reexame aprofundado quando as inconsistências são aferíveis prima facie (caput e itens 7 e 10).",
+      "[PRECISION] Campo jurisprudenciaCitada usou chave estrutural incorreta (\"teseId\" em vez de \"id\") e errou a referência do HC n. 674.139/SP ao combinar data de outro julgado (o texto traz HC 674.139/SP julgado em 15/2/2022, DJe 24/2/2022, e HC 664.537/RJ em 16/8/2022, DJe 19/8/2022). Isso viola o padrão estrutural e insere dado factual incorreto.",
+      "[RECALL] Campo jurisprudenciaCitada omitiu precedentes relevantes expressamente citados no VOTO que fundamentam a tese sobre a insuficiência do reconhecimento: AgRg no HC n. 730.232/SP; HC n. 706.735/RS; HC n. 698.058/SP; AgRg no HC n. 641.267/RS; HC n. 664.537/RJ.",
+      "[RECALL] Campo referenciasLegislativas não incluiu dispositivos também interpretados/indicados no VOTO, como \"Código de Processo Penal, Art. 227\" e \"Código de Processo Penal, Art. 228\" (o voto menciona os arts. 226 a 228 do CPP), além da \"Resolução CNJ n. 484/2022, Art. 7º, inciso I\", expressamente utilizada para orientar o procedimento.",
+      "[PRECISION] Campo notas contém informações inventadas e em formato errado: \"Princípio da insignificância: não aplicado no caso\" (o acórdão não trata de insignificância) e \"Técnica de Distinção...\" (não há menção inequívoca à aplicação de distinguishing, tampouco no formato exato exigido).",
+      "[PRECISION] Campo informacoesComplementares traz etiquetas não padronizadas/inverídicas: \"Julgado conforme Recursos Repetitivos no STJ\" (o caso não é repetitivo) e \"Habeas corpus concedido de ofício\" (não é etiqueta prevista; além disso, a concessão ex officio já está na ementa, vedando uso no ICE).",
+      "[PRECISION] Campo termosAuxiliares viola a normalização (acentos em \"reconhecimento fotográfico\", \"contradições\", \"inconsistências\", \"fragilidade probatória\") e inclui termos que já constam da ementa (\"reconhecimento fotográfico\", \"in dubio pro reo\", \"contradições\", \"inconsistências\").",
+      "[PRECISION] Campo tema incluiu registro inexistente (\"STJ\" com descrição genérica), sem qualquer menção a Tema de Recurso Repetitivo (STJ) ou de Repercussão Geral (STF) no texto; o correto seria não incluir tema."
+    ],
+    "explicacao": "A precision ficou baixa por erros estruturais e materiais relevantes (jurisprudência com chave/tomada de dados incorretas, notas/ICE/tema inventados, e termos auxiliares fora do padrão). O recall foi prejudicado pela omissão de teses adicionais claras da ementa, de diversos precedentes citados no voto, e de dispositivos complementares (arts. 227-228 CPP e Resolução CNJ 484/2022). Para melhorar, separar e enunciar todas as teses da ementa com correlação tripla, revisar e completar as citações jurisprudenciais e legislativas, e suprimir campos não aplicáveis ou fora do padrão."
+  },
+  "json": true,
+  "usage": {
+    "prompt_tokens": 27118,
+    "completion_tokens": 7714,
+    "total_tokens": 34832,
+    "cached_tokens": 25856,
+    "reasoning_tokens": 6400,
+    "finished_reason": "stop"
+  },
+  "model": "openai/gpt-5",
+  "tempo": 172.223,
+  "tratada": true
+}

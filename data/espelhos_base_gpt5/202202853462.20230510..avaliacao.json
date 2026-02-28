@@ -1,0 +1,62 @@
+{
+  "resposta": {
+    "precision": 0.8,
+    "recall": 0.92,
+    "metricas_por_campo": {
+      "teseJuridica": {
+        "precision": 0.95,
+        "recall": 1.0
+      },
+      "jurisprudenciaCitada": {
+        "precision": 0.6,
+        "recall": 1.0
+      },
+      "referenciasLegislativas": {
+        "precision": 0.9,
+        "recall": 1.0
+      },
+      "notas": {
+        "precision": 1.0,
+        "recall": 1.0
+      },
+      "informacoesComplementares": {
+        "precision": 0.0,
+        "recall": 1.0
+      },
+      "termosAuxiliares": {
+        "precision": 0.17,
+        "recall": 0.4
+      },
+      "tema": {
+        "precision": 1.0,
+        "recall": 1.0
+      }
+    },
+    "pontos_fortes": [
+      "Teses T1 e T2 extraídas da ementa e coerentes com relatório e voto, em frase única e com os quatro elementos, p.ex.: desnecessidade de reexame, dúvida razoável e in dubio pro reo (ementa; itens 6, 7, 10 e 11; relatório e voto corroboram).",
+      "Jurisprudência citada contempla todos os precedentes relevantes expressamente mencionados no voto, com referências completas (ex.: STJ, HC 712.781/RJ; STJ, AgRg no AREsp 1.722.914/DF; STF, HC 170117).",
+      "Referências legislativas essenciais corretamente incluídas (arts. 226 a 228 do CPP e art. 386, VII do CPP), além da Resolução CNJ n. 484/2022, art. 7º, I, todos efetivamente empregados na fundamentação.",
+      "Campos notas e tema corretamente deixados vazios diante da ausência de categorias/procedimentos especiais aplicáveis ou de menção inequívoca a Temas."
+    ],
+    "pontos_melhoria": [
+      "[PRECISION] Campo jurisprudenciaCitada utilizou a chave 'teseId' em vez da obrigatória 'id' para referenciar a tese (ex.: \"teseId\": \"T1\"), o que viola a estrutura exigida e compromete a conformidade.",
+      "[PRECISION] Campo informacoesComplementares incluiu textos não padronizados e já constantes do acórdão/ementa (\"Julgado pela Terceira Seção do STJ\"; \"Concedido habeas corpus de ofício...\"); o ICE deve conter apenas etiquetas padronizadas (ex.: repetitivos, IAC, juízo de retratação) e somente quando não constarem da ementa.",
+      "[PRECISION] Campo termosAuxiliares incluiu termos que constam da ementa (p.ex., \"habeas corpus\", \"roubo majorado\", \"reconhecimento fotografico\", \"in dubio pro reo\", \"desnecessidade de reexame probatorio\"), contrariando a regra de exclusão do TAP.",
+      "[PRECISION] Normalização legislativa: usar o padrão completo de dispositivo, p.ex., \"Art. 386, inciso VII\" e \"Art. 7º, inciso I\" (em vez de \"Art. 386, VII\" e \"Art. 7º, I\").",
+      "[RECALL] Campo termosAuxiliares poderia incluir termos relevantes não presentes na ementa/ICE para melhorar recuperação, como \"resolucao cnj 484\", \"falso positivo\", \"psicologia do testemunho\", \"cross race effect\"."
+    ],
+    "explicacao": "A precisão foi afetada por erros estruturais (uso de 'teseId' em jurisprudência), ICE com etiquetas não padronizadas e TAP contendo termos presentes na ementa. O recall é alto porque as teses centrais, os precedentes e os dispositivos efetivamente utilizados foram capturados. Para melhorar, corrigir a estrutura da associação tese↔precedente, limitar ICE às etiquetas padronizadas e refinar os termos auxiliares excluindo o que já está na ementa e incluindo termos técnicos adicionais relevantes."
+  },
+  "json": true,
+  "usage": {
+    "prompt_tokens": 28634,
+    "completion_tokens": 6983,
+    "total_tokens": 35617,
+    "cached_tokens": 25856,
+    "reasoning_tokens": 6016,
+    "finished_reason": "stop"
+  },
+  "model": "openai/gpt-5",
+  "tempo": 162.688,
+  "tratada": true
+}

@@ -1,0 +1,153 @@
+{
+  "teseJuridica": [
+    {
+      "id": "T1",
+      "descricao": "O reconhecimento de pessoas, ainda que realizado segundo os arts. 226 a 228 do CPP, não possui força probante absoluta e, quando é o único suporte (ao lado do depoimento da vítima) para a condenação, especialmente diante de contradições e inconsistências nas descrições e do risco de falsas memórias e viés de confirmação, não pode, por si só, afirmar a autoria, de modo que a questão jurídica sobre a suficiência do depoimento da vítima e dos reconhecimentos fotográfico e pessoal para sustentar a condenação por roubo majorado, no contexto em que não houve outras provas, a res furtiva não foi apreendida e o réu negou os fatos, deve ser resolvida com absolvição, conforme a jurisprudência desta Corte que reconhece a fragilidade epistêmica do reconhecimento e a inexistência de força probante absoluta mesmo quando formalmente válido.",
+      "justificativas": [
+        "\"Consoante jurisprudência desta Corte, o reconhecimento positivo, que respeite as exigências legais, portanto, \\\"é válido, sem, todavia, força probante absoluta, de sorte que não pode induzir, por si só, à certeza da autoria delitiva, em razão de sua fragilidade epistêmica\\\" (STJ, HC n. 712.781/RJ, relator Ministro ROGERIO SCHIETTI CRUZ, Sexta Turma, julgado em 15/3/2022, DJe de 22/3/2022).\"",
+        "\"A confirmação, em juízo, do reconhecimento fotográfico extrajudicial, por si só, não torna o ato seguro e isento de erros involuntários, pois \\\"uma vez que a testemunha ou a vítima reconhece alguém como o autor do delito, há tendência, por um viés de confirmação, a repetir a mesma resposta em reconhecimentos futuros\\\" (STJ, HC n. 712.781/RJ...).\"",
+        "\"No caso, é incontroverso nos autos que (i) a condenação do Paciente encontra-se amparada tão somente no depoimento da Vítima e nos reconhecimentos realizados na fase extrajudicial e em juízo; (ii) não foram ouvidas outras testemunhas de acusação; (iii) a res furtiva não foi apreendida em poder do Acusado; (iv) o Réu negou a imputação que lhe foi dirigida.\"",
+        "\"Constata-se, primo ictu oculi e sem a necessidade de incursão aprofundada no acervo probatório, que há diversas inconsistências e contradições nas descrições feitas pela Vítima a respeito dos aspectos fisionômicos do suspeito, o que indica a possibilidade de reconhecimento falho, dado o risco de construção de falsas memórias.\""
+      ]
+    },
+    {
+      "id": "T2",
+      "descricao": "É possível, na via do habeas corpus, sem reexame aprofundado de provas, reconhecer a dúvida razoável e aplicar a regra in dubio pro reo para absolver com fundamento no art. 386, VII, do CPP, quando a questão jurídica consiste em saber se contradições e inconsistências aferíveis de plano nos únicos elementos de prova (depoimento da vítima e reconhecimentos) bastam para infirmar a condenação por roubo majorado, no contexto em que tais desconformidades são primo ictu oculi verificáveis e não há outras provas autônomas, à luz da orientação desta Corte e da Suprema Corte sobre a possibilidade de controle da idoneidade da fundamentação condenatória em habeas corpus.",
+      "justificativas": [
+        "\"HABEAS CORPUS. ROUBO MAJORADO. ... CONTRADIÇÕES E INCONSISTÊNCIAS AFERÍVEIS, PRIMO ICTU OCULI. DESNECESSIDADE DE REEXAME DO ACERVO PROBATÓRIO. DÚVIDA RAZOÁVEL. IN DUBIO PRO REO. ORDEM CONCEDIDA.\"",
+        "\"... é possível a correção do constrangimento ilegal imposto ao Réu mesmo na via do mandamus.\"",
+        "\"Considerando que o decreto condenatório está amparado tão somente nos reconhecimentos formalizados pela Vítima e, ainda, as divergências e inconsistências na referida prova, aferíveis de plano e sem a necessidade de incursão no conjunto fático-probatório, concluo que há dúvida razoável a respeito da autoria delitiva, razão pela qual é necessário adotar a regra de julgamento que decorre da máxima in dubio pro reo.\"",
+        "\"Ordem de habeas corpus concedida para absolver o Paciente, com fundamento no art. 386, inciso VII, do Código de Processo Penal.\""
+      ]
+    }
+  ],
+  "jurisprudenciaCitada": [
+    {
+      "teseId": "T1",
+      "referenciaCompleta": "STJ, HC 712.781/RJ, Rel. Min. Rogerio Schietti Cruz, Sexta Turma, julgado em 15/03/2022, DJe 22/03/2022.",
+      "assunto": "Reconhecimento é válido, mas sem força probante absoluta e sujeito a viés de confirmação.",
+      "repercussaoGeral": false,
+      "recursoRepetitivo": false,
+      "temaRepetitivo": null
+    },
+    {
+      "teseId": "T1",
+      "referenciaCompleta": "STJ, AgRg no REsp 1.969.149/RS, Rel. Min. Joel Ilan Paciornik, Quinta Turma, julgado em 28/11/2022, DJe 01/12/2022.",
+      "assunto": "Confirmação em juízo não constitui prova independente quando o reconhecimento original está contaminado.",
+      "repercussaoGeral": false,
+      "recursoRepetitivo": false,
+      "temaRepetitivo": null
+    },
+    {
+      "teseId": "T1",
+      "referenciaCompleta": "STJ, AgRg no HC 730.232/SP, Rel. Min. Rogerio Schietti Cruz, Sexta Turma, julgado em 19/12/2022, DJe 21/12/2022.",
+      "assunto": "Erros honestos e falsas memórias como limites da confiabilidade do reconhecimento.",
+      "repercussaoGeral": false,
+      "recursoRepetitivo": false,
+      "temaRepetitivo": null
+    },
+    {
+      "teseId": "T2",
+      "referenciaCompleta": "STJ, AgRg no AREsp 1.722.914/DF, Rel. Min. Laurita Vaz, Sexta Turma, julgado em 13/04/2021, DJe 28/04/2021.",
+      "assunto": "Controle, em habeas corpus, da idoneidade da fundamentação condenatória sem reexame probatório; absolvição por insuficiência de provas.",
+      "repercussaoGeral": false,
+      "recursoRepetitivo": false,
+      "temaRepetitivo": null
+    },
+    {
+      "teseId": "T2",
+      "referenciaCompleta": "STF, HC 170117, Rel. Min. Marco Aurélio, Primeira Turma, julgado em 19/05/2020, DJe 07/10/2020.",
+      "assunto": "Dúvida razoável deve beneficiar o acusado; absolvição quando a prova é insuficiente.",
+      "repercussaoGeral": false,
+      "recursoRepetitivo": false,
+      "temaRepetitivo": null
+    },
+    {
+      "teseId": "T2",
+      "referenciaCompleta": "STJ, HC 706.735/RS, Rel. Min. Sebastião Reis Júnior, Sexta Turma, julgado em 14/02/2023, DJe 17/02/2023.",
+      "assunto": "Nulidade de decisão fundada em depoimentos contraditórios e elementos inquisitoriais; exigência de prova idônea.",
+      "repercussaoGeral": false,
+      "recursoRepetitivo": false,
+      "temaRepetitivo": null
+    },
+    {
+      "teseId": "T2",
+      "referenciaCompleta": "STJ, HC 664.537/RJ, Rel. Min. Antonio Saldanha Palheiro, Sexta Turma, julgado em 16/08/2022, DJe 19/08/2022.",
+      "assunto": "Nulidade do reconhecimento tardio sem outras provas; absolvição.",
+      "repercussaoGeral": false,
+      "recursoRepetitivo": false,
+      "temaRepetitivo": null
+    },
+    {
+      "teseId": "T2",
+      "referenciaCompleta": "STJ, HC 698.058/SP, Rel. Min. Sebastião Reis Júnior, Sexta Turma, julgado em 22/02/2022, DJe 25/02/2022.",
+      "assunto": "Fragilidade do reconhecimento e contradições justificam absolvição.",
+      "repercussaoGeral": false,
+      "recursoRepetitivo": false,
+      "temaRepetitivo": null
+    },
+    {
+      "teseId": "T2",
+      "referenciaCompleta": "STJ, AgRg no HC 641.267/RS, Rel. Min. Rogerio Schietti Cruz, Sexta Turma, julgado em 13/12/2022, DJe 16/12/2022.",
+      "assunto": "Ausência de outras provas a amparar reconhecimento realizado na fase inquisitiva conduz à absolvição.",
+      "repercussaoGeral": false,
+      "recursoRepetitivo": false,
+      "temaRepetitivo": null
+    },
+    {
+      "teseId": "T2",
+      "referenciaCompleta": "STJ, HC 674.139/SP, Rel. Min. Rogerio Schietti Cruz, Sexta Turma, julgado em 15/02/2022, DJe 24/02/2022.",
+      "assunto": "Dúvida relevante resolve-se a favor da liberdade (in dubio pro libertas), reforçando o padrão decisório em habeas corpus.",
+      "repercussaoGeral": false,
+      "recursoRepetitivo": false,
+      "temaRepetitivo": null
+    }
+  ],
+  "referenciasLegislativas": [
+    {
+      "diplomaLegal": "Código de Processo Penal",
+      "dispositivo": "Art. 226",
+      "redacaoPosterior": null
+    },
+    {
+      "diplomaLegal": "Código de Processo Penal",
+      "dispositivo": "Art. 227",
+      "redacaoPosterior": null
+    },
+    {
+      "diplomaLegal": "Código de Processo Penal",
+      "dispositivo": "Art. 228",
+      "redacaoPosterior": null
+    },
+    {
+      "diplomaLegal": "Código de Processo Penal",
+      "dispositivo": "Art. 386, VII",
+      "redacaoPosterior": null
+    },
+    {
+      "diplomaLegal": "Resolução CNJ n. 484/2022",
+      "dispositivo": "Art. 7º, I",
+      "redacaoPosterior": null
+    }
+  ],
+  "notas": [],
+  "informacoesComplementares": [
+    "Julgado pela Terceira Seção do STJ.",
+    "Concedido habeas corpus de ofício para determinar soltura imediata e comunicação à Corregedoria de Polícia do Estado do Rio de Janeiro."
+  ],
+  "termosAuxiliares": [
+    "habeas corpus",
+    "roubo majorado",
+    "reconhecimento fotografico",
+    "reconhecimento pessoal",
+    "depoimento da vitima",
+    "falsas memorias",
+    "vies de confirmacao",
+    "art 226 cpp",
+    "in dubio pro reo",
+    "terceira secao",
+    "absolvicao",
+    "desnecessidade de reexame probatorio"
+  ],
+  "tema": []
+}

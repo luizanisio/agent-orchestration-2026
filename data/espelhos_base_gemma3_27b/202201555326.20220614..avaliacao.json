@@ -1,0 +1,64 @@
+{
+  "resposta": {
+    "precision": 0.39,
+    "recall": 0.46,
+    "metricas_por_campo": {
+      "teseJuridica": {
+        "precision": 0.75,
+        "recall": 1.0
+      },
+      "jurisprudenciaCitada": {
+        "precision": 0.38,
+        "recall": 0.3
+      },
+      "referenciasLegislativas": {
+        "precision": 0.75,
+        "recall": 0.6
+      },
+      "notas": {
+        "precision": 0.0,
+        "recall": 1.0
+      },
+      "informacoesComplementares": {
+        "precision": 0.0,
+        "recall": 1.0
+      },
+      "termosAuxiliares": {
+        "precision": 0.25,
+        "recall": 0.4
+      },
+      "tema": {
+        "precision": 0.0,
+        "recall": 0.0
+      }
+    },
+    "pontos_fortes": [
+      "Teses T2 e T4 bem alinhadas à EMENTA e ao VOTO, em frase única, com fundamentos claros (redução do aumento para 1/6 e fixação de regime semiaberto com base no art. 33, § 2º, c e § 3º, do CP).",
+      "Jurisprudência HC 400.119/RJ corretamente citada para a tese sobre cabimento restrito de habeas corpus substitutivo e revisão de dosimetria em caso de flagrante desproporcionalidade.",
+      "Referências legislativas nucleares à decisão (arts. 33, 44, 59 e 68 do CP) foram identificadas, com diploma legal padronizado."
+    ],
+    "pontos_melhoria": [
+      "[PRECISION] T3 contém erro fático ao mencionar 'reincidência' como fundamento para negar a substituição (o acórdão afirma expressamente que o paciente não é reincidente: 'em face do paciente não ser reincidente'), o que compromete a fidelidade da tese.",
+      "[PRECISION] Campo jurisprudenciaCitada com várias inconsistências: ARE 666.334/STF foi rotulado como 'AgRg no HC' e associado indevidamente à T3; HC 536.632/RJ virou 'AgRg no HC 536.632/SP'; HC 430.248/SP foi rotulado como 'AgRg no HC'; além de metadados incompletos (ausência do Tribunal em várias referências) e uso do campo 'teseId' em vez de 'id'.",
+      "[RECALL] Foram omitidos precedentes relevantes citados no VOTO que fundamentam as teses: AgRg no HC 583.237/PR e AgRg nos EDcl no HC 670.440/SP (deslocamento de qualificadora/maus antecedentes), AgRg no REsp 1.970.791/RN, AgRg no HC 711.280/MS e AgRg no HC 696.947/SP (parâmetro de 1/6), HC 405.667/SP e AgRg no HC 512.273/SP (substituição por restritivas).",
+      "[PRECISION] Notas em desconformidade: inclusão indevida de 'Quantidade de droga apreendida' e 'Princípio da insignificância' (inexistem no caso) e técnica de distinguishing fora do formato exigido e sem evidência inequívoca de aplicação.",
+      "[PRECISION] Informações complementares fora do padrão ('Habeas corpus concedido de ofício.') e repetindo dado já constante da ementa; ICE deve usar apenas etiquetas padronizadas de procedimentos especiais.",
+      "[PRECISION e RECALL] Termos auxiliares incluem expressões presentes na ementa ('dosimetria', 'maus antecedentes', 'habeas corpus', 'desproporcionalidade') e termos genéricos ('pena'); por outro lado, faltaram termos úteis que não estão na ementa/ICE, como 'sumula 7 stj', 'sumula 284 stf', 'direito ao esquecimento' e 'periodo depurador'.",
+      "[RECALL] Referências legislativas omitiram o art. 64, I, do Código Penal (período depurador) debatido no VOTO; além disso, a normalização de 'Art. 33, § 2º, c e § 3º' deveria seguir a vírgula padronizada ('Art. 33, § 2º, c, § 3º').",
+      "[PRECISION] Campo tema: não há menção inequívoca a 'Tema' com número; a inclusão genérica de 'Repercussão Geral' com descrição criada não atende ao critério e deve ser omitida ou ajustada quando houver referência clara ao número do Tema."
+    ],
+    "explicacao": "A precisão ficou baixa principalmente por erros factuais e estruturais nas citações de precedentes (classes e tribunais trocados, campo 'teseId' em vez de 'id'), notas indevidas e uma tese (T3) com menção incorreta à reincidência. O recall caiu em razão da omissão de precedentes relevantes que fundamentam as teses e da ausência do art. 64, I, do CP nas referências legislativas, além de TAP pouco seletivo. Para melhorar, separar claramente as teses, corrigir e completar as referências jurisprudenciais com metadados padronizados, ajustar a normalização legal e incluir termos auxiliares realmente não presentes na ementa/ICE."
+  },
+  "json": true,
+  "usage": {
+    "prompt_tokens": 22689,
+    "completion_tokens": 11473,
+    "total_tokens": 34162,
+    "cached_tokens": 20224,
+    "reasoning_tokens": 10240,
+    "finished_reason": "stop"
+  },
+  "model": "openai/gpt-5",
+  "tempo": 251.84,
+  "tratada": true
+}

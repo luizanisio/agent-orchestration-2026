@@ -1,0 +1,63 @@
+{
+  "resposta": {
+    "precision": 0.64,
+    "recall": 0.9,
+    "metricas_por_campo": {
+      "teseJuridica": {
+        "precision": 0.95,
+        "recall": 1.0
+      },
+      "jurisprudenciaCitada": {
+        "precision": 0.4,
+        "recall": 0.9
+      },
+      "referenciasLegislativas": {
+        "precision": 1.0,
+        "recall": 1.0
+      },
+      "notas": {
+        "precision": 1.0,
+        "recall": 1.0
+      },
+      "informacoesComplementares": {
+        "precision": 0.0,
+        "recall": 1.0
+      },
+      "termosAuxiliares": {
+        "precision": 0.07,
+        "recall": 0.25
+      },
+      "tema": {
+        "precision": 1.0,
+        "recall": 1.0
+      }
+    },
+    "pontos_fortes": [
+      "Teses T1–T6 bem alinhadas aos itens I–VI da EMENTA, com correlação ao RELATÓRIO (impugnação da dosimetria e pedido de substituição de pena) e ao VOTO, além de conterem os 4 elementos exigidos em uma única frase.",
+      "Campo referenciasLegislativas completo e corretamente normalizado (arts. 33, § 2º, c; 33, § 3º; 44, III; 59; 64, I; 68, do CP), todos efetivamente aplicados na fundamentação do VOTO.",
+      "Boa cobertura de precedentes centrais que fundamentam as teses (p. ex., HC 400.119/RJ para T2; AgRg no HC 583.237/PR e AgRg nos EDcl no HC 670.440/SP para T3; AgRg no REsp 1.970.791/RN e AgRg no HC 696.947/SP para T4; HC 405.667/SP e AgRg no HC 512.273/SP para T5; HC 430.248/SP para T6).",
+      "Decisão correta de não incluir Temas/STF-STJ por ausência de menção inequívoca a “Tema” com número."
+    ],
+    "pontos_melhoria": [
+      "[PRECISION] Campo jurisprudenciaCitada usou a chave “teseId” em vez de “id”, contrariando a estrutura obrigatória; além disso, a referência “AgRg no HC 714.214/SC” ficou incompleta quanto ao Relator (“de minha relatoria”), o que fere a exigência de referência completa.",
+      "[PRECISION] Campo informacoesComplementares incluiu “Habeas corpus não conhecido; ordem concedida de ofício.”, que não é uma etiqueta padronizada e já consta na ementa; o ICE deve conter apenas etiquetas de procedimentos especiais previstas no Manual.",
+      "[PRECISION] Campo termosAuxiliares traz diversos termos já presentes na EMENTA (ex.: “dosimetria”, “furto qualificado”, “maus antecedentes”, “deslocamento de qualificadora”, “art 44 cp”, “regime semiaberto”), violando a regra do TAP de conter apenas termos ausentes da ementa/ICE.",
+      "[RECALL] Campo jurisprudenciaCitada omitiu precedente citado e útil para T4 (AgRg no AREsp 1.445.055/MG), que reforça a possibilidade de exasperação com uma vetorial quando bem fundamentada.",
+      "[RECALL] Campo termosAuxiliares poderia incluir institutos relevantes não constantes da ementa, como “direito ao esquecimento”, “bis in idem”, “reformatio in pejus”, “efeito devolutivo”, “sumula 7 stj”, “sumula 284 stf”, “tentativa” e “regime fechado”, úteis para recuperação do julgado.",
+      "[PRECISION] Pequeno ajuste de normalização legislativa recomendado: preferir “Art. 33, § 2º, alínea c” em vez de apenas “Art. 33, § 2º, c”, conforme o padrão indicado (inciso/alínea)."
+    ],
+    "explicacao": "A precisão ficou em 0.64 principalmente por erros estruturais em jurisprudenciaCitada (uso de “teseId” e uma referência sem Relator), inclusão indevida no ICE e violações de regra no TAP. O recall alcançou 0.90 porque todas as teses da EMENTA foram capturadas com boa correlação, as referências legislativas foram completas e a maior parte dos precedentes relevantes foi listada. Para melhorar, corrija a estrutura das citações (id correto e relator nomeado), deixe o ICE vazio quando não houver etiqueta padronizada aplicável e ajuste o TAP para conter apenas termos relevantes ausentes da ementa/ICE."
+  },
+  "json": true,
+  "usage": {
+    "prompt_tokens": 24705,
+    "completion_tokens": 9135,
+    "total_tokens": 33840,
+    "cached_tokens": 20224,
+    "reasoning_tokens": 8064,
+    "finished_reason": "stop"
+  },
+  "model": "openai/gpt-5",
+  "tempo": 212.967,
+  "tratada": true
+}

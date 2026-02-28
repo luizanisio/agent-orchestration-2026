@@ -1,0 +1,86 @@
+{
+  "id_peca": "202201555326.20220614.",
+  "total_geral": {
+    "prompt_tokens": 267300,
+    "completion_tokens": 9658,
+    "cached_tokens": 0,
+    "reasoning_tokens": 0,
+    "total_tokens": 276958,
+    "time": 496.583128,
+    "time_linear": 524.397339
+  },
+  "por_agente": {
+    "AgenteCampos": {
+      "prompt_tokens": 14712,
+      "completion_tokens": 403,
+      "cached_tokens": 0,
+      "reasoning_tokens": 0,
+      "total_tokens": 15115,
+      "execucoes": 1,
+      "time": 23.843087
+    },
+    "AgenteTeses": {
+      "prompt_tokens": 30128,
+      "completion_tokens": 2411,
+      "cached_tokens": 0,
+      "reasoning_tokens": 0,
+      "total_tokens": 32539,
+      "execucoes": 2,
+      "time": 152.01375099999998
+    },
+    "AgenteJurisprudenciasCitadas": {
+      "prompt_tokens": 48324,
+      "completion_tokens": 4783,
+      "cached_tokens": 0,
+      "reasoning_tokens": 0,
+      "total_tokens": 53107,
+      "execucoes": 3,
+      "time": 224.440701
+    },
+    "AgenteTermosAuxiliares": {
+      "prompt_tokens": 29022,
+      "completion_tokens": 288,
+      "cached_tokens": 0,
+      "reasoning_tokens": 0,
+      "total_tokens": 29310,
+      "execucoes": 2,
+      "time": 12.546761
+    },
+    "AgenteNotas": {
+      "prompt_tokens": 29830,
+      "completion_tokens": 200,
+      "cached_tokens": 0,
+      "reasoning_tokens": 0,
+      "total_tokens": 30030,
+      "execucoes": 2,
+      "time": 18.478119
+    },
+    "AgenteInformacoesComplementares": {
+      "prompt_tokens": 29231,
+      "completion_tokens": 349,
+      "cached_tokens": 0,
+      "reasoning_tokens": 0,
+      "total_tokens": 29580,
+      "execucoes": 2,
+      "time": 19.779220000000002
+    },
+    "AgenteReferenciasLegislativas": {
+      "prompt_tokens": 29335,
+      "completion_tokens": 704,
+      "cached_tokens": 0,
+      "reasoning_tokens": 0,
+      "total_tokens": 30039,
+      "execucoes": 2,
+      "time": 42.617217
+    },
+    "AgenteValidacaoFinal": {
+      "prompt_tokens": 56718,
+      "completion_tokens": 520,
+      "cached_tokens": 0,
+      "reasoning_tokens": 0,
+      "total_tokens": 57238,
+      "execucoes": 3,
+      "time": 30.678483000000003
+    }
+  }
+}

@@ -1,19 +1,19 @@
 {
   "resposta": {
-    "precision": 0.38,
-    "recall": 0.49,
+    "precision": 0.5,
+    "recall": 0.68,
     "metricas_por_campo": {
       "teseJuridica": {
-        "precision": 0.25,
-        "recall": 0.6
+        "precision": 0.4,
+        "recall": 0.65
       },
       "jurisprudenciaCitada": {
-        "precision": 0.85,
-        "recall": 0.25
+        "precision": 0.72,
+        "recall": 0.4
       },
       "referenciasLegislativas": {
         "precision": 1.0,
-        "recall": 0.75
+        "recall": 0.85
       },
       "notas": {
         "precision": 0.0,
@@ -24,8 +24,8 @@
         "recall": 1.0
       },
       "termosAuxiliares": {
-        "precision": 0.2,
-        "recall": 0.4
+        "precision": 0.3,
+        "recall": 0.5
       },
       "tema": {
         "precision": 0.0,
@@ -33,31 +33,32 @@
       }
     },
     "pontos_fortes": [
-      "Referências legislativas bem selecionadas e aplicadas ao caso (CPP, Art. 386, VII; Art. 226; Art. 227), com normalização adequada e sem incluir dispositivos penais não interpretados no HC (como o Art. 157 do CP).",
-      "Precedentes citados com referência completa (tribunal, classe, número, relator, órgão e datas), por exemplo: STJ, HC 712.781/RJ, Min. Rogerio Schietti, 6ª Turma, 15/3/2022, DJe 22/3/2022.",
-      "As justificativas das teses trazem trechos literais fiéis da ementa/voto, demonstrando correlação sem inventar conteúdos."
+      "Referências legislativas corretas e pertinentes ao fundamento do acórdão: inclusão de Código de Processo Penal, Art. 386, inciso VII; Art. 226; e Art. 227, efetivamente manejados no voto/ementa.",
+      "Teses capturaram pontos centrais da ementa (reconhecimento não tem força probante absoluta; confirmação em juízo não é suficiente; aplicação do in dubio pro reo), com justificativas literais adequadas extraídas da ementa/voto.",
+      "Citação jurisprudencial do HC 712.781/RJ, com classe, número, relator, órgão julgador e datas, corretamente empregada para fundamentar teses sobre a fragilidade epistêmica do reconhecimento."
     ],
     "pontos_melhoria": [
-      "[PRECISION] As teses (T1–T5) não seguem a estrutura obrigatória de uma única frase contendo entendimento + questão jurídica + contexto fático + fundamentos jurídicos; por exemplo, T1 não insere o contexto do caso (roubo majorado com prova limitada a depoimento da vítima e reconhecimentos) nem indica os fundamentos específicos (arts. 226/227 CPP e precedentes), o que viola o Manual.",
-      "[RECALL] Faltou tese expressa sobre a \"desnecessidade de reexame do acervo probatório\" quando as inconsistências são aferíveis primo ictu oculi (ementa/caput e itens; voto: \"essa análise [...] não depende de incursão aprofundada no acervo probatório\"). Também não foi formulada tese sobre a nulidade do reconhecimento quando não observadas as formalidades do art. 226 do CPP, como indicado no item 3 da ementa.",
-      "[RECALL] Campo jurisprudenciaCitada omitiu diversos precedentes que fundamentam as teses: STF, HC 170.117; STJ, AgRg no AREsp 1.722.914/DF; HC 706.735/RS; HC 664.537/RJ; HC 698.058/SP; AgRg no HC 641.267/RS; AgRg no HC 730.232/SP; AgRg no REsp 1.969.149/RS. Esses julgados são citados no voto para sustentar os critérios de valoração do reconhecimento e a atuação em HC sem reexame probatório profundo.",
-      "[PRECISION] Campo notas incluiu categorias inexistentes no caso (quantidade de droga; Direito Ambiental; Recursos Repetitivos; Reafirmação de jurisprudência), com formato incorreto e sem qualquer lastro no texto; neste acórdão não há notas aplicáveis, portanto o campo deveria estar vazio.",
-      "[PRECISION] Campo informacoesComplementares trouxe itens inventados (Recursos Repetitivos, Reafirmação, distinguishing, PUIL, IAC), ausentes no texto; o correto seria não incluir ICE, pois não há procedimento especial padronizado mencionado.",
-      "[PRECISION] Campo termosAuxiliares contém termos proibidos/irrelevantes ou com normalização incorreta (p.ex., \"habeas corpus\" e \"depoimento da vitima\" constam da ementa; \"sumula 7 stj\", \"repercussao geral\", \"prisao preventiva\", \"art 312 cpp\" não aparecem no texto; nome da parte \"<DADOS PESSOAIS REMOVIDOS>\" é indevido; acentos em \"reconhecimento fotográfico\"); priorizar termos realmente úteis e não presentes na ementa/ICE, como \"art 226 cpp\", \"art 227 cpp\", \"vies de confirmacao\", \"psicologia do testemunho\", \"falso positivo\", \"resolucao 484 cnj\".",
-      "[PRECISION] Campo tema incluiu \"STJ, número 0\" sem qualquer menção inequívoca a Tema; o campo deve permanecer vazio quando não há referência expressa a Tema de repetitivo (STJ) ou repercussão geral (STF)."
+      "[PRECISION] As teses não atendem ao formato obrigatório de uma única frase contendo ENTENDIMENTO + QUESTÃO JURÍDICA + CONTEXTO FÁTICO + FUNDAMENTOS JURÍDICOS; por exemplo, T1 e T4 são enunciados genéricos, sem o contexto específico do caso (roubo majorado com condenação lastreada apenas em depoimento da vítima/reconhecimentos) e sem indicar o fundamento normativo/jurisprudencial aplicado (art. 226 CPP; HC 712.781/RJ), o que viola o padrão estrutural.",
+      "[RECALL] Faltou tese específica da ementa sobre a \"desnecessidade de reexame do acervo probatório\" em habeas corpus quando as inconsistências são aferíveis primo ictu oculi (itens do caput e dos pontos 7, 10), e tese sobre a nulidade do reconhecimento que não observa as disposições legais (arts. 226 a 228 do CPP), ambas correlacionadas ao relatório e amplamente fundamentadas no voto.",
+      "[PRECISION] Campo notas contém informações inexistentes e em formato inválido: \"Quantidade de droga apreendida...\" (o caso é roubo, sem drogas), \"Direito Ambiental.\", e procedimentos especiais não mencionados; além disso, a nota de quantidade de drogas usa placeholders, violando o formato exato exigido.",
+      "[PRECISION] Campo informacoesComplementares traz etiquetas inexistentes no texto e fora do rol permitido (p.ex., \"Aplicada técnica de distinção (distinguishing)...\", PUIL, IAC, Recursos Repetitivos), o que fere as regras de ICE (apenas rótulos padronizados e quando houver evidência inequívoca).",
+      "[RECALL] Campo jurisprudenciaCitada omitiu precedentes claramente citados e diretamente utilizados no voto, como: AgRg no AREsp 1.722.914/DF (STJ, Min. Laurita Vaz), HC 706.735/RS (STJ, Min. Sebastião Reis Júnior), HC 664.537/RJ (STJ, Min. Antonio Saldanha Palheiro), AgRg no HC 641.267/RS (STJ, Min. Rogerio Schietti), AgRg no REsp 1.969.149/RS (STJ, Min. Joel Ilan Paciornik) e HC 170.117 (STF, Min. Marco Aurélio); esses precedentes fundamentam diretamente as teses sobre insuficiência de provas e atuação em HC.",
+      "[PRECISION] Em jurisprudenciaCitada, há erro factual na data do DJe do HC 674.139/SP (no voto: DJe de 24/2/2022; extraído: 19/2/2022) e uso do campo \"teseId\" em vez do obrigatório \"id\" para referenciar a tese, contrariando o padrão estrutural.",
+      "[PRECISION] Campo termosAuxiliares inclui termos presentes na ementa (p.ex., \"habeas corpus\", \"in dubio pro reo\", \"reconhecimento pessoal\", \"depoimento da vitima\"), termos irrelevantes/ausentes (\"sumula 7 stj\", \"repercussao geral\", \"prisao preventiva\", \"art 312 cpp\"), uso de acentuação (\"reconhecimento fotográfico\") e um placeholder indevido (\"<DADOS PESSOAIS REMOVIDOS>\"), violando as regras de normalização e relevância.",
+      "[PRECISION] Campo tema indevidamente preenchido com {\"tribunal\":\"STJ\",\"numero\":0}, sem qualquer menção a Tema de Repetitivo ou de Repercussão Geral no texto; o correto seria não indicar tema."
     ],
-    "explicacao": "A precision ficou baixa porque há violações estruturais relevantes nas teses, inclusão de notas/ICE inexistentes e tema indevido, além de termos auxiliares inadequados. O recall foi prejudicado pela omissão de teses claras da ementa (p. ex., desnecessidade de reexame probatório) e pela ausência de vários precedentes citados no voto. Para melhorar, reescrever as teses com os 4 elementos em uma frase, completar a lista de precedentes do voto e manter vazios os campos sem evidência inequívoca (notas, ICE, tema)."
+    "explicacao": "A precisão ficou em 0.50 devido a violações estruturais nas teses, inclusão de notas/ICE inventadas e erros/irregularidades em jurisprudência, termos auxiliares e tema. O recall foi 0.68 porque, embora as ideias centrais da ementa tenham sido captadas, faltaram teses e vários precedentes relevantes citados no voto. Para melhorar, é essencial ajustar o formato das teses (uma frase com 4 elementos), limitar notas/ICE apenas quando houver evidência inequívoca e completar as citações jurisprudenciais efetivamente utilizadas no voto."
   },
   "json": true,
   "usage": {
-    "prompt_tokens": 28185,
-    "completion_tokens": 6821,
-    "total_tokens": 35006,
-    "cached_tokens": 28160,
-    "reasoning_tokens": 5568,
+    "prompt_tokens": 28188,
+    "completion_tokens": 8097,
+    "total_tokens": 36285,
+    "cached_tokens": 25856,
+    "reasoning_tokens": 6720,
     "finished_reason": "stop"
   },
   "model": "openai/gpt-5",
-  "tempo": 191.556,
+  "tempo": 148.838,
   "tratada": true
 }

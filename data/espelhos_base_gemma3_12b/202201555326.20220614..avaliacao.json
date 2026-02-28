@@ -1,19 +1,19 @@
 {
   "resposta": {
-    "precision": 0.33,
-    "recall": 0.56,
+    "precision": 0.37,
+    "recall": 0.73,
     "metricas_por_campo": {
       "teseJuridica": {
-        "precision": 0.2,
-        "recall": 0.4
+        "precision": 0.25,
+        "recall": 0.8
       },
       "jurisprudenciaCitada": {
-        "precision": 0.35,
-        "recall": 0.2
+        "precision": 0.3,
+        "recall": 0.3
       },
       "referenciasLegislativas": {
         "precision": 0.67,
-        "recall": 0.8
+        "recall": 1.0
       },
       "notas": {
         "precision": 0.0,
@@ -24,8 +24,8 @@
         "recall": 1.0
       },
       "termosAuxiliares": {
-        "precision": 0.12,
-        "recall": 0.2
+        "precision": 0.4,
+        "recall": 0.5
       },
       "tema": {
         "precision": 0.0,
@@ -33,33 +33,32 @@
       }
     },
     "pontos_fortes": [
-      "Referências legislativas contemplaram os dispositivos centrais efetivamente aplicados (ex.: Art. 33, § 2º, c e § 3º; Art. 59; Art. 64, I; Art. 68, todos do Código Penal), alinhados ao voto.",
-      "Foram corretamente citados precedentes específicos sobre a fração de 1/6 para exasperação da pena-base (AgRg no AREsp 1.816.037/GO; AgRg no AREsp 1.769.665/RN), que constam do voto.",
-      "ICE mantido vazio, o que é adequado na ausência de procedimentos especiais expressos."
+      "Boa cobertura das teses constantes da ementa quanto ao resultado prático: incluídas as linhas sobre não cabimento de HC substitutivo (item I), adequação do writ para dosimetria (item II), desproporcionalidade do aumento em dobro e redução para parâmetro de 1/6 (item IV), impossibilidade de substituição da pena por restritiva ante maus antecedentes (item V) e fixação de regime semiaberto (item VI).",
+      "Referências legislativas centrais da dosimetria corretamente incluídas e aplicadas: Art. 33, § 2º e § 3º, do Código Penal; Art. 59 e Art. 68 do Código Penal; Art. 64, I, do Código Penal, todos expressamente utilizados no voto.",
+      "Citações jurisprudenciais pertinentes à fração de 1/6 para cada circunstância judicial negativa foram corretamente trazidas (AgRg no AREsp 1.816.037/GO; AgRg no AREsp 1.769.665/RN), alinhadas com a fundamentação do voto."
     ],
     "pontos_melhoria": [
-      "[PRECISION] As teses não seguem a estrutura obrigatória (uma frase com entendimento + questão jurídica + contexto fático + fundamentos): p.ex., T1 e T2 carecem de contexto fático do caso e fundamentos jurídicos explícitos; T5 não explicita o fundamento legal (art. 33, § 2º, c e § 3º, do CP) na própria descrição, violando o Manual.",
-      "[RECALL] Faltou tese sobre a possibilidade de deslocamento de qualificadora para a primeira fase e utilização de condenações atingidas pelo período depurador como maus antecedentes (EMENTA, item III; Voto: \"permite o deslocamento de uma qualificadora... sendo certo que os maus antecedentes... ainda que atingidos pelo período depurador de cinco anos\").",
-      "[PRECISION] Associação incorreta de precedentes às teses e problema estrutural de chave: HC 400.119/RJ foi vinculado à T1 (HC substitutivo), quando no voto fundamenta T2 (revisão da dosimetria); AgRg no HC 696.947/SP (dosimetria/1/6) foi ligado à T4 (substituição), além de usar 'teseId' em vez de 'id'.",
-      "[RECALL] Omissão de precedentes relevantes citados no voto para fundamentar teses: p.ex., AgRg no HC 583.237/PR e AgRg nos EDcl no HC 670.440/SP (deslocamento de qualificadora e maus antecedentes); HC 405.667/SP, HC 536.632/RJ e AgRg no AREsp 1.737.521/PR (substituição/regime).",
-      "[PRECISION] Referências legislativas com erro material: inclusão de 'Código de Processo Penal, Art. 312' (não citado/aplicado) e atribuição equivocada de 'Art. 44, inc. III' ao CPP em vez do Código Penal, contrariando a normalização exigida.",
-      "[RECALL] Omissão do 'Art. 44, inc. III, do Código Penal' como referência legislativa corretamente normalizada, apesar de ser expressamente aplicado para afastar a substituição.",
-      "[PRECISION] Notas indevidas: inclusão da categoria 'Quantidade de droga apreendida...' sem qualquer lastro no caso (furto qualificado), e fora do formato padrão (uso de colchetes e ausência de dado concreto).",
-      "[PRECISION] Termos auxiliares incluem expressões presentes na ementa (p.ex., 'dosimetria', 'regime prisional', 'maus antecedentes', 'substituição da pena', 'habeas corpus') e não observam a normalização (acentos em 'substituição da pena'), contrariando o Manual.",
-      "[PRECISION] Tema de repetitivo/repercussão geral foi criado sem menção no texto ('STJ' com descrição genérica), quando não há referência a 'Tema'."
+      "[PRECISION] As teses não observam a estrutura exigida (uma frase com entendimento + questão jurídica + contexto fático + fundamentos jurídicos); por exemplo, T3 afirma \"elevação em patamar superior ao previsto em lei\" (o parâmetro é jurisprudencial, não legal) e não inclui o contexto fático específico (furto qualificado com duas qualificadoras e maus antecedentes) nem os fundamentos citados (precedentes sobre a fração de 1/6).",
+      "[RECALL] Faltou tese expressa sobre a possibilidade de deslocamento de qualificadora para outras fases e de uso de condenações alcançadas pelo período depurador como maus antecedentes, claramente enunciada na ementa (item III: \"permite o deslocamento de uma qualificadora... e... os maus antecedentes... ainda que atingidos pelo período depurador de cinco anos\").",
+      "[PRECISION] Campo jurisprudenciaCitada com associação tese ↔ precedente incorreta e erro estrutural de chave: foi usado \"teseId\" em vez de \"id\"; p.ex., o HC 400.119/RJ fundamenta a revisão de dosimetria em HC (T2), mas foi associado à T1 (substitutividade).",
+      "[RECALL] Omissão de precedentes citados e diretamente relacionados às teses: para substituição de pena e regime prisional (HC 405.667/SP; HC 536.632/RJ; AgRg no AREsp 1.737.521/PR; HC 430.248/SP) e para a proporcionalidade da fração (AgRg no REsp 1.970.791/RN; AgRg no HC 711.280/MS; AgRg no HC 696.947/SP).",
+      "[PRECISION] Referências legislativas com erro grave: inclusão inventada do Art. 312 do CPP (não citado/aplicado) e rotulação equivocada do Art. 44, III, como do Código de Processo Penal (o voto e a ementa referem-se ao Código Penal).",
+      "[PRECISION] Notas: inserida categoria indevida e em formato não previsto (\"Quantidade de droga apreendida...\"), sem qualquer suporte no texto do acórdão (o caso não é de drogas).",
+      "[PRECISION] Termos auxiliares com itens vedados por constarem na ementa ou por serem genéricos: \"maus antecedentes\", \"habeas corpus\" e \"substituição da pena\" constam na ementa; \"pena\" é termo genérico e deve ser evitado.",
+      "[PRECISION] Campo tema indevido: criado um \"Tema STJ\" sem qualquer menção a Tema/STF-STJ no acórdão; o correto seria manter o campo vazio."
     ],
-    "explicacao": "A precisão ficou baixa principalmente por teses fora do padrão estrutural, associações incorretas de precedentes, referências legislativas com erros e inclusão indevida de notas/TAP/tema. A cobertura ficou mediana porque, embora os tópicos principais tenham sido abordados, faltou a tese sobre deslocamento de qualificadora/maus antecedentes e vários precedentes essenciais foram omitidos. Para melhorar, priorizar a formulação das teses com os 4 elementos em uma sentença, revisar o mapeamento correto de precedentes às teses e ajustar referências legais e metadados conforme a normalização do Manual."
+    "explicacao": "A precision ficou baixa (0.37) principalmente por teses sem os 4 elementos exigidos, jurisprudências mal associadas e categorias/notas indevidas (incluindo dispositivo legal inventado e tema inexistente). O recall é moderado (0.73) porque a maioria das linhas da ementa foi capturada, mas faltou a tese sobre deslocamento de qualificadora/maus antecedentes e vários precedentes relevantes foram omitidos. Para melhorar, padronize as teses com contexto e fundamentos explícitos, corrija a associação e a estrutura das citações jurisprudenciais e remova campos indevidos (notas de drogas e tema não mencionado)."
   },
   "json": true,
   "usage": {
     "prompt_tokens": 21973,
-    "completion_tokens": 8457,
-    "total_tokens": 30430,
+    "completion_tokens": 8680,
+    "total_tokens": 30653,
     "cached_tokens": 20224,
-    "reasoning_tokens": 7296,
+    "reasoning_tokens": 7424,
     "finished_reason": "stop"
   },
   "model": "openai/gpt-5",
-  "tempo": 180.144,
+  "tempo": 192.178,
   "tratada": true
 }

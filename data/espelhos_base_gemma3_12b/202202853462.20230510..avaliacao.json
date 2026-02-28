@@ -1,19 +1,19 @@
 {
   "resposta": {
-    "precision": 0.46,
-    "recall": 0.65,
+    "precision": 0.38,
+    "recall": 0.52,
     "metricas_por_campo": {
       "teseJuridica": {
-        "precision": 0.75,
-        "recall": 0.85
+        "precision": 0.85,
+        "recall": 0.67
       },
       "jurisprudenciaCitada": {
-        "precision": 0.25,
-        "recall": 0.33
+        "precision": 0.5,
+        "recall": 0.3
       },
       "referenciasLegislativas": {
         "precision": 1.0,
-        "recall": 0.5
+        "recall": 0.67
       },
       "notas": {
         "precision": 0.0,
@@ -24,7 +24,7 @@
         "recall": 1.0
       },
       "termosAuxiliares": {
-        "precision": 0.0,
+        "precision": 0.1,
         "recall": 0.2
       },
       "tema": {
@@ -33,30 +33,32 @@
       }
     },
     "pontos_fortes": [
-      "As teses T1 e T2 refletem fielmente a EMENTA (caput e pontos 2, 5, 6, 7, 10) e o VOTO, descrevendo o contexto fático (reconhecimento como única prova e contradições) e o entendimento (insuficiência/in dubio pro reo).",
-      "Referências legislativas incluíram corretamente o art. 386, inciso VII, do CPP e o art. 226 do CPP, efetivamente aplicados no VOTO.",
-      "Precedente central HC 712.781/RJ foi corretamente citado e associado ao tema da fragilidade do reconhecimento."
+      "As teses T1 e T2 refletem adequadamente a EMENTA (itens 6, 7, 8, 10 e 11), com correlação clara ao RELATÓRIO (impugnação do art. 226 do CPP e fragilidade do reconhecimento) e ao VOTO (dúvida razoável e aplicação do in dubio pro reo), e foram redigidas em uma frase cada.",
+      "As referências legislativas do CPP foram corretamente identificadas e normalizadas: Art. 386, inciso VII (fundamento da absolvição) e Art. 226 (procedimento de reconhecimento).",
+      "Os metadados de jurisprudência sobre repercussão geral e repetitivo foram corretamente sinalizados como false e temaRepetitivo null, conforme a ausência de menções explícitas."
     ],
     "pontos_melhoria": [
-      "[PRECISION] Campo jurisprudenciaCitada usou chave estrutural incorreta (\"teseId\" em vez de \"id\"), violando o padrão exigido; além disso, há erros factuais em referências (p.ex., AgRg no HC 730.232/SP com datas divergentes do texto e HC 664.537 indicado como RS quando o acórdão cita RJ).",
-      "[RECALL] Jurisprudência: omissão de precedentes citados e relevantes para a ratio (STJ, AgRg no AREsp 1.722.914/DF; STJ, HC 706.735/RS; STJ, HC 698.058/SP; STJ, AgRg no REsp 1.969.149/RS; STF, HC 170.117), todos expressamente mencionados no VOTO para fundamentar a tese.",
-      "[PRECISION] Notas: inclusão indevida de \"Quantidade de droga apreendida: Não consta na peça processual.\", fora do escopo (caso não é de drogas) e em formato divergente do Manual; o correto seria não incluir nenhuma nota.",
-      "[PRECISION] Informações Complementares: inclusão de texto não padronizado e não previsto nas etiquetas permitidas (\"Concessão de ordem de habeas corpus de ofício...\"); o ICE deve usar apenas as etiquetas de procedimentos especiais listadas, o que não se aplica aqui.",
-      "[PRECISION] Termos auxiliares com várias violações: presença de termos que constam na ementa (\"reconhecimento\", \"in dubio pro reo\"), uso de acentos (\"vítima\", \"absolvição\", \"contradição\", etc.) e termos genéricos (\"prova\", \"justiça\", \"erro\").",
-      "[RECALL] Referências legislativas relevantes foram omitidas, embora citadas e aplicadas no VOTO: arts. 227 e 228 do CPP (o reconhecimento como meio de prova previsto nos arts. 226 a 228) e o art. 7º, I, da Resolução n. 484/2022, mencionada como parâmetro procedimental."
+      "[PRECISION] Campo notas incluiu \"Quantidade de droga apreendida: Não consta na peça processual.\", categoria inexistente no caso (roubo) e em formato vedado pelo Manual; deveria estar vazio diante da ausência de nota aplicável.",
+      "[PRECISION] Campo informacoesComplementares trouxe sentença não padronizada (\"Concessão de ordem de habeas corpus de ofício...\") e ainda reproduziu conteúdo já constante da ementa; o ICE deve usar apenas etiquetas padronizadas (p.ex., repetitivos/IAC/PUIL) e, inexistindo, manter vazio.",
+      "[PRECISION] Campo jurisprudenciaCitada contém erros factuais: \"AgRg no HC n. 730.232/SP\" com datas incorretas (no texto: julgado em 19/12/2022, DJe 21/12/2022) e \"HC n. 664.537/RJ\" foi extraído como \"RS\"; isso compromete a fidedignidade das referências.",
+      "[RECALL] Campo jurisprudenciaCitada omitiu precedentes centrais citados no VOTO que fundamentam as teses, como STF HC 170.117 (Rel. Min. Marco Aurélio), STJ AgRg no AREsp 1.722.914/DF (Rel. Min. Laurita Vaz), STJ HC 706.735/RS, STJ HC 674.139/SP, STJ HC 698.058/SP e STJ AgRg no REsp 1.969.149/RS.",
+      "[RECALL] Campo referenciasLegislativas omitiu o art. 7º, inciso I, da Resolução n. 484/2022 (citada expressamente no VOTO como parâmetro para instrução do reconhecedor), dispositivo efetivamente utilizado na fundamentação; deveria constar como diploma \"Resolução n. 484/2022 [do órgão competente]\", dispositivo \"Art. 7º, inciso I\".",
+      "[PRECISION] Campo termosAuxiliares incluiu termos já presentes na ementa (p.ex., \"in dubio pro reo\", \"reconhecimento\") e com acentuação indevida (\"vítima\", \"absolvição\", \"prisão\"), além de termos genéricos (\"prova\", \"justiça\", \"erro\"); sugerem-se termos normalizados e relevantes não constantes da ementa/ICE, como \"art 226 cpp\", \"reconhecimento fotografico\", \"falsas memorias\", \"album de suspeitos\", \"vies de confirmacao\", \"art 386 vii cpp\", \"resolucao 484 cnj\".",
+      "[RECALL] Campo teseJuridica deixou de formular tese explícita da EMENTA sobre a \"confirmação em juízo do reconhecimento fotográfico não ser, por si, segura em razão de viés de confirmação\" (item 5) e sobre que o \"reconhecimento que obedece às disposições legais não prepondera sobre outros meios de prova\" (item 3); deveriam constar como teses autônomas com os 4 elementos.",
+      "[PRECISION] Campo tema incluiu Tema do STJ sem número e sem menção no acórdão; não há indicação de Tema de Repercussão Geral (STF) ou Recurso Repetitivo (STJ), devendo o campo permanecer vazio."
     ],
-    "explicacao": "A precision ficou baixa sobretudo por violações estruturais e erros factuais em jurisprudência, além de inclusões indevidas em notas, ICE, termos auxiliares e tema. O recall é mediano pelas omissões de precedentes relevantes e de dispositivos legais citados/interpretados no VOTO. Para melhorar, alinhar estritamente a estrutura exigida (campos e formatos), revisar dados factuais das citações e ampliar a cobertura de precedentes e dispositivos efetivamente aplicados."
+    "explicacao": "A precisão ficou baixa porque houve inserções indevidas e com formatação inadequada (notas, ICE, termos auxiliares e tema) e erros factuais em precedentes. O recall foi comprometido principalmente pela omissão de vários precedentes relevantes e de um dispositivo normativo (Resolução 484/2022), além da ausência de uma tese clara da EMENTA sobre o viés de confirmação e a não preponderância do reconhecimento. Para melhorar, seguir estritamente os padrões do Manual (especialmente em notas/ICE/TAP), revisar cuidadosamente os dados dos precedentes e ampliar a cobertura de jurisprudência e das teses explícitas da ementa."
   },
   "json": true,
   "usage": {
     "prompt_tokens": 27263,
-    "completion_tokens": 7980,
-    "total_tokens": 35243,
-    "cached_tokens": 7040,
-    "reasoning_tokens": 7040,
+    "completion_tokens": 7703,
+    "total_tokens": 34966,
+    "cached_tokens": 25856,
+    "reasoning_tokens": 6400,
     "finished_reason": "stop"
   },
   "model": "openai/gpt-5",
-  "tempo": 130.105,
+  "tempo": 172.386,
   "tratada": true
 }

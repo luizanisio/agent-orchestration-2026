@@ -1,0 +1,142 @@
+{
+  "teseJuridica": [
+    {
+      "id": "T1",
+      "descricao": "A admissão de habeas corpus em substituição a recurso próprio é restrita a casos excepcionais de flagrante ilegalidade, e a dosimetria da pena, em regra, insere-se no âmbito da discricionariedade do julgador, somente passível de revisão em caso de inobservância dos parâmetros legais ou flagrante desproporcionalidade, considerando o contexto de que a Corte de origem invocou fundamentos para manter a exasperação da basilar em sintonia com o entendimento do Sodalício, permitindo o deslocamento de uma qualificadora para outras fases da dosimetria e a utilização de maus antecedentes para majorar a pena-base, ainda que dentro do período depurador de cinco anos.",
+      "justificativas": [
+        "A Terceira Seção desta Corte, seguindo entendimento firmado pela Primeira Turma do col. Pretório Excelso, firmou orientação no sentido de não admitir a impetração de habeas corpus em substituição ao recurso adequado, situação que implica o não conhecimento da impetração, ressalvados casos excepcionais em que, configurada flagrante ilegalidade apta a gerar constrangimento ilegal, seja possível a concessão da ordem de ofício.",
+        "A via do writ somente se mostra adequada para a análise da dosimetria da pena se não for necessária uma análise aprofundada do conjunto probatório e se se tratar de flagrante ilegalidade. Vale dizer, o entendimento deste Tribunal firmou-se no sentido de que a \"dosimetria da pena insere-se dentro de um juízo de discricionariedade do julgador, atrelado às particularidades fáticas do caso concreto e subjetivas do agente, somente passível de revisão por esta Corte no caso de inobservância dos parâmetros legais ou de flagrante desproporcionalidade\" (HC n. 400.119/RJ, Quinta Turma, Rel. Min. Reynaldo Soares da Fonseca, DJe de 1º/8/2017)."
+      ]
+    },
+    {
+      "id": "T2",
+      "descricao": "Apesar da possibilidade de deslocamento de qualificadoras para outras fases da dosimetria e da consideração de maus antecedentes, o aumento em dobro da pena-base em relação ao mínimo legal revela-se desproporcional, exigindo a redução para um patamar mais adequado, como 1/6 por cada circunstância judicial negativa, considerando que não se demonstrou de forma concreta e específica a necessidade de um aumento maior.",
+      "justificativas": [
+        "Contudo, tem-se que o aumento em dobro em relação ao mínimo se revela desproporcional, notadamente porque não se demonstrou de forma concreta e específica a necessidade do referido aumento de forma a afastar o entendimento deste Tribunal que considera proporcional o aumento de 1/6 por cada circunstância judicial negativa impondo, nesse ponto, a concessão da ordem para reduzir a pena-base."
+      ]
+    },
+    {
+      "id": "T3",
+      "descricao": "Ainda que a pena-base tenha sido reduzida, a substituição da pena privativa de liberdade por restritiva de direitos é inviável, em virtude da vedação legal expressa no artigo 44, inciso III, do Código Penal, diante da existência de maus antecedentes do apelante, tornando a medida socialmente não recomendável, especialmente considerando a reincidência e a gravidade dos delitos anteriores.",
+      "justificativas": [
+        "Assim, ainda que a basilar tenha sido reduzida, descabida a pretensão de substituição da pena privativa de liberdade por restritiva de direitos pois, como bem observado pelo acórdão recorrido, \"há vedação legal à substituição da pena privativa de liberdade por restritiva de direitos, com base no disposto no artigo 44, inciso III, do Código Penal, diante dos maus antecedentes do apelante, não sendo medida socialmente recomendável, afastando-se o pleito Defensivo\" (fl. 268), notadamente diante da existência de diversas anotações criminais, inclusive pelo mesmo delito versado nestes autos, que torna a medida socialmente não recomendável, conforme folha de antecedentes ínsita às fls. 190-194."
+      ]
+    },
+    {
+      "id": "T4",
+      "descricao": "Considerando a nova pena imposta, inferior a quatro anos de reclusão, e a ausência de reincidência do paciente, embora presentes maus antecedentes, a manutenção do regime fechado é inviável, sendo mais adequado o regime semiaberto, especialmente por se tratar de crime cometido sem violência ou grave ameaça, conforme o artigo 33, § 2º, c e § 3º, do Código Penal.",
+      "justificativas": [
+        "Considerando a nova pena imposta, inferior a quatro anos de reclusão, bem como em face do paciente não ser reincidente, em que pese a existência de maus antecedentes, tenho que resta inviável a manutenção do regime fechado, notadamente por se tratar de crime cometido sem violência ou grave ameaça, pelo que fixo o regime semiaberto para início do resgate da reprimenda, ex vi do art. 33, § 2º, c e § 3º, do CP."
+      ]
+    }
+  ],
+  "jurisprudenciaCitada": [
+    {
+      "teseId": "T1",
+      "referenciaCompleta": "STJ, HC n. 400.119/RJ, Quinta Turma, Rel. Min. Reynaldo Soares da Fonseca, DJe de 1º/8/2017.",
+      "assunto": "Admissibilidade do habeas corpus em substituição a recurso próprio apenas em casos de flagrante ilegalidade.",
+      "repercussaoGeral": false,
+      "recursoRepetitivo": false,
+      "temaRepetitivo": null
+    },
+    {
+      "teseId": "T2",
+      "referenciaCompleta": "AgRg no AREsp n. 1.816.037/GO, relatora Ministra Laurita Vaz, Sexta Turma, DJe de 29/10/2020.",
+      "assunto": "Exasperação da pena-base deve seguir o parâmetro de 1/6 para cada circunstância judicial desfavorável.",
+      "repercussaoGeral": false,
+      "recursoRepetitivo": false,
+      "temaRepetitivo": null
+    },
+    {
+      "teseId": "T2",
+      "referenciaCompleta": "AgRg no AREsp n. 1.769.665/RN, relator Ministro Reynaldo Soares da Fonseca, Quinta Turma, DJe de 22/06/2021.",
+      "assunto": "Necessidade de fundamentação adequada para exasperação da pena-base acima do patamar usual.",
+      "repercussaoGeral": false,
+      "recursoRepetitivo": false,
+      "temaRepetitivo": null
+    },
+    {
+      "teseId": "T3",
+      "referenciaCompleta": "AgRg no HC n. 666.334/RG, Rel. Ministro GILMAR MENDES, DJe de 6/5/2014.",
+      "assunto": "Utilização da quantidade de droga para majorar a pena-base e afastar a causa de diminuição não configura bis in idem.",
+      "repercussaoGeral": true,
+      "recursoRepetitivo": false,
+      "temaRepetitivo": null
+    },
+    {
+      "teseId": "T3",
+      "referenciaCompleta": "AgRg no HC n. 536.632/SP, Quinta Turma, Rel. Min. Leopoldo de Arruda Raposo, DJe de 20/11/2019.",
+      "assunto": "Impossibilidade de substituição da pena privativa de liberdade em casos de maus antecedentes.",
+      "repercussaoGeral": false,
+      "recursoRepetitivo": false,
+      "temaRepetitivo": null
+    },
+    {
+      "teseId": "T4",
+      "referenciaCompleta": "AgRg no AREsp n. 1.737.521/PR, Quinta Turma, Rel. Min. Reynaldo Soares da Fonseca, DJe de 21/6/2021.",
+      "assunto": "Possibilidade de fixação do regime semiaberto mesmo com circunstâncias judiciais desfavoráveis.",
+      "repercussaoGeral": false,
+      "recursoRepetitivo": false,
+      "temaRepetitivo": null
+    },
+    {
+      "teseId": "T4",
+      "referenciaCompleta": "AgRg no HC n. 430.248/SP, Quinta Turma, Rel. Min. Felix Fischer, DJe de 1/8/2018.",
+      "assunto": "Inviabilidade da manutenção do regime fechado em casos de pena inferior a 4 anos e ausência de reincidência.",
+      "repercussaoGeral": false,
+      "recursoRepetitivo": false,
+      "temaRepetitivo": null
+    }
+  ],
+  "referenciasLegislativas": [
+    {
+      "diplomaLegal": "Código Penal",
+      "dispositivo": "Art. 33, § 2º, c e § 3º",
+      "redacaoPosterior": null
+    },
+    {
+      "diplomaLegal": "Código Penal",
+      "dispositivo": "Art. 44, inciso III",
+      "redacaoPosterior": null
+    },
+    {
+      "diplomaLegal": "Código Penal",
+      "dispositivo": "Art. 59",
+      "redacaoPosterior": null
+    },
+    {
+      "diplomaLegal": "Código Penal",
+      "dispositivo": "Art. 68",
+      "redacaoPosterior": null
+    }
+  ],
+  "notas": [
+    "Quantidade de droga apreendida: não consta.",
+    "Princípio da insignificância: não aplicado.",
+    "Técnica de distinção (distinguishing) aplicada em relação ao RE n. 666.334/RG (Repercussão Geral)."
+  ],
+  "informacoesComplementares": [
+    "Habeas corpus concedido de ofício."
+  ],
+  "termosAuxiliares": [
+    "dosimetria",
+    "pena",
+    "regime prisional",
+    "maus antecedentes",
+    "proporcionalidade",
+    "desproporcionalidade",
+    "flagrante ilegalidade",
+    "habeas corpus",
+    "substituição da pena",
+    "circunstancias judiciais",
+    "qualificadora",
+    "reincidencia"
+  ],
+  "tema": [
+    {
+      "tribunal": "STF",
+      "numero": null,
+      "descricao": "Repercussão Geral sobre bis in idem na dosimetria da pena."
+    }
+  ]
+}

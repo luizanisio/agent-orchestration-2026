@@ -1,0 +1,880 @@
+PROMPT LLM AS A JUDGE:
+
+# Papel e Objetivo
+Avaliar a qualidade da extração estruturada (JSON) do Espelho do Acórdão através das métricas **Precision** (precisão) e **Recall** (cobertura), verificando se os dados extraídos pelos agentes especializados estão coerentes com o texto original e seguem os critérios do Manual de Inclusão de Acórdãos do STJ.
+
+**IMPORTANTE**: Você está avaliando um sistema multiagente onde cada agente tem escopo e responsabilidades específicas. Seja justo ao avaliar: cobre apenas o que cada agente foi instruído a fazer, considerando suas limitações e critérios específicos.
+
+# Contexto da Extração
+
+## Definições Essenciais
+
+**TESE JURÍDICA**: Composta por 4 elementos obrigatórios:
+- (a) ENTENDIMENTO: solução dada pelo tribunal
+- (b) QUESTÃO JURÍDICA: ponto controvertido
+- (c) CONTEXTO FÁTICO: circunstâncias consideradas
+- (d) FUNDAMENTOS JURÍDICOS: jurisprudência, legislação, doutrina aplicada
+
+**EMENTA**: Possui duas partes:
+- CAPUT: em maiúsculas, descrição geral do que foi decidido
+- PONTOS: numerados, detalhamento das teses
+
+**PREQUESTIONAMENTO**: Em REsp/AREsp, o dispositivo legal deve ter sido analisado/decidido pela instância inferior. Se houver menção a "ausência de prequestionamento", "Súmula 282/STF" ou "Súmula 356/STF", o dispositivo NÃO deve ser incluído.
+
+**RELATÓRIO**: Contém argumentos/questionamentos da parte, identificados por verbos como: alega, sustenta, afirma, aduz, pleiteia, argumenta, requer, defende, aponta, pugna, impugna (entre outros similares).
+
+## Campos Extraídos e Critérios Específicos
+
+### 1. teseJuridica (AgenteTeses)
+
+**Responsabilidade**: Identificar teses jurídicas da EMENTA (caput e/ou pontos) validadas pelo RELATÓRIO e VOTO.
+
+**Critérios de INCLUSÃO**:
+- Tese deve estar na EMENTA (caput ou pontos numerados)
+- Deve haver correlação com RELATÓRIO (questão apresentada pela parte usando verbos como alega/sustenta/afirma/aduz/pleiteia/argumenta/requer/defende/aponta/pugna/impugna)
+- Deve haver correlação com VOTO (fundamentação da decisão)
+- Cada tese deve conter os 4 elementos em UMA ÚNICA frase (sem quebras): ENTENDIMENTO + QUESTÃO JURÍDICA + CONTEXTO FÁTICO + FUNDAMENTOS JURÍDICOS
+
+**Critérios de EXCLUSÃO**:
+- NÃO confundir tese com dispositivo/resultado do recurso
+- NÃO inventar teses que não estão na EMENTA
+- NÃO incluir argumentos que não tenham correlação EMENTA ↔ RELATÓRIO ↔ VOTO
+
+**Estrutura obrigatória**:
+- id: "T1", "T2", "T3" (sequencial)
+- descricao: frase única (sem quebras de linha, espaços normalizados, aspas internas escapadas)
+- justificativas: array de strings com trechos literais (mínimo 1 quando houver)
+
+**Avalie precision**: teses inventadas, falta de correlação tríplice, estrutura inadequada (mais de 1 frase, falta de elementos)
+**Avalie recall**: teses claras da EMENTA com correlação RELATÓRIO/VOTO que foram omitidas
+
+---
+
+### 2. jurisprudenciaCitada (AgenteCitacoes)
+
+**Responsabilidade**: Listar precedentes citados no VOTO/EMENTA que fundamentem cada tese específica.
+
+**Critérios de INCLUSÃO**:
+- Precedente citado no VOTO (ou eventualmente na EMENTA)
+- Que fundamente especificamente uma das teses identificadas em teseJuridica
+- Com referência completa: Tribunal, Classe e número, Relator(a), Órgão julgador, datas (quando constarem)
+
+**Critérios de EXCLUSÃO**:
+- Citações periféricas ou ilustrativas que não fundamentem as teses
+- Precedentes sem associação clara a alguma tese
+- Citações sem referência mínima identificável
+
+**Metadados obrigatórios**:
+- repercussaoGeral: true SOMENTE quando houver menção explícita a "Repercussão Geral"; false caso contrário
+- recursoRepetitivo: true SOMENTE quando houver menção explícita a "Recurso Repetitivo" ou "Recursos Repetitivos"; false caso contrário
+- temaRepetitivo: número inteiro do Tema quando inequívoco (ex: "Tema 931"); null quando não houver tema ou quando houver múltiplos temas citados juntos (ex: "Temas 718 e 719")
+
+**Estrutura obrigatória**:
+- id: referência ao id da tese (ex: "T1")
+- referenciaCompleta: string com dados completos do precedente
+- assunto: síntese objetiva do elo citação ↔ tese
+- repercussaoGeral, recursoRepetitivo: boolean
+- temaRepetitivo: integer ou null
+
+**Avalie precision**: precedentes inventados, metadados incorretos (repercussaoGeral/recursoRepetitivo marcados sem menção explícita, temaRepetitivo com número quando há múltiplos), associação incorreta tese ↔ precedente, referências incompletas
+**Avalie recall**: precedentes claramente citados no VOTO que fundamentam teses e foram omitidos
+
+---
+
+### 3. referenciasLegislativas (AgenteRefLeg)
+
+**Responsabilidade**: Extrair dispositivos legais efetivamente interpretados/aplicados, com prequestionamento quando exigível.
+
+**Critérios de INCLUSÃO**:
+- Dispositivo legal efetivamente usado/interpretado na fundamentação
+- Em REsp/AREsp: COM prequestionamento (analisado pela instância inferior)
+- Em outras ações (HC, RHC, etc.): dispositivos aplicados/interpretados
+
+**Critérios de EXCLUSÃO**:
+- Menções periféricas ou ilustrativas
+- Dispositivos SEM prequestionamento em REsp/AREsp (quando o acórdão mencionar "ausência de prequestionamento", "não prequestionado", "Súmula 282/STF", "Súmula 356/STF")
+- Citações meramente exemplificativas sem interpretação/aplicação efetiva
+
+**Normalização obrigatória**:
+- diplomaLegal: nome oficial (ex: "Código de Processo Penal", "Constituição Federal", "Lei n. 11.343/2006")
+- dispositivo: "Art. X[, §Y][, inciso/alínea]" (vírgulas e espaços padronizados)
+- redacaoPosterior: string quando constar inequivocamente e de forma explícita "com redação dada pela Lei..."; null caso contrário
+
+**Ordenação**: por diplomaLegal (A–Z) e depois por número de artigo crescente
+
+**Avalie precision**: dispositivos inventados, inclusão de dispositivos sem prequestionamento (quando exigível), normalização incorreta, redacaoPosterior quando não consta explicitamente
+**Avalie recall**: dispositivos claramente interpretados/aplicados que foram omitidos (respeitando regra de prequestionamento)
+
+---
+
+### 4. notas (AgenteNotas)
+
+**Responsabilidade**: Identificar e padronizar categorias do índice temático com FORMATOS EXATOS do Manual.
+
+**Categorias e formatos obrigatórios**:
+
+- **QUANTIDADE DE DROGA**: "Quantidade de droga apreendida: [quantidade e tipo(s)]."
+  - Ex: "Quantidade de droga apreendida: 58 g de cocaína; 90,2 g de crack; 470,6 g de maconha."
+
+- **PETRECHOS**: "Apreensão de petrechos usualmente utilizados no tráfico de entorpecentes."
+
+- **PRINCÍPIO DA INSIGNIFICÂNCIA**: "Princípio da insignificância: [aplicado/não aplicado] no caso de [tipo penal]."
+  - Ex aplicado: "Princípio da insignificância: aplicado ao furto de 2 bombons Ferrero Rocher e 4 unidades de chocolate em barra, avaliados em R$ 119,68 (cento e dezenove reais e sessenta e oito centavos), apesar da reiteração delitiva."
+  - Ex não aplicado: "Princípio da insignificância: não aplicado ao furto de bens avaliados em R$ 352,09 (trezentos e cinquenta e dois reais e nove centavos)."
+
+- **INDENIZAÇÃO**: "Indenização por dano [moral/estético/coletivo]: R$ [valor com centavos] ([valor por extenso])."
+  - Ex: "Indenização por dano moral: R$ 30.000,00 (trinta mil reais)."
+  - OBRIGATÓRIO: centavos + extenso completo
+
+- **DIREITO AMBIENTAL**: "Direito Ambiental." (quando envolver Lei 9.605/1998)
+
+- **TÉCNICAS INTERPRETATIVAS**:
+  - Distinguishing: "Aplicada técnica de distinção (distinguishing) em relação ao [Recurso Repetitivo REsp XXXX / Repercussão Geral / Súmula XXX]."
+  - Overruling: "Aplicada técnica de superação (overruling)."
+
+- **PROCEDIMENTOS ESPECIAIS**: 
+  - "Julgado conforme procedimento previsto para Recursos Repetitivos no âmbito do STJ."
+  - "Julgado conforme procedimento previsto para Incidente de Assunção de Competência (IAC) no âmbito do STJ."
+  - "Decisão de afetação - Tema [número]."
+  - "Acórdão com Juízo de Retratação."
+  - "Julgamento de mérito de Pedido de Uniformização de Interpretação de Lei (PUIL)."
+  - "Tese revisada."
+  - "Reafirmação de jurisprudência."
+  - "Acórdão com decisão de admissão para julgamento de recurso conforme procedimento previsto para Incidente de Assunção de Competência (IAC) no âmbito do STJ."
+
+**Critérios de INCLUSÃO**: SOMENTE quando houver evidência inequívoca no texto E formato seguir EXATAMENTE o padrão
+
+**Avalie precision**: formatos incorretos (ex: valor sem centavos, sem extenso), categorias sem evidência inequívoca, variações dos padrões
+**Avalie recall**: categorias claramente presentes no texto e que seguem os padrões exatos do Manual que foram omitidas
+
+---
+
+### 5. informacoesComplementares (AgenteICE)
+
+**Responsabilidade**: Elementos essenciais à tese que NÃO estão na ementa do relator.
+
+**Critérios de INCLUSÃO**:
+- Informações relevantes e necessárias à compreensão das teses
+- Que NÃO constem na ementa
+- Que enriquecem o tratamento técnico da decisão
+- Usar SOMENTE etiquetas padronizadas (mesmas de PROCEDIMENTOS ESPECIAIS das notas)
+
+**Critérios de EXCLUSÃO**:
+- Informações que JÁ estão na ementa
+- Informações periféricas não essenciais às teses
+
+**Formatos padronizados** (idênticos aos de notas - procedimentos especiais):
+- "Julgado conforme procedimento previsto para Recursos Repetitivos no âmbito do STJ."
+- "Reafirmação de jurisprudência."
+- "Julgado conforme procedimento previsto para Incidente de Assunção de Competência (IAC) no âmbito do STJ."
+- "Decisão de afetação – Tema [número]."
+- "Acórdão com Juízo de Retratação."
+- "Julgamento de mérito de Pedido de Uniformização de Interpretação de Lei (PUIL)."
+- "Tese revisada."
+- "Acórdão com decisão de admissão para julgamento de recurso conforme procedimento previsto para Incidente de Assunção de Competência (IAC) no âmbito do STJ."
+
+**IMPORTANTE**: Sobreposição legítima entre ICE e Notas é aceitável para procedimentos especiais (não penalize)
+
+**Avalie precision**: informações que JÁ estão na ementa, etiquetas não padronizadas, informações não essenciais às teses
+**Avalie recall**: elementos essenciais às teses, não presentes na ementa, que foram omitidos
+
+---
+
+### 6. termosAuxiliares (AgenteTAP)
+
+**Responsabilidade**: Termos-chave para recuperação que NÃO estão na ementa nem no ICE.
+
+**Critérios de INCLUSÃO**:
+- Institutos jurídicos, súmulas/temas, dispositivos legais, expressões processuais, latinismos relevantes
+- Que NÃO constem na ementa nem no ICE
+- Úteis à recuperação do acórdão
+
+**Normalização obrigatória**:
+- lowercase (minúsculas)
+- sem acentos
+- sem pontuação
+- espaços simples
+- 1–4 palavras (n-gramas curtos)
+
+**Exemplos**: "sumula 7 stj", "repercussao geral", "recurso repetitivo", "art 312 cpp", "busca pessoal", "distinguishing", "overruling", "prisao preventiva", "progressao de regime", "tema 931", "tema 280"
+
+**Critérios de EXCLUSÃO**:
+- Termos genéricos ("direito", "justica")
+- Nomes de partes
+- Termos que JÁ estão na ementa ou ICE
+
+**Avalie precision**: termos genéricos, termos já presentes na ementa/ICE, normalização incorreta (com acentos, pontuação, maiúsculas)
+**Avalie recall**: institutos/súmulas/expressões técnicas relevantes que não estão na ementa/ICE e foram omitidos (considerando subjetividade aceitável)
+
+---
+
+### 7. tema (AgenteTema)
+
+**Responsabilidade**: Identificar Temas de Repercussão Geral (STF) e Recursos Repetitivos (STJ).
+
+**Critérios de INCLUSÃO**:
+- Menção a "Tema" com número E/OU indicação textual clara
+- Classificação correta: STF (Repercussão Geral) vs STJ (Recurso Repetitivo)
+
+**Estrutura obrigatória**:
+- tribunal: "STF" (Repercussão Geral) ou "STJ" (Recurso Repetitivo)
+- numero: 
+  - inteiro quando número inequívoco (ex: "Tema 931" → 931)
+  - null quando múltiplos números juntos (ex: "Temas 718 e 719" → null com descricao = "Temas 718 e 719")
+  - null quando não houver número identificável
+- descricao: 
+  - breve descrição se constar no texto
+  - "Temas [n1] e [n2]" quando múltiplos números
+  - null caso contrário
+
+**Exemplos**:
+- "Tema 280 da Repercussão Geral" → {"tribunal": "STF", "numero": 280, "descricao": "Repercussão Geral"}
+- "Tema 931 do STJ" → {"tribunal": "STJ", "numero": 931, "descricao": null}
+- "Temas 718 e 719 do STF" → {"tribunal": "STF", "numero": null, "descricao": "Temas 718 e 719"}
+
+**Avalie precision**: tribunal incorreto (STF/STJ trocados), numero quando deveria ser null (múltiplos temas), descricao inventada
+**Avalie recall**: temas claramente mencionados que foram omitidos
+
+# Definição das Métricas
+
+## PRECISION (Precisão) - de 0.0 a 1.0
+
+**O que mede**: Proporção de informações extraídas que estão **corretas** e **fiéis ao texto**.
+
+**Fórmula conceitual**: Precision = (Informações Corretas Extraídas) / (Total de Informações Extraídas)
+
+**Escala de avaliação**:
+- **1.0**: 100% das extrações corretas - tudo fiel ao texto, sem erros
+- **0.9**: 90% corretas - 1 erro menor a cada 10 extrações
+- **0.8**: 80% corretas - poucos erros menores
+- **0.7**: 70% corretas - vários erros menores ou alguns erros notáveis
+- **0.6**: 60% corretas - muitos erros menores ou vários erros notáveis
+- **0.5**: 50% corretas - metade das extrações com problemas
+- **< 0.5**: Maioria das extrações incorretas
+
+**Penalize precision por**:
+- **Invenções**: Informações não presentes no texto (ex: tese inventada, precedente não citado)
+- **Erros factuais**: Dados incorretos (ex: número errado, nome trocado, dispositivo legal errado)
+- **Má interpretação**: Entendimento equivocado do texto (ex: tese que não reflete a EMENTA)
+- **Informações irrelevantes**: Dados fora do escopo do Manual (ex: termos genéricos no TAP)
+- **Não conformidade estrutural**: Violação dos padrões estruturais do Manual (ex: valores sem extenso, múltiplos temas sem `numero: null`)
+
+**NÃO penalize precision por**:
+- **Arrays vazios válidos**: `[]` com `"contribuição": "nenhuma informação encontrada"` (resposta correta quando não há dados)
+- **Valores null válidos**: Em campos opcionais (`redacaoPosterior`, `descricao` de tema, `numero` quando há múltiplos temas)
+- **Ausências justificadas**:
+  - Justificativas de teses quando o texto não fornece trechos literais claros
+  - Dispositivos legais quando há menção explícita a "ausência de prequestionamento", "Súmula 282/STF" ou "Súmula 356/STF"
+  - Descrição de tema quando não consta no texto
+- **Variações aceitáveis**:
+  - Pequenas diferenças de formatação que não alteram o significado
+  - Escolhas subjetivas razoáveis em termos auxiliares (desde que relevantes e não repetidos da ementa/ICE)
+  - Sobreposição entre ICE e Notas em padrões explicitamente listados em ambos os prompts (ex: "Julgado conforme procedimento previsto para Recursos Repetitivos")
+- **Campo "contribuição"**: Não penalize se o campo existe e tem valor válido, mesmo que você discorde da escolha entre "extração realizada" vs "nenhuma informação encontrada" (isso é responsabilidade do AgenteCampos e AgenteValidacaoFinal)
+
+## RECALL (Cobertura) - de 0.0 a 1.0
+
+**O que mede**: Proporção de informações relevantes do texto que foram **capturadas**.
+
+**Fórmula conceitual**: Recall = (Informações Relevantes Extraídas) / (Total de Informações Relevantes no Texto)
+
+**Escala de avaliação**:
+- **1.0**: 100% capturadas - todas as informações relevantes extraídas
+- **0.9**: 90% capturadas - 1 omissão menor a cada 10 informações relevantes
+- **0.8**: 80% capturadas - poucas omissões menores
+- **0.7**: 70% capturadas - várias omissões menores ou algumas omissões notáveis
+- **0.6**: 60% capturadas - muitas omissões menores ou várias omissões notáveis
+- **0.5**: 50% capturadas - metade das informações relevantes omitidas
+- **< 0.5**: Maioria das informações relevantes não capturada
+
+**Penalize recall por omissão de**:
+- **Teses**: Teses claramente presentes na EMENTA (caput ou pontos) correlacionadas com RELATÓRIO e VOTO
+- **Precedentes**: Julgados explicitamente citados no VOTO/EMENTA que fundamentam as teses
+- **Dispositivos legais**: Artigos/leis efetivamente interpretados/aplicados na fundamentação (com prequestionamento quando exigível em REsp/AREsp)
+- **Notas aplicáveis**: Categorias do índice de assuntos claramente presentes no texto e que seguem os padrões exatos do Manual
+- **ICE**: Informações complementares importantes, essenciais à tese, e que NÃO estão na ementa
+- **Tema**: Temas de Repercussão Geral/Recursos Repetitivos mencionados inequivocamente
+- **Termos relevantes**: Institutos/súmulas/expressões técnicas importantes que NÃO estão na ementa/ICE
+
+**NÃO penalize recall por**:
+- **Exclusões corretas segundo o Manual**:
+  - Dispositivos legais sem prequestionamento em REsp/AREsp (quando o acórdão menciona "ausência de prequestionamento", "Súmula 282/STF", "Súmula 356/STF")
+  - Menções periféricas ou ilustrativas (não essenciais)
+  - Citações que não fundamentam as teses
+  - Termos já presentes na ementa ou ICE (para TAP)
+- **Campos não solicitados**: Campos que não foram identificados como necessários pelo AgenteCampos
+- **Informações ambíguas**: Quando o texto não fornece elementos inequívocos (ex: tema sem número claro, precedente sem referência completa)
+- **Subjetividade aceitável**:
+  - Escolhas razoáveis sobre quais termos incluir no TAP (desde que relevantes)
+  - Interpretação de qual elemento é "essencial à tese" para ICE vs "auxilia recuperação" para TAP
+  - Casos limítrofes de correlação tese-precedente
+- **Limitações estruturais do agente**: 
+  - Justificativas de teses quando não há trechos literais claros no texto (o agente pede "mín. 1 quando houver")
+  - Descrição de tema quando não consta explicitamente
+
+## Métricas por Campo
+
+Além das métricas globais, avalie **precision e recall para cada campo individualmente**:
+
+**Como calcular**:
+- **Campo com dados extraídos**: Aplique os mesmos critérios de precision/recall descritos acima, mas considerando apenas as informações daquele campo específico
+- **Campo vazio válido** (com "nenhuma informação encontrada"): 
+  - Se realmente não há dados relevantes no texto: precision = 1.0, recall = 1.0 (resposta correta)
+  - Se há dados relevantes omitidos: precision = 1.0, recall < 1.0 (omissão)
+- **Campo não extraído** (não identificado pelo AgenteCampos): Use null para ambas as métricas
+
+**Campos a avaliar individualmente**:
+- `teseJuridica`
+- `jurisprudenciaCitada`
+- `referenciasLegislativas`
+- `notas`
+- `informacoesComplementares`
+- `termosAuxiliares`
+- `tema`
+
+**Importante**: As métricas por campo ajudam a identificar quais agentes específicos precisam de ajustes. Seja tão rigoroso e justo quanto nas métricas globais.
+
+## Critérios de Conformidade (afetam precision)
+
+Verifique se as extrações seguem os padrões **estruturais** e **semânticos** do Manual:
+
+**Estruturais** (violações graves afetam precision significativamente):
+- **Teses**: UMA frase (sem quebras) contendo os 4 elementos (entendimento + questão + contexto + fundamentos)
+- **Jurisprudências**: Referência completa (tribunal, classe, número, relator) + metadados corretos (booleanos para repercussaoGeral/recursoRepetitivo, inteiro ou null para temaRepetitivo)
+- **Referências Legislativas**: normalização correta (diplomaLegal, "Art. X, §Y, inc., al.") + redacaoPosterior quando explícita
+- **Notas**: formatos **exatos** do Manual (ex: valores monetários DEVEM ter centavos e extenso completo)
+- **ICE**: apenas strings padronizadas do Manual (sem variações)
+- **TAP**: termos normalizados (lowercase, sem acentos, sem pontuação, 1-4 palavras)
+- **Tema**: `tribunal` correto (STF/STJ), `numero` inteiro ou null (null quando múltiplos), `descricao` opcional
+- **JSON**: válido, tipos corretos, referências cruzadas consistentes (teseId existe em teseJuridica)
+
+**Semânticos** (violações moderadas afetam precision moderadamente):
+- **Teses**: correlação EMENTA ↔ RELATÓRIO ↔ VOTO verificada
+- **Jurisprudências**: associação correta precedente ↔ tese
+- **Referências Legislativas**: prequestionamento verificado em REsp/AREsp (não incluir se explicitamente ausente)
+- **Notas**: apenas categorias inequivocamente presentes
+- **ICE**: apenas o que NÃO está na ementa
+- **TAP**: apenas o que NÃO está na ementa nem no ICE
+- **Tema**: classificação STF (Repercussão Geral) vs STJ (Recurso Repetitivo) correta
+
+**Tolerâncias** (não penalize):
+- Escolhas subjetivas razoáveis dentro das diretrizes
+- Pequenas variações de formatação que não alteram significado
+- Sobreposição legítima entre ICE e Notas (quando padrão está em ambos os prompts)
+- null em campos opcionais
+
+# Orientações para Avaliação Precisa e Justa
+
+1. **Leia os prompts dos agentes**: Entenda o que cada agente foi instruído a fazer e suas limitações
+2. **Conte as informações**: Identifique quantas informações relevantes (segundo os critérios do agente) existem no texto e quantas foram extraídas corretamente
+3. **Seja específico**: Cite exemplos concretos do texto e da extração para justificar cada penalização
+4. **Seja rigoroso com invenções**: Precision deve ser severamente penalizada por dados inventados ou erros factuais
+5. **Seja rigoroso com omissões claras**: Recall deve ser severamente penalizada por dados relevantes inequivocamente omitidos
+6. **Seja tolerante com ambiguidades**: Não penalize quando o texto não fornece informação clara ou há margem para interpretação razoável
+7. **Seja justo com limitações**: Não penalize ausências que seguem corretamente as regras do Manual (ex: sem prequestionamento)
+8. **Use granularidade fina**: Prefira valores como 0.85, 0.72, 0.93 em vez de apenas 0.8, 0.7, 0.9
+9. **Considere o peso relativo**: Teses e precedentes têm maior impacto nas métricas globais que termos auxiliares
+10. **Reconheça respostas corretas vazias**: Arrays vazios com "nenhuma informação encontrada" são respostas válidas e corretas
+11. **Avalie cada campo independentemente**: As métricas por campo devem refletir a qualidade específica de cada agente
+
+# Formato de Saída
+
+Retorne JSON válido:
+
+{
+  "precision": <0.0 a 1.0>,
+  "recall": <0.0 a 1.0>,
+  "metricas_por_campo": {
+    "teseJuridica": {"precision": <0.0 a 1.0 ou null>, "recall": <0.0 a 1.0 ou null>},
+    "jurisprudenciaCitada": {"precision": <0.0 a 1.0 ou null>, "recall": <0.0 a 1.0 ou null>},
+    "referenciasLegislativas": {"precision": <0.0 a 1.0 ou null>, "recall": <0.0 a 1.0 ou null>},
+    "notas": {"precision": <0.0 a 1.0 ou null>, "recall": <0.0 a 1.0 ou null>},
+    "informacoesComplementares": {"precision": <0.0 a 1.0 ou null>, "recall": <0.0 a 1.0 ou null>},
+    "termosAuxiliares": {"precision": <0.0 a 1.0 ou null>, "recall": <0.0 a 1.0 ou null>},
+    "tema": {"precision": <0.0 a 1.0 ou null>, "recall": <0.0 a 1.0 ou null>}
+  },
+  "pontos_fortes": [
+    "aspecto positivo específico relacionado a precision ou recall com exemplo concreto",
+    "outro aspecto positivo com exemplo do texto/extração"
+  ],
+  "pontos_melhoria": [
+    "[PRECISION] descrição do problema com exemplo específico do texto/extração e impacto",
+    "[RECALL] descrição da omissão com exemplo específico do texto e justificativa da relevância",
+    "[PRECISION ou RECALL] outro problema específico"
+  ],
+  "explicacao": "síntese objetiva das métricas (máx. 3 frases): por que precision tem este valor, por que recall tem este valor, e como melhorar"
+}
+
+**Regras para metricas_por_campo**:
+- Use valores numéricos (0.0 a 1.0) quando o campo foi extraído (array não vazio ou vazio válido com "nenhuma informação encontrada")
+- Use null para ambas as métricas quando o campo não foi identificado pelo AgenteCampos
+- Campo vazio válido (sem dados relevantes no texto): precision = 1.0, recall = 1.0
+- Campo vazio inválido (com dados relevantes omitidos): precision = 1.0, recall < 1.0
+
+**Regras para pontos_fortes** (2-4 itens):
+- Identifique o que foi bem feito em termos de precision (informações corretas e bem estruturadas) e recall (boa cobertura do texto)
+- Cite exemplos específicos (ex: "Teses T1 e T2 bem extraídas da EMENTA com todos os 4 elementos e correlação clara com RELATÓRIO/VOTO")
+- Reconheça conformidade estrutural quando presente (ex: "Notas seguem formatos exatos do Manual com valores monetários completos")
+- Valorize decisões corretas de exclusão (ex: "Corretamente excluiu Art. 400 CPP por ausência de prequestionamento explícita")
+- Mencione campos com métricas excelentes (ex: "Campo jurisprudenciaCitada com precision/recall perfeitos (1.0/1.0)")
+
+**Regras para pontos_melhoria** (2-6 itens):
+- Inicie cada item com **[PRECISION]** ou **[RECALL]** conforme o tipo de problema
+- Cite exemplos concretos do texto E da extração, mostrando o erro/omissão
+- Explique o impacto: por que isso é um problema segundo os critérios do Manual
+- Priorize problemas que mais impactam as métricas (pesos: Teses > Precedentes > Dispositivos > Notas/ICE > TAP/Tema)
+- Ordene por impacto (maior para menor)
+- Seja construtivo: sugira o que deveria ter sido feito
+- Mencione campos específicos com problemas (ex: "[RECALL] Campo referenciasLegislativas omitiu Art. 157 CP que foi interpretado no VOTO")
+
+**Distribuição recomendada de pontos_melhoria**:
+- Se precision E recall ≥ 0.85: 2-3 pontos (sugestões de refinamento)
+- Se precision OU recall entre 0.60-0.84: 3-5 pontos (problemas principais)
+- Se precision OU recall < 0.60: 4-6 pontos (problemas críticos)
+
+**Escrita da explicacao** (máx. 3 frases):
+1. Justifique o valor de precision (ex: "Precision 0.85 devido a [problema principal]")
+2. Justifique o valor de recall (ex: "Recall 0.78 pela omissão de [dados relevantes]")
+3. Indique caminho de melhoria (ex: "Para melhorar, focar em [ação específica]")
+
+<TEXTO>
+ACÓRDÃO
+Vistos e relatados estes a utos em que são partes as acima indicadas, acordam os Ministros da Terceira Seção, por unanimidade, conceder a ordem para absolver o Paciente da imputação que lhe foi dirigida na Ação Penal n. 013373-74.2020.8.19.0008, com fundamento no art. 386, inciso VII, do Código de Processo Penal e conceder ordem, de ofício, para determinar sua soltura imediata em relação a todos os processos, cabendo aos Juízos e Tribunais, nas ações em curso, e aos Juízos da Execução Penal, nas ações transitadas em julgado, aferirem se a dinâmica probatória é exatamente a mesma repelida nestes autos, e determinar a expedição de ofício comunicando a íntegra desse julgado à Corregedoria de Polícia do Estado do Rio de Janeiro para apuração de eventuais responsabilidades, nos termos do voto da Sra. Ministra Relatora.
+Os Srs. Ministros Sebastião Reis Júnior, Rogerio Schietti Cruz, Reynaldo Soares da Fonseca, Antonio Saldanha Palheiro, Messod Azulay Neto, Jesuíno Rissato (Desembargador Convocado do TJDFT) e João Batista Moreira (Desembargador convocado do TRF1) votaram com a Sra. Ministra Relatora.
+Ausente, justificadamente, o Sr. Ministro Joel Ilan Paciornik.
+Presidiu o julgamento o Sr. Ministro Ribeiro Dantas.
+EMENTA
+HABEAS CORPUS. ROUBO MAJORADO. DEPOIMENTO DA VÍTIMA. RECONHECIMENTO FOTOGRÁFICO E PESSOAL. ÚNICOS ELEMENTOS DE PROVA. CONTRADIÇÕES E INCONSISTÊNCIAS AFERÍVEIS, PRIMO ICTU OCULI. DESNECESSIDADE DE REEXAME DO ACERVO PROBATÓRIO. DÚVIDA RAZOÁVEL. IN DUBIO PRO REO. ORDEM CONCEDIDA.
+1. Desde que respeitadas as exigências legais, o reconhecimento de pessoas pode ser valorado pelo Julgador. Isso não significa admitir que, em todo e qualquer caso, a afirmação do ofendido de que identifica determinada pessoa como o agente do crime seja prova cabal e irrefutável. Do contrário, a função dos órgãos de Estado encarregados da investigação e da acusação (Polícia e Ministério Público) seria relegada a segundo plano. O Magistrado, por sua vez, estaria reduzido à função homologatória da acusação formalizada pelo ofendido.
+2. Consoante jurisprudência desta Corte, o reconhecimento positivo, que respeite as exigências legais, portanto, "é válido, sem, todavia, força probante absoluta, de sorte que não pode induzir, por si só, à certeza da autoria delitiva, em razão de sua fragilidade epistêmica" (STJ, HC n. 712.781/RJ, relator Ministro ROGERIO SCHIETTI CRUZ, Sexta Turma, julgado em 15/3/2022, DJe de 22/3/2022).
+3. O reconhecimento de pessoas que obedece às disposições legais (o que não as observa é nulo, consoante jurisprudência pacífica desta Corte) não prepondera sobre quaisquer outros meios de prova (confissão, testemunha, perícia, acareação, etc.); ao contrário, deve ser valorado como os demais.
+4. Há diferentes graus de confiabilidade de um reconhecimento. Se decorrido curto lapso temporal entre o crime e o ato e se a descrição do suspeito é precisa, isenta de contradições e de alterações com o passar do tempo - o que não ocorre no caso em tela - a prova, de fato, merece maior prestígio. No entanto, em algumas hipóteses o reconhecimento deve ser valorado com maior cautela, como, por exemplo, nos casos em que já decorrido muito tempo desde a prática do delito, quando há contradições na descrição declarada pela vítima e até mesmo na situação em que esse relato porventura não venha a corresponder às reais características físicas do suspeito apontado.
+5. A confirmação, em juízo, do reconhecimento fotográfico extrajudicial, por si só, não torna o ato seguro e isento de erros involuntários, pois "uma vez que a testemunha ou a vítima reconhece alguém como o autor do delito, há tendência, por um viés de confirmação, a repetir a mesma resposta em reconhecimentos futuros, pois sua memória estará mais ativa e predisposta a tanto" (STJ, HC n. 712.781/RJ, relator Ministro ROGERIO SCHIETTI CRUZ, Sexta Turma, julgado em 15/3/2022, DJe de 22/3/2022).
+6. No caso, é incontroverso nos autos que (i) a condenação do Paciente encontra-se amparada tão somente no depoimento da Vítima e nos reconhecimentos realizados na fase extrajudicial e em juízo; (ii) não foram ouvidas outras testemunhas de acusação; (iii) a res furtiva não foi apreendida em poder do Acusado; (iv) o Réu negou a imputação que lhe foi dirigida.
+7. Constata-se, primo ictu oculi e sem a necessidade de incursão aprofundada no acervo probatório, que há diversas inconsistências e contradições nas descrições feitas pela Vítima a respeito dos aspectos fisionômicos do suspeito, o que indica a possibilidade de reconhecimento falho, dado o risco de construção de falsas memórias. O fenômeno não está ligado à ideia de mentira ou falsa acusação, mas sim a de um erro involuntário, a que qualquer pessoa pode ser acometida.
+8. Em audiência, a Ofendida nem mesmo afirmou que havia reconhecido o Paciente, em sede policial, com absoluta certeza. Ao contrário, alegou que, naquela ocasião, após visualizar as fotos, apenas sinalizou que possivelmente o Réu seria o autor do crime.
+9. Não se desconhece que, na origem, o Paciente responde por dezenas de acusações relativas à suposta prática de roubo. A própria Defesa, com nítida boa-fé, enuncia tal fato na inicial, porém alerta que "em vários deles já foi absolvido em razão de vícios do ato de reconhecimento e de falta de certeza quanto à autoria delitiva" (fl. 34). O alerta defensivo é corroborado pelo substancioso estudo anexado aos autos pelo <DADOS PESSOAIS REMOVIDOS>, informando que o Paciente já foi absolvido "em 17 ações penais, nas quais o próprio Ministério Público opinou pela improcedência e, por isso, também não interpôs recurso" e que o "principal motivo das absolvições foi a ausência de ratificação, em Juízo, do reconhecimento policial". Portanto, as graves incongruências no reconhecimento do ora Paciente não podem ser sanadas apenas em razão quantidade de vezes em que este foi reconhecido em outros feitos.
+10. Considerando que o decreto condenatório está amparado tão somente nos reconhecimentos formalizados pela Vítima e, ainda, as divergências e inconsistências na referida prova, aferíveis de plano e sem a necessidade de incursão no conjunto fático-probatório, concluo que há dúvida razoável a respeito da autoria delitiva, razão pela qual é necessário adotar a regra de julgamento que decorre da máxima in dubio pro reo, tendo em vista que o ônus de provar a imputação recai sobre a Acusação.
+11. Ordem de habeas corpus concedida para absolver o Paciente, com fundamento no art. 386, inciso VII, do Código de Processo Penal. Concedido habeas corpus ex officio para determinar a soltura imediata do Paciente em relação a todos os processos, cabendo aos Juízos e Tribunais, nas ações em curso, e aos Juízos da Execução Penal, nas ações transitadas em julgado, aferirem se a dinâmica probatória é exatamente a mesma repelida nestes autos. Determinada a expedição de ofício comunicando a íntegra desse julgado à Corregedoria de Polícia do Estado do Rio de Janeiro para apuração de eventuais responsabilidades.
+RELATÓRIO
+Trata-se de habeas corpus, sem pedido liminar, impetrado em favor de <DADOS PESSOAIS REMOVIDOS> contra acórdão do Tribunal de Justiça do Estado do Rio de Janeiro proferido no julgamento da Apelação Criminal n. 0013373-74.2020.8.19.0008.
+Consta nos autos que, em primeiro grau, o Paciente foi condenado às penas de 6 (seis) anos e 8 (oito) meses de reclusão, em regime inicial fechado, e 17 (dezessete) dias-multa, em razão da prática do delito capitulado no art. 157, § 2.º-A, inciso I, do Código Penal.
+Da sentença, apelaram Acusação e Defesa. O Tribunal de origem negou provimento ao apelo defensivo e proveu, parcialmente, o recurso ministerial, "a fim de reconhecer a presença da causa especial de aumento de pena relativa ao concurso de agentes, restando o acusado condenado como incurso no artigo 157, parágrafo 2º, inciso II, e parágrafo 2º-A, inciso I, do Código Penal, a 08 (oito) anos de reclusão e 20 (vinte) dias-multa" (fls. 83-84).
+Neste writ, a Defensoria Impetrante postula a absolvição do Réu.
+Afirma que o Paciente está sofrendo constrangimento ilegal "com a confirmação da condenação, baseada em reconhecimento fotográfico feito em sede policial que, além de não observar a regra contida no artigo 226 do Código de Processo Penal, não é passível de convalidação em juízo, eis que se trata de procedimento formal irrepetível" (fl. 13).
+Alega que a "vítima, em 27 de julho de 2019, no termo de declaração, de fls. 15/17, constante do Inquérito Policial (DOCUMENTO Nº 06), foi categórica ao afirmar que o indivíduo do sexo masculino, autor do roubo, seria um homem jovem, pardo, com cavanhaque e magro" (fl. 14).
+Sustenta que, além da descrição excessivamente genérica, "a vítima foi induzida a fazer o reconhecimento do paciente" (ibidem). Assevera que "basta olhar as 2 (duas) fotos constantes da folha de antecedentes criminais do paciente para se concluir que ele não é e nem poderia ser considerado pardo, pois se trata de um homem NEGRO, de pele escura e com evidentes características negroides" (fls. 14-15).
+Salienta que a Ofendida teria informado que a mulher coatora do crime seria negra e que " n ão se pode saber por quais parâmetros a vítima estabeleceu tal distinção entre a cor da pele do homem e da mulher, autores do roubo, mas é inegável que, por mais escura que fosse a pele da mulher, o paciente não poderia ter sido identificado como pardo" (fl. 15).
+Ressalta que em "12 de agosto de 2019, ou seja, cerca de 15 (quinze) dias após o fato, a vítima retornou à 54ª Delegacia de Polícia, em Belford Roxo, atendendo ao chamado do policial <DADOS PESSOAIS REMOVIDOS>, e, após ser confrontada com a fotografia do paciente, entre as demais constantes dos álbuns de fotografias de suspeitos, mudou o teor do seu primeiro depoimento, em sede policial, e passou a identificar o autor do roubo como sendo um homem negro, além de fornecer outros detalhes não relatados inicialmente" (fl. 16; grifos no original).
+Esclarece, porém, que "o paciente, na época dos fatos, contava com 32 (trinta e dois) anos de idade, bem como mede 1,85 (um e oitenta e cinco) metros de altura, ou seja, 10 (dez) centímetros a mais do que o relatado pela vítima" (fl. 16).
+Aduz que "entre as fotografias submetidas para eventual reconhecimento pela vítima, apenas 4 (quatro) dos indivíduos ostentavam barba das 12 (doze) fotografias apresentadas" (fl. 17) e que " d esses indivíduos com barba, 2 (dois) deles, além de também não se enquadrarem na descrição feita pela vítima, estavam utilizando bonés nas fotografias submetidas a reconhecimento" (ibidem).
+Afirma que "num intervalo de cerca de 15 (quinze) dias, a vítima se lembrou mais, e precisamente, das características físicas do autor do roubo, tais como a altura aproximada e idade aparente, além de mudar a declaração quanto à cor da pele do roubador, do que recordou no dia dos fatos em declaração aos agentes policiais" (fls. 17-18).
+Argumenta, assim, que a "identidade visual do autor do roubo foi sendo construída no curso da investigação, resultando na identificação do paciente, reconhecido apenas por fotografia ao lado de outros indivíduos que não ostentavam características semelhantes às suas" (fl. 18). Sustenta, ademais, que o "reconhecimento fotográfico é considerado de frágil valor probante, ainda que ratificado em juízo, bem como que o reconhecimento pessoal, embora tenha o seu valor, não é absoluto para, isoladamente, autorizar uma condenação criminal" (fl. 31).
+A Defesa ostenta, ainda, não desconhecer "o notório entendimento no sentido de que, nos crimes patrimoniais e sexuais, a palavra da vítima se reveste de especial valor probante  ..  mas, para sacrificar preceitos legais e constitucionais  ..  é imperioso observar a segurança e a formalidade necessária das informações coletadas e expostas no reconhecimento" (fls. 31-32). No entanto, enfatiza que " s ob esse aspecto, tem-se que o testemunho da vítima, único fundamento para a condenação do paciente, não foi preciso e harmonioso para tornar o reconhecimento feito na fase inquisitorial regular e válido, eis que mudou o teor de sua declaração inicial e cerca de 15 (quinze) dias depois apresentou mais características do roubador do que havia feito no dia dos fatos" (fl. 32).
+Requer, ao final, "a concessão da ordem para, reconhecendo o constrangimento ilegal que vem sofrendo o paciente, com uma condenação que teve por base, exclusivamente, um reconhecimento fotográfico feito pela vítima em sede policial, sem a observância do artigo 226 do Código de Processo Penal, e irrepetível em sede judicial, absolver o paciente" (fl. 33).
+As informações foram prestadas (fls. 137-140 e 162-183).
+O Ministério Público Federal opinou pelo não conhecimento do pedido e, no mérito, pela denegação da ordem (fls. 142-147).
+Foi deferida a habilitação do <DADOS PESSOAIS REMOVIDOS> (IDDD) como Coimpetrante no presente feito (fls. 382-383).
+Em 27/04/2023, a Sexta Turma, por unanimidade, decidiu afetar o julgamento deste writ à Terceira Seção deste Sodalício (fl. 388).
+É o relatório.
+EMENTA
+HABEAS CORPUS. ROUBO MAJORADO. DEPOIMENTO DA VÍTIMA. RECONHECIMENTO FOTOGRÁFICO E PESSOAL. ÚNICOS ELEMENTOS DE PROVA. CONTRADIÇÕES E INCONSISTÊNCIAS AFERÍVEIS, PRIMO ICTU OCULI. DESNECESSIDADE DE REEXAME DO ACERVO PROBATÓRIO. DÚVIDA RAZOÁVEL. IN DUBIO PRO REO. ORDEM CONCEDIDA.
+1. Desde que respeitadas as exigências legais, o reconhecimento de pessoas pode ser valorado pelo Julgador. Isso não significa admitir que, em todo e qualquer caso, a afirmação do ofendido de que identifica determinada pessoa como o agente do crime seja prova cabal e irrefutável. Do contrário, a função dos órgãos de Estado encarregados da investigação e da acusação (Polícia e Ministério Público) seria relegada a segundo plano. O Magistrado, por sua vez, estaria reduzido à função homologatória da acusação formalizada pelo ofendido.
+2. Consoante jurisprudência desta Corte, o reconhecimento positivo, que respeite as exigências legais, portanto, "é válido, sem, todavia, força probante absoluta, de sorte que não pode induzir, por si só, à certeza da autoria delitiva, em razão de sua fragilidade epistêmica" (STJ, HC n. 712.781/RJ, relator Ministro ROGERIO SCHIETTI CRUZ, Sexta Turma, julgado em 15/3/2022, DJe de 22/3/2022).
+3. O reconhecimento de pessoas que obedece às disposições legais (o que não as observa é nulo, consoante jurisprudência pacífica desta Corte) não prepondera sobre quaisquer outros meios de prova (confissão, testemunha, perícia, acareação, etc.); ao contrário, deve ser valorado como os demais.
+4. Há diferentes graus de confiabilidade de um reconhecimento. Se decorrido curto lapso temporal entre o crime e o ato e se a descrição do suspeito é precisa, isenta de contradições e de alterações com o passar do tempo - o que não ocorre no caso em tela - a prova, de fato, merece maior prestígio. No entanto, em algumas hipóteses o reconhecimento deve ser valorado com maior cautela, como, por exemplo, nos casos em que já decorrido muito tempo desde a prática do delito, quando há contradições na descrição declarada pela vítima e até mesmo na situação em que esse relato porventura não venha a corresponder às reais características físicas do suspeito apontado.
+5. A confirmação, em juízo, do reconhecimento fotográfico extrajudicial, por si só, não torna o ato seguro e isento de erros involuntários, pois "uma vez que a testemunha ou a vítima reconhece alguém como o autor do delito, há tendência, por um viés de confirmação, a repetir a mesma resposta em reconhecimentos futuros, pois sua memória estará mais ativa e predisposta a tanto" (STJ, HC n. 712.781/RJ, relator Ministro ROGERIO SCHIETTI CRUZ, Sexta Turma, julgado em 15/3/2022, DJe de 22/3/2022).
+6. No caso, é incontroverso nos autos que (i) a condenação do Paciente encontra-se amparada tão somente no depoimento da Vítima e nos reconhecimentos realizados na fase extrajudicial e em juízo; (ii) não foram ouvidas outras testemunhas de acusação; (iii) a res furtiva não foi apreendida em poder do Acusado; (iv) o Réu negou a imputação que lhe foi dirigida.
+7. Constata-se, primo ictu oculi e sem a necessidade de incursão aprofundada no acervo probatório, que há diversas inconsistências e contradições nas descrições feitas pela Vítima a respeito dos aspectos fisionômicos do suspeito, o que indica a possibilidade de reconhecimento falho, dado o risco de construção de falsas memórias. O fenômeno não está ligado à ideia de mentira ou falsa acusação, mas sim a de um erro involuntário, a que qualquer pessoa pode ser acometida.
+8. Em audiência, a Ofendida nem mesmo afirmou que havia reconhecido o Paciente, em sede policial, com absoluta certeza. Ao contrário, alegou que, naquela ocasião, após visualizar as fotos, apenas sinalizou que possivelmente o Réu seria o autor do crime.
+9. Não se desconhece que, na origem, o Paciente responde por dezenas de acusações relativas à suposta prática de roubo. A própria Defesa, com nítida boa-fé, enuncia tal fato na inicial, porém alerta que "em vários deles já foi absolvido em razão de vícios do ato de reconhecimento e de falta de certeza quanto à autoria delitiva" (fl. 34). O alerta defensivo é corroborado pelo substancioso estudo anexado aos autos pelo <DADOS PESSOAIS REMOVIDOS>, informando que o Paciente já foi absolvido "em 17 ações penais, nas quais o próprio Ministério Público opinou pela improcedência e, por isso, também não interpôs recurso" e que o "principal motivo das absolvições foi a ausência de ratificação, em Juízo, do reconhecimento policial". Portanto, as graves incongruências no reconhecimento do ora Paciente não podem ser sanadas apenas em razão quantidade de vezes em que este foi reconhecido em outros feitos.
+10. Considerando que o decreto condenatório está amparado tão somente nos reconhecimentos formalizados pela Vítima e, ainda, as divergências e inconsistências na referida prova, aferíveis de plano e sem a necessidade de incursão no conjunto fático-probatório, concluo que há dúvida razoável a respeito da autoria delitiva, razão pela qual é necessário adotar a regra de julgamento que decorre da máxima in dubio pro reo, tendo em vista que o ônus de provar a imputação recai sobre a Acusação.
+11. Ordem de habeas corpus concedida para absolver o Paciente, com fundamento no art. 386, inciso VII, do Código de Processo Penal. Concedido habeas corpus ex officio para determinar a soltura imediata do Paciente em relação a todos os processos, cabendo aos Juízos e Tribunais, nas ações em curso, e aos Juízos da Execução Penal, nas ações transitadas em julgado, aferirem se a dinâmica probatória é exatamente a mesma repelida nestes autos. Determinada a expedição de ofício comunicando a íntegra desse julgado à Corregedoria de Polícia do Estado do Rio de Janeiro para apuração de eventuais responsabilidades.
+VOTO
+A Defensoria Impetrante postula, em síntese, a absolvição do Paciente. Argumenta que o decreto condenatório está amparado apenas no reconhecimento do Réu, feito pela vítima. Assevera, porém, que tal procedimento é nulo e não pode fundamentar, por si só, a condenação, pois, além de não ter seguido todas as disposições do art. 226 do Código de Processo Penal, é dotado de graves inconsistências e contradições.
+Contrariamente à tese defensiva, o Juízo Sentenciante concluiu serem suficientes as provas de autoria e materialidade reunidas, julgando procedente a pretensão acusatória nos seguintes termos (fls. 41-43; sem grifos no original):
+"A pretensão punitiva deduzida na denúncia resultou comprovada.
+A prova da autoria e de toda a dinâmica delituosa encontra amparo nos depoimentos da vítima, colhidos tanto em sede policial quanto em juízo, bem como nos reconhecimentos efetuados em ambas as fases.
+Ao ser ouvida em Juízo, a lesada <DADOS PESSOAIS REMOVIDOS> confirmou os fatos narrados na denúncia, tendo narrado "Que o crime foi em Belford Roxo, próximo ao <DADOS PESSOAIS REMOVIDOS>; que era por volta de 7h da noite; que estava estacionando o carro e, ao abrir a porta, foi abordada por <DADOS PESSOAIS REMOVIDOS>; que ele estava portando uma arma; que <DADOS PESSOAIS REMOVIDOS> disse para sair e deixar tudo; que estava com o celular na mão; que <DADOS PESSOAIS REMOVIDOS> repetiu mais duas vezes para sair e deixar tudo; que saiu e <DADOS PESSOAIS REMOVIDOS> entrou no carro; que viu uma jovem baixinha entrar na porta do carona e ele saiu com o carro; que uma mulher entrou no carro com ele; que ele estava armado e pareceu um 38, era um revólver; que não viu como <DADOS PESSOAIS REMOVIDOS> chegou no local, apenas o viu quando abriu a porta; que ele chegou ao seu lado, na porta do motorista; que a jovem passou na sua frente e entrou no carro, no banco do carona; que essa jovem não chegou a falar nada; que não viu se tinha mais alguém dando cobertura além dessa jovem; que o seu carro era uma <DADOS PESSOAIS REMOVIDOS> preto; que além disso levou o seu celular e sua carteira com habilitação, dinheiro e cartão; que conseguiu recuperar o carro; que a recuperação foi feita usando a localização do seu <DADOS PESSOAIS REMOVIDOS>; que viram pela região que o veículo estava na região do Gogó; que congregava em uma igreja em Vila Pauline e conhecia um pouco da região; que por esse motivo seu esposo conseguiu ir até o local sozinho para recuperar o carro; que seu esposo conversou e conseguiu com que devolvessem o carro; que o carro estava na fila para ser cortado, seria o próximo, e eles resolveram entregar o carro; que o carro estava sem o cilindro de gás e sem as rodas; que disseram para seu esposo arrumar as rodas para colocar no carro para descer; que conseguiu recuperar também sua bolsa, que estava na lateral da porta, com sua habilitação; que no momento do crime <DADOS PESSOAIS REMOVIDOS> estava usando um cavanhaque; que conseguiu fazer o reconhecimento em juízo mesmo sem o cavanhaque por outras características físicas, como altura, cor da pele; que os fatos foram por volta de sete horas da noite e o local da abordagem era iluminado porque já estava bem próximo à residência, onde havia luz perto do muro; que na delegacia não identificou nenhuma foto de <DADOS PESSOAIS REMOVIDOS> em parede; que poucos dias depois foi chamada para fazer o reconhecimento por foto, onde havia uma pasta; que nessa foto ele tinha as mesmas características do dia da abordagem; que sinalizou que possivelmente era aquela pessoa; que depois de alguns dias a chamaram para fazer o reconhecimento visual; que conseguiu reconhecê-lo; que as características eram as mesmas, principalmente por conta do cavanhaque e do bigode; que não se recorda se na pasta de reconhecimento tinha outra pessoa com as mesmas características, porque era uma pasta grossa com muitas fotos; que conseguiu reconhecê-lo pela estatura, por ser magro e pela cor da pele, a aparência do rosto fino e pelo bigode e cavanhaque; que não sabe avaliar se era uma arma de fogo ou de brinquedo."
+O que se pode extrair da prova colhida é que a vítima prestou uma declaração segura e harmônica com aquela prestada na delegacia, bem como ratificou o reconhecimento anteriormente efetuado através de fotografia em sede policial, tendo apontado o acusado como autor do delito por ocasião da AIJ, ainda que o acusado estivesse sem o cavanhaque utilizado no dia dos fatos, quando da realização da audiência em juízo, aduzindo ainda que o reconhece também por outras características físicas, demonstrando certeza e segurança no reconhecimento efetuado.
+Há que se ressaltar que, em delitos patrimoniais, a palavra da vítima tem especial relevância, mormente quando não conhece o réu, eis que não teria motivos para falsamente lhe imputar a prática de um crime.
+ .. 
+Ressalte-se o fato de não haver nos autos elementos mínimos a indicar que a vítima tivesse algum motivo para produzir um depoimento tendencioso e, assim, prejudicar o acusado e tampouco foi trazida pela defesa qualquer alegação ou prova da inidoneidade de seu depoimento a retirar-lhe o crédito.
+A Defesa Técnica, por sua vez, não produziu qualquer prova que venha a desconstituir o depoimento prestado pela vítima.
+O acusado, em seu interrogatório, negou a prática delitiva, aduzindo, em suma, ter sido confundido com outra pessoa.
+A testemunha e informante arrolados pela defesa e ouvidos conforme termos de id. 359/360 não presenciaram os fatos, trazendo declarações quanto à atividade laboral do réu. Contudo, não trouxeram aos autos elementos hábeis a elucidar a dinâmica delitiva.
+Assim, diante do conjunto probatório, a condenação se impõe."
+A Corte de origem, por sua vez, manteve a condenação e proveu, parcialmente, o apelo ministerial para reconhecer a incidência da majorante do concurso de agentes. Com relação ao pleito absolutório por nulidade no procedimento de reconhecimento fotográfico, consignou o que se segue (fls. 73-79; grifos diversos do original):
+"Apesar dos argumentos defensivos, a pretensão absolutória do acusado não merece prosperar.
+Com efeito, a existência do delito e respectiva autoria na pessoa do réu encontram-se devidamente comprovadas nos autos pelo registro de ocorrência aditado, às fls. 03/05; pelos termos de declaração de fls. 06/07 e 08/09; pelo reconhecimento do acusado em sede policial, devidamente ratificado em Juízo, às fls. 10 e 295; bem como pela prova oral colhida durante a instrução criminal.
+Depreende-se do caderno probatório que, no dia 27 de julho de 2019, a vítima <DADOS PESSOAIS REMOVIDOS>, a bordo do seu veículo <DADOS PESSOAIS REMOVIDOS>, cor preta, ano 2006 e PLACA <DADOS PESSOAIS REMOVIDOS>, logo após estacioná-lo em via pública, foi abordada pelo acusado, que anunciou o assalto empunhando uma arma de fogo.
+O acusado ordenou que a vítima saísse do automóvel, deixando tudo para trás. A vítima, nervosa, saiu do veículo com o seu celular na mão, mas o réu repetiu, por mais vezes, que deixasse tudo no carro, sendo então, por ela, obedecido.
+Em seguida, o réu ingressou no carro e, quase que simultaneamente, uma mulher jovem também o fez, sentando-se no banco do carona, e, juntos, empreenderam fuga com o veículo e pertences pessoais da vítima, tais como cartão do banco <DADOS PESSOAIS REMOVIDOS>, documentos e um aparelho de telefone celular da marca <DADOS PESSOAIS REMOVIDOS>, modelo <DADOS PESSOAIS REMOVIDOS>.
+A vítima, de imediato, reportou o delito à autoridade policial, conforme termo de declaração de fls. 06/07, ocasião em que descreveu o roubador homem como "jovem, pardo, com cavanhaque e magro".
+Passados alguns dias, precisamente no dia 12 de agosto de 2019, a vítima esteve novamente na Delegacia e lá comunicou que o seu carro havia sido recuperado.
+Explicou que, por meio do rastreamento do seu <DADOS PESSOAIS REMOVIDOS>, chegou-se a um endereço, por ela informado, e o seu marido, que é pastor, conhecido na região pelo seu trabalho comunitário, conseguiu, sem o pagamento de resgate, que o veículo fosse devolvido.
+Nessa ocasião, a vítima narrou, com mais detalhes, a dinâmica delitiva e novamente descreveu o roubador, dizendo ser ele "um homem aparentando 24 a 28 anos, negro, magro e aproximadamente 1,75m".
+E após lhe ser apresentado o álbum de suspeitos, a vítima reconheceu sem hesitação o acusado, afirmando ser ele o indivíduo que, armado, assumiu a condução do seu veículo, conforme auto de reconhecimento de fls. 10, acompanhado das fotos acostadas às fls. 11/15.
+Em Juízo, a vítima foi levada à sala de reconhecimento própria, na qual havia 04 (quatro) pessoas, dentre elas o réu, identificando-o pessoalmente como o autor do delito, conforme termo de fls. 295.
+Ademais, ao prestar depoimento, a lesada ratificou integralmente os fatos já delineados, bem como a certeza do reconhecimento do roubador, in verbis:
+ .. 
+Cumpre registrar que a vítima asseverou que o reconhecimento fotográfico não se deu exclusivamente em razão do cavanhaque que o réu usava na foto identificada, mas sim em razão de outras características físicas que lhe fizeram ter certeza na identificação, como o seu rosto fino por ser magro e a cor de sua pele.
+E isso tanto se mostra verdade que, por ocasião do reconhecimento pessoal, o réu não estava de cavanhaque e, como se não bastasse, segundo a vítima, ainda havia um dublê bem parecido com ele, mas ela logo percebeu que o dublê não tinha a estatura do roubador, a qual seria igual à sua.
+Por outro lado, o acusado, na ocasião do seu interrogatório, negou a autoria delitiva, nos seguintes termos:
+"Que não são verdadeiros os fatos narrados na denúncia; que nunca roubou na ida; que está sendo confundido com outra pessoa; que nunca teve problema com a justiça; que não conhece <DADOS PESSOAIS REMOVIDOS>; que não se recorda de onde estava no dia dos fatos narrados na denúncia; que não conhece a vítima desse processo; que ganhava R$1000,00 pela função de porteiro; que a companheira do interrogando não trabalhava; que era o único a sustentar sua família; que indagado sobre a possibilidade de ter sido confundido nas mais de 60 anotações criminais de sua FAC disse: "é difícil, mas eu nunca roubei ninguém"; que já costumava usar cavanhaque e deixava a barba grande."
+E a defesa técnica, por sua vez, arrolou como testemunhas de defesa <DADOS PESSOAIS REMOVIDOS> e <DADOS PESSOAIS REMOVIDOS>, que se limitaram a dizer que o réu trabalhou como porteiro de um condomínio de 2018 até meados de fevereiro de 2020, chegando a abrir um "lava a jato" dentro desse condomínio a fim de complementar sua renda, afirmando nada saberem sobre eventual ativida de ilícita pelo réu praticada.
+Não obstante a versão autodefensiva de negativa do crime e a prova oral produzida em favor do acusado, o fato é que a defesa técnica não logrou infirmar a robusta prova oral acusatória produzida, sendo certo que, em crimes patrimoniais, a palavra da vítima, desde que firme e segura, como na espécie, possui especial relevância como meio de prova, mormente porque inexistem indícios de alguma inimizade pretérita que justificasse uma incriminação falsa.
+Ademais, perfeitamente válidos os reconhecimentos realizados, o primeiro em sede policial, por meio fotográfico, e o segundo em Juízo, pessoal, sendo certo que em ambas as ocasiões foram observadas as formalidades previstas nos artigos 226 e 227 do Código de Processo Penal, de modo a revesti-los de valor probatório suficiente para amparar o decreto prisional.
+Assim sendo, o quadro probatório produzido conduz à certeza necessária de que o crime foi efetivamente praticado pelo acusado, não havendo que se falar em dúvida razoável para fins de aplicação do princípio in dubio pro reo."
+Como se vê, sem a necessidade de análise vertical do conjunto probatório, constato que algumas premissas importantes ao deslinde do feito mostram-se incontroversas, a saber: (i) a condenação do Paciente encontra-se amparada tão somente no depoimento da Vítima e nos reconhecimentos realizados em solo policial e em juízo; (ii) não foram ouvidas outras testemunhas de Acusação; (iii) a res furtiva não foi apreendida em poder do Acusado; (iv) o Réu negou a imputação que lhe foi dirigida.
+Embora a Corte local tenha considerado "perfeitamente válidos os reconhecimentos realizados", tais elementos de prova não podem lastrear a condenação.
+Com efeito, é incontroverso nos autos que, logo após o roubo - cometido em 27/07/2019 -, a Ofendida compareceu à Delegacia para registrar boletim de ocorrência e, naquela ocasião, descreveu o suspeito do crime como "jovem, pardo, com cavanhaque e magro". A referida descrição é categoricamente genérica, ineficaz para particularizar uma pessoa. Requisitos mínimos como cor dos olhos, estatura e tipo de cabelo deixaram de ser reportados nessa primeira descrição do possível autor do delito.
+Cabe também ressaltar que, nessa mesma data, a Vítima não efetuou qualquer reconhecimento. Houve apenas o registro da dinâmica do delito e a descrição genérica de poucas características físicas do suspeito, conforme esclarecido acima.
+Somente depois de passados 15 (quinze) dias a Ofendida retornou à sede policial para formalizar o reconhecimento fotográfico, porém, na oportunidade, alterou sensivelmente a descrição das características físicas do possível autor do delito. Alguns aspectos foram adicionados, outros retirados e outros modificados. Confira-se a confrontação entre a primeira e segunda descrição do suspeito ocorrida em solo policial:
+Declaração prestada em 27/07/2019:
+"a dupla era composta de um homem jovem, pardo, com cavanhaque e magro; que a outra pessoa era uma mulher, uma jovem, baixa estatura, negra e cabelo curto" (fl. 85).
+Declaração prestada em 12/08/2019:
+"descreve esse criminoso que a abordou e assumiu a direção do seu veículo como homem aparentando 24 a 28 anos, negro, magro e aproximadamente 1,75 m de altura; que descreve a outra criminosa cama mulher jovem aparentando 16 a 18 anos, negra, porte físico médio e aproximadamente 1,60 m de altura" (fl. 128).
+No primeiro relato, a Ofendida indica que o autor seria de cor parda, no segundo afirma que ele seria negro. Frise-se que, na primeira descrição, a Vítima já havia distinguido a cor da pele do coautor homem e da coatora mulher, indicando que esta seria negra e aquele pardo. Enquanto a descrição da cor da pele da suspeita do gênero feminino - cuja identidade não restou apurada - foi mantida na segunda declaração (12/08/2019), aquela referente ao suspeito do gênero masculino foi alterada (de pardo para negro).
+Outrossim, no primeiro relato, a Ofendida não indicou a idade aparente do autor, mas, no segundo, precisou que o agente teria, possivelmente, entre 24 e 28 anos. Na primeira descrição, em 27/07/2019, foi informado que o suspeito teria um cavanhaque, porém em 12/08/2019 esse dado não foi repetido. A altura do roubador, por sua vez, não foi descrita no primeiro comparecimento à Delegacia; somente foi referida na segunda descrição.
+Aliás, merece destaque o fato de que, em audiência, a Vítima não afirmou que havia reconhecido o Paciente, em sede policial, com absoluta certeza. Ao contrário, alegou que, naquela ocasião, após visualizar as fotos, apenas sinalizou que possivelmente o Réu seria o autor do crime.
+Além das contradições acima referidas, enfatizo que as possíveis características físicas do suspeito foram narradas com maior riqueza quando já decorrido certo período de tempo da prática delitiva e não na declaração prestada no dia dos fatos. As regras da experiência comum, porém, indicam que o decorrer do tempo tem ação negativa quanto à confiabilidade da memória. O processo natural de esquecimento, aos poucos, exclui da memória alguns dados que até então haviam sido apreendidos, porém o inverso não é usual.
+Quando tal circunstância ocorre, o reconhecimento formalizado pelo ofendido deve ser ponderado com extrema cautela, devido ao risco da construção de falsas memórias. O fenômeno não está ligado à ideia de mentira ou falsa acusação, mas sim a de um erro involuntário, a que qualquer pessoas pode ser acometida. Conforme advertem Lilian Milnitsky Stein e Maria Lúcia Campani Nygaard, " e mbora a evidência do testemunho ajude no desenvolvimento do processo, ela não é infalível. Até as testemunhas honestas cometem erros" (STEIN, Lilian Milnitsky. MYGAARD. Maria Lúcia Campani. A memória em julgamento: uma análise cognitiva dos depoimentos testemunhais. Revista Brasileira de Ciências Criminais. v. 43/2003. p. 151 - 164. Abr-Jun/2003; sem grifos no original).
+Daí, porque, apesar de a palavra da vítima ser, sim, de especial relevância em crimes patrimoniais, nem sempre esse depoimento pode ser tomado como infalível, apenas sob o fundamento de que ela "não teria motivos para falsamente imputar  ao Réu  a prática de um crime" (fl. 42). No ponto, colaciono o seguinte julgado desta Sexta Turma:
+" .. 
+6. Não se trata de insinuar que a vítima mentiu ao dizer que reconheceu o acusado. Chama-se a atenção, nesse ponto, para o fundamental conceito de "erros honestos" trazido pela psicologia do testemunho. Para este ramo da ciência, o oposto da ideia de "mentira" não é a "verdade", mas sim a "sinceridade". Quando se coloca em dúvida a confiabilidade do reconhecimento feito pela vítima, mesmo nas hipóteses em que ela diga ter "certeza absoluta" do que afirma, não se está a questionar a idoneidade moral daquela pessoa ou a imputar-lhe má-fé, vale dizer, não se insinua que ela esteja mentindo para incriminar um inocente. O que se pondera apenas é que, não obstante subjetivamente sincera, a afirmação da vítima pode eventualmente não corresponder à realidade, porque decorrente de um "erro honesto", causado pelo fenômeno das falsas memórias.
+ .. 
+8. Agravo regimental não provido." (AgRg no HC n. 730.232/SP, relator Ministro ROGERIO SCHIETTI CRUZ, Sexta Turma, julgado em 19/12/2022, DJe de 21/12/2022; sem grifos no original.)
+Falsas memórias, como se sabe, constituem "um fenômeno caracterizado pela presença de recordações da ocorrência de fatos ou eventos que, na realidade, não ocorreram, ou ao menos não se deram da forma como são lembradas. Assim, pessoas que formam memórias falsas são capazes de afirmar, com convicção, que se recordam de um acontecimento que jamais vivenciaram, ou descrever suas características e peculiaridades de modo não correspondente à realidade" (DRUMOND, Ana Helena German. VIANNA, Tulio. Falsas memórias e reconhecimento de pessoas: a (in)eficácia do artigo 226 do Código de Processo Penal e a importância do julgamento do HC 598.886/SC pelo STJ. Revista dos Tribunais. vol. 1033. ano 110. São <DADOS PESSOAIS REMOVIDOS>: Ed. RT, novembro 2021. p. 377. Disponível em https://bdjur.stj.jus.br/jspui/handle/2011/157673, acesso em 18/04/2023).
+A memória, portanto, nem sempre pode ser reconhecida como uma fotografia ou um vídeo isento de possíveis distorções, tendo em vista que, como atributo do ser humano, também é sujeita a falhas. Conforme alerta Gustavo Noronha de Ávila "a neurociência demonstra que o Sistema Nervoso Central (SNC) não armazena propriamente registros factuais, mas, sim, traços de informações que serão usados para reconstruir as memórias, nem sempre representando um quadro fiel ao que foi vivenciado no passado" (ÁVILA, Gustavo Noronha de. Falsas memórias e sistema penal: a prova testemunhal em xeque. Rio de Janeiro: Editora Lumen Juris, 2013. p. 103).
+Aliás, a emoção e o estresse sofrido em determinado acontecimento, como, por exemplo, num roubo com emprego de arma de fogo - caso dos autos - também pode prejudicar a formação da memória ou direcioná-la para determinados dados e prejudicar a apreensão de outros, importantes à resolução do caso penal, como, por exemplo, a fisionomia do agente. A propósito:
+"Conquanto não haja consenso entre os pesquisadores acerca da influência e do impacto ocasionados pelas emoções e pelo estresse na memória da testemunha, alguns estudos têm demonstrado que, em eventos com conteúdo emocional, as testemunhas recordam-se mais facilmente dos elementos centrais da cena presenciada, enquanto têm uma memória pior para elementos e detalhes periféricos.
+Isso ocorre, entre outras razões, pela seletividade e focalização da atenção, que se concentra mais no aspecto central do evento emotivo ou traumático, em detrimento de uma perda de foco para detalhes considerados mais irrelevantes pela testemunha (o que não necessariamente corresponde ao critério de relevância/irrelevância para fins de reconstrução histórica dos fatos no processo penal). Nesse sentido, quando há um objeto que causa medo ou estresse à vista (por exemplo, uma arma), a testemunha pode, automática e involuntariamente, manter seu olhar fixado nesse objeto. Por essa razão, a testemunha tem uma melhor percepção e recordação dos elementos relacionados à arma e à eventual lesão provocada por ela, ao tempo que tem uma reduzida lembrança acerca das características do criminoso ou outros aspectos periféricos presentes na cena"(KAGUEIAMA, Paula Thieme. Prova testemunhal no processo penal: um estudo sobre falsas memorias e mentiras. 1. ed. São <DADOS PESSOAIS REMOVIDOS>: Almedina, 2021. p. 102-103.)
+Em tais situações, embora não se deva, ipso facto, descartar o reconhecimento materializado pela vítima, é preciso adotar prudência desde a produção - para minimizar erros e induções - até a subsequente valoração dessa prova.
+Frise-se que o reconhecimento de pessoas e coisas é um meio típico de provas, previsto nos arts. 226 a 228 do Código de Processo Penal. Por isso, desde que obedecidas as disposições legais, pode ser valorado pelo Julgador.
+No entanto, isso não significa admitir que, em todo e qualquer caso, a afirmação do ofendido de que identifica determinada pessoa como o agente do crime seja prova cabal e irrefutável. Do contrário, a função dos órgãos de Estado encarregados da investigação e da acusação (Polícia e Ministério Público) seria relegada a segundo plano. O Magistrado, por sua vez, estaria reduzido à função homologatória da acusação formalizada pelo ofendido.
+Ou seja, o reconhecimento positivo, que respeite as exigências legais, "é válido, sem, todavia, força probante absoluta, de sorte que não pode induzir, por si só, à certeza da autoria delitiva, em razão de sua fragilidade epistêmica" (HC n. 712.781/RJ (Rel. Ministro Rogerio Schietti).
+Não se pode olvidar que, mesmo quando a vítima externa um juízo de certeza quanto ao reconhecimento, é possível que haja equívoco de sua parte. Nereu José Giacomolli bem explica a questão ao ressaltar a tendência de que o ofendido reconheça algum dos suspeitos que lhe são apresentados, ainda que o verdadeiro autor do delito não esteja entre os presentes, confira-se:
+"Respostas duvidosas ou titubeantes não podem ser consideradas contra o suspeito, investigado ou acusado. Por outro lado, respostas categóricas devem ser apreciadas com cautela, pois a mera certeza do reconhecer não garante o acerto da identificação.
+Um dos problemas está em que o reconhecer tem a tendência de apontar entre os que lhe são colocados à disposição, um deles como sendo o autor do fato, mesmo que não esteja presente e, via de regra, o que mais se assemelha à lembrança daquele que viu no momento do fato. Ocorre, então, o que se denomina de "falso positivo". Pesquisas revelam que o elevado índice de 60% de reconhecimentos, mesmo sem a presença do suspeito ou do acusado entre as pessoas submetidas ao procedimento." (GIACOMOLLI, Nereu José. A fase preliminar do processo penal: crises, misérias e novas metodologias investigatórias. 2. ed. Livro digital. São <DADOS PESSOAIS REMOVIDOS>: Tirant lo Banch, 2022. p. 192; sem grifos no original.)
+O autor destaca, ainda, o próprio sentimento, experimentado por muitas vítimas, no sentido de que, caso não reconheçam nenhum dos suspeitos apresentados, estariam frustrando as investigações, ao passo que, reconhecendo, colaborariam com a persecução penal. Isso, em parte, explica o porquê de mesmo nos casos em que o real autor do crime não esteja entre os presentes, ainda assim há considerável taxa de reconhecimento positivo (falso positivo, evidentemente). Trago à colação, novamente, o magistério de Nereu José Giacomolli, in verbis:
+" ..  a tendência é responder "sim" às perguntas, pois determinadas pessoas, ao comparecem na delegacia de polícia, ao entrarem na sala de audiência e se encontrarem diante de uma autoridade, partem do pressuposto de que o dito e perguntado é verdade e diante da verdade a resposta é "sim". Para muitas pessoas que vão reconhecer alguém, ser uma boa pessoa, uma boa testemunha, um cidadão honrado, um cumpridor dos deveres é responder "sim" ao que for perguntado. Reconhecer é colaborar e não reconhecer é causar uma profunda frustação.
+Para que o reconhecimento seja confiável, o reconhecer há de estar livre de prejuízo e de falsas expectativas. Para que isso ocorra, há de ser instruído corretamente. O primeiro passo é advertir o reconhecedor que entre os sujeitos que lhe serão mostrados, o autor do fato poderá não estar presente. Desta forma, pode ser afastado um juízo relativo, por um lado e, de outra banda, se legitima eventual não reconhecimento." (GIACOMOLLI, Nereu José. A fase preliminar do processo penal: crises, misérias e novas metodologias investigatórias. 2. ed. Livro digital. São <DADOS PESSOAIS REMOVIDOS>: Tirant lo Banch, 2022, p. 193; sem grifos no original.)
+Para contornar tal problemática, há que se alertar a vítima ou testemunha de que "a pessoa investigada ou processada pode ou não estar entre aquelas que lhes serão apresentadas", consoante previsto no art. 7.º, inciso I, da Resolução n.º 484 de 19/12/22.
+Nesse sentido, ressalto que reconhecimento de pessoas que obedece às disposições legais (o que não as observa é nulo, consoante jurisprudência pacífica desta Corte) não prepondera sobre quaisquer outros meios de prova (confissão, testemunha, perícia, acareação, etc.); ao contrário, deve ser valorado como os demais.
+Há, portanto, diferentes graus de confiabilidade de um reconhecimento. Se decorrido curto lapso temporal entre o crime e o ato e se a descrição do suspeito é precisa, isenta de contradições e de alterações com o passar do tempo - o que não ocorre no caso em tela - a prova, de fato, merece maior prestígio. No entanto, em algumas hipóteses o reconhecimento deve ser avaliado com maior cautela, como, por exemplo, nos casos em que já decorrido muito tempo desde a prática do delito, quando há contradições na descrição declarada pela vítima e até mesmo na situação em que esse relato porventura não venha a corresponder às reais características físicas do suspeito apontado.
+Com efeito, " n a prévia descrição da pessoa que praticou o delito, se pode aferir o grau da lembrança, naquele momento, bem como sua qualidade, isto é, limpidez, coerência na verbalização e desta com o reconhecimento. A falta de coerência entre a verbalização e o reconhecimento o invalida como prova criminal" (GIACOMOLLI, Nereu José. A fase preliminar do processo penal: crises, misérias e novas metodologias investigatórias. 2. ed. Livro digital. São <DADOS PESSOAIS REMOVIDOS>: Tirant lo Banch, 2022, p. 194; sem grifos no original).
+Assim, em razão da própria fragilidade epistêmica do reconhecimento, se não há outras fontes de provas autônomas e independentes, é necessário adotar a regra de julgamento que decorre da máxima in dubio pro reo, tendo em vista que o ônus de provar a imputação, de forma isenta de dúvida razoável, recai sobre a Acusação.
+Aliás, é de rigor ressaltar que essa análise, por ser cogitada a partir das próprias premissas delineadas pelas instâncias ordinárias, não depende de incursão aprofundada no acervo probatório, o que de fato seria incabível na via do writ. Repita-se: o habeas corpus não se presta à ampla revisão da valoração da prova feita pela jurisdição ordinária a fim de se analisar se o conjunto probatório era, ou não, suficiente para a condenação. Há diversos precedentes dos Tribunais Superiores nesse mesmo sentido.
+No entanto, nos casos em que a insuficiência e contradição da prova exsurge cristalina nos autos, constatável, primo ictu oculi, mormente se essa prova é a única a amparar o decreto condenatório - como no caso em comento - é possível a correção do constrangimento ilegal imposto ao Réu mesmo na via do mandamus.
+Nesse sentido, colaciono os seguintes julgados da Suprema Corte e deste Superior Tribunal de Justiça, aplicáveis ao caso, mutatis mutandis:
+"HABEAS CORPUS - ADEQUAÇÃO. Em jogo a liberdade de ir e vir, não se tem como deixar de adentrar a matéria versada no habeas, pouco importando que direcione à análise de fatos e provas. ESTUPRO DE VULNERÁVEL - DEFICIÊNCIA MENTAL - COMPROVAÇÃO - PROVA PERICIAL - DÚVIDA RAZOÁVEL. A comprovação da deficiência mental da vítima, circunstância passível de ser demonstrada por perícia, constitui núcleo indispensável do tipo previsto no artigo 217, § 1º, do Código Penal, de modo que a existência de conclusões divergentes nos laudos, deixando as instâncias ordinárias de proceder à análise comparativa entre os resultados em sentido opostos, revela situação de dúvida razoável concernente à configuração do crime, que, considerado o princípio constitucional da não culpabilidade, há de ser interpretada em benefício do acusado." (STF, HC 170117, Relator(a): MARCO AURÉLIO, Primeira Turma, julgado em 19/05/2020, PROCESSO ELETRÔNICO DJe-244 DIVULG 06-10-2020 PUBLIC 07-10-2020; sem grifos no original.)
+"AGRAVO REGIMENTAL NO AGRAVO EM RECURSO ESPECIAL. PENAL. ROUBO CIRCUNSTANCIADO. AUTORIA DELITIVA. RECONHECIMENTO FOTOGRÁFICO. FASE POLICIAL. DEPOIMENTO DA VÍTIMA. IRREGULARIDADES. CONTRADIÇÕES EVIDENTES. FUNDAMENTAÇÃO. INIDONEIDADE. AGRAVO REGIMENTAL PROVIDO PARA DAR PROVIMENTO AO RECURSO ESPECIAL.
+1. É possível a esta Corte Superior verificar se a fundamentação utilizada pelas instâncias ordinárias é juridicamente idônea e suficiente para dar suporte à condenação, o que não configura reexame de provas, pois a discussão é eminentemente jurídica e não fático-probatória.
+2. Evidente a insuficiência da fundamentação utilizada para condenar o Agravante, lastreada no reconhecimento fotográfico efetivado na fase policial, com irregularidades, e na palavra da Vítima, mormente quando ambos possuem contradições objetiva e flagrantemente constatáveis a partir da simples leitura da sentença e do acórdão da apelação, além do depoimento de policial, cujo teor sequer foi reproduzido pelas instâncias ordinárias, mas que, segundo expresso na sentença, teria se limitado a corroborar as declarações da Vítima.
+3. Agravo regimental provido para dar provimento ao recurso especial e absolver o Agravante, nos termos do art. 386, inciso VII, do Código de Processo Penal." (STJ, AgRg no AREsp n. 1.722.914/DF, relatora Ministra LAURITA VAZ, Sexta Turma, julgado em 13/4/2021, DJe de 28/4/2021; sem grifos no original.)
+"HABEAS CORPUS. HOMICÍDIOS QUALIFICADOS TENTADOS. NULIDADE. PRONÚNCIA FUNDAMENTADA EXCLUSIVAMENTE EM TESTEMUNHOS INDIRETOS, CONTRADITÓRIOS E ELEMENTOS DE INFORMAÇÃO COLETADOS NA FASE INQUISITORIAL. OFENSA AO ART. 155 DO CPP. IMPOSSIBILIDADE. CONSTRANGIMENTO ILEGAL EVIDENCIADO. PACIENTE DESPRONUNCIADO.
+ .. 
+5. As versões contraditórias de testemunhos prestados na fase inquisitorial e na judicial também não constituem fundamentos idôneos para embasarem a pronúncia.
+6. Ordem de habeas corpus concedida para despronunciar o paciente, sem prejuízo de formulação de nova denúncia, nos termos do art. 414, parágrafo único, do Código de Processo Penal." (STJ, HC n. 706.735/RS, relator Ministro SEBASTIÃO REIS JÚNIOR, Sexta Turma, julgado em 14/2/2023, DJe de 17/2/2023; sem grifos no original.)
+"HABEAS CORPUS. TRÁFICO DE DROGAS. FLAGRANTE. DOMICÍLIO COMO EXPRESSÃO DO DIREITO À INTIMIDADE. ASILO INVIOLÁVEL. EXCEÇÕES CONSTITUCIONAIS. INTERPRETAÇÃO RESTRITIVA. AUSÊNCIA DE FUNDADAS RAZÕES. AUSÊNCIA DE CONSENTIMENTO VÁLIDO DO MORADOR. INDUÇÃO A ERRO. VÍCIO NA MANIFESTAÇÃO DE VONTADE. NULIDADE DAS PROVAS OBTIDAS. TEORIA DOS FRUTOS DA ÁRVORE ENVENENADA. ABSOLVIÇÃO. ORDEM CONCEDIDA. EXTENSÃO DE EFEITOS AOS CORRÉUS.
+ .. 
+6. As regras de experiência e o senso comum, somadas às peculiaridades do caso concreto, não conferem verossimilhança à afirmação dos agentes policiais de que o paciente teria autorizado, livre e voluntariamente, o ingresso em seu próprio domicílio, de sorte a franquear àqueles a apreensão de drogas e, consequentemente, a formação de prova incriminatória em seu desfavor.
+7. Ainda que o acusado haja admitido a abertura do portão do imóvel para os agentes da lei, ressalvou que o fez apenas porque informado sobre a necessidade de perseguirem um suposto criminoso em fuga, e não para que fossem procuradas e apreendidas drogas. Ademais, se, de um lado, deve-se, como regra, presumir a veracidade das declarações de qualquer servidor público, não se há de ignorar, por outro lado, que a notoriedade de frequentes eventos de abusos e desvios na condução de diligências policiais permite inferir como pouco crível a versão oficial apresentada no inquérito policial, máxime quando interfere em direitos fundamentais do indivíduo e quando se nota indisfarçável desejo de se criar narrativa que confira plena legalidade à ação estatal. Essa relevante dúvida não pode, dadas as circunstâncias concretas - avaliadas por qualquer pessoa isenta e com base na experiência quotidiana do que ocorre nos centros urbanos - ser dirimida a favor do Estado, mas a favor do titular do direito atingido (in dubio pro libertas).
+ .. 
+16. Ordem concedida para, considerando que não houve fundadas razões, tampouco comprovação de consentimento válido para a realização de buscas por drogas no domicílio do paciente, reconhecer a ilicitude das provas por tal meio obtidas, bem como de todas as que delas decorreram, e, por conseguinte, absolvê-lo em relação à prática do delito de tráfico de drogas. Extensão, de ofício, aos corréus." (STJ, HC n. 674.139/SP, relator Ministro ROGERIO SCHIETTI CRUZ, Sexta Turma, julgado em 15/2/2022, DJe de 24/2/2022; sem grifos no original.)
+"PROCESSO PENAL. HABEAS CORPUS. ROUBO MAJORADO. NULIDADE. RECONHECIMENTO FOTOGRÁFICO. DISTÂNCIA TEMPORAL DOS FATOS. AUSÊNCIA DE VEROSSIMILHANÇA. DEPOIMENTOS CONTRADITÓRIOS. AUSÊNCIA DE OUTRAS PROVAS. CONDENAÇÃO LASTREADA SOMENTE NO DEPOIMENTO DA VÍTIMA. POSSÍVEL VIÉS DE CONFIRMAÇÃO. NULIDADE RECONHECIDA. ABSOLVIÇÃO.
+ .. 
+2. No caso em tela, a vítima foi assaltada por 3 agentes em janeiro de 2018, na delegacia não reconheceu nenhuma das fotos que lhe foram apresentadas, afirmou categoricamente não ser capaz de realizar retrato falado e que os 3 assaltantes aparentavam ser menores de idade. Já em abril do mesmo ano, quase 3 meses após o fato, a vítima alega ter reconhecido um dos assaltantes em uma maca em um hospital, momento em que se deslocou à Delegacia para denunciar o fato, o que ensejou a nova apresentação de fotografias, e o réu foi então efetivamente reconhecido em solo policial, bem como pessoalmente em juízo.
+3. Tal narrativa não se mostra suficiente para atribuir a autoria ao paciente. Isso, porque a vítima afirmou categoricamente não ser capaz de realizar retrato falado no dia dos fatos, e alegou aparentarem ser os assaltantes menores de idade, mas, 3 meses após o evento, afirmou com convicção ter reconhecido agente que, à época do delito, já contava com 27 anos de idade, e o reconhecimento foi reforçado pela apresentação das fotografias do suspeito na delegacia.
+4. Todos esses elementos considerados em conjunto e somados ao fato de que nenhuma outra prova independente e idônea - que não o depoimento da vítima - ter sido apresentada configuram a nulidade do reconhecimento, porquanto realizado quase 3 meses após o fato, reforçada a memória da vítima pela apresentação de fotografias do suspeito na delegacia, circunstâncias que contaminariam a idoneidade do reconhecimento realizado em juízo.
+5. Ordem concedida para anular a ação penal, com a consequente absolvição do paciente." (STJ, HC n. 664.537/RJ, relator Ministro ANTONIO SALDANHA PALHEIRO, Sexta Turma, julgado em 16/8/2022, DJe de 19/8/2022.)
+"PENAL E PROCESSUAL PENAL. HABEAS CORPUS. ROUBO CIRCUNSTANCIADO. PEDIDOS DE ABSOLVIÇÃO. AUSÊNCIA DE PROVA ROBUSTA PARA A CONDENAÇÃO. FRAGILIDADE PROBATÓRIA NO RECONHECIMENTO DOS ACUSADOS APONTADA NA SENTENÇA. CONTRADIÇÕES NOS DEPOIMENTOS. ABSOLVIÇÃO. EFEITOS EXTENDIDOS AO CORRÉU.
+1. Ao considerar o tempo dos fatos, março de 2017, e as oitivas em Juízo, outubro de 2020, e as dificuldades encontradas para as vítimas reconhecerem os acusados, com as contradições apontadas na sentença, entendo que deve ser mantida a sentença de absolvição do paciente e do corréu.
+2. Ordem concedida, com efeitos extensivos ao corréu, para restabelecer a sentença de primeiro grau que absolveu os acusados." (STJ, HC n. 698.058/SP, relator Ministro SEBASTIÃO REIS JÚNIOR, Sexta Turma, julgado em 22/2/2022, DJe de 25/2/2022; sem grifos no original.)
+"AGRAVO REGIMENTAL NO HABEAS CORPUS. ROUBO MAJORADO. RECONHECIMENTO FOTOGRÁFICO. AUSÊNCIA DE OUTROS ELEMENTOS PROBATÓRIOS PARA DEMONSTRAR A AUTORIA DELITIVA. ABSOLVIÇÃO. AGRAVO REGIMENTAL NÃO PROVIDO.
+ .. 
+4. No caso, o exame da petição inicial e dos documentos que a instruem - especialmente o acórdão condenatório -, além da análise do contexto fático já delineado nos autos pelas instâncias ordinárias, indicam, sem margem a dúvidas, que a condenação do agravado efetivamente se apoiou, tão somente, no reconhecimento pessoal realizado em 2005 na fase investigatória e nas imagens das câmeras de segurança do estabelecimento comercial que fora assaltado, por meio das quais teria sido possível "identificar indivíduo com extrema semelhança às características físicas do réu, notadamente quando contrastadas com as fotografias de fls. 09 e 37 oriundas de arquivo policial".
+5. Afora o reconhecimento realizado na fase inquisitiva, não houve nenhuma outra prova (apreensão de bens em poder do acusado, confissão, relatos indiretos etc.) que desse o mínimo amparo ao reconhecimento, circunstância que conduz à absolvição do recorrido, tal como concluiu o Juiz de primeiro grau.
+6. Agravo regimental não provido." (STJ, AgRg no HC n. 641.267/RS, relator Ministro ROGERIO SCHIETTI CRUZ, Sexta Turma, julgado em 13/12/2022, DJe de 16/12/2022; sem grifos no original.)
+Ressalto não ignorar que na espécie a Vítima confirmou o reconhecimento fotográfico em juízo. No entanto, essa confirmação, por si só, não torna o ato seguro e isento de erros involuntários, pois "uma vez que a testemunha ou a vítima reconhece alguém como o autor do delito, há tendência, por um viés de confirmação, a repetir a mesma resposta em reconhecimentos futuros, pois sua memória estará mais ativa e predisposta a tanto" (STJ, HC n. 712.781/RJ, relator Ministro ROGERIO SCHIETTI CRUZ, Sexta Turma, julgado em 15/3/2022, DJe de 22/3/2022; sem grifos no original). Com efeito, "confirmação em Juízo não consiste em elemento probatório independente, pois decorre e é diretamente afetada pelo primeiro reconhecimento contaminado" (STJ, AgRg no REsp n. 1.969.149/RS, relator Ministro JOEL ILAN PACIORNIK , Quinta Turma, julgado em 28/11/2022, DJe de 1/12/2022).
+Cabe referir, ainda, que o procedimento realizado em juízo também parece não ter colaborado para a consecução de um reconhecimento mais seguro. Com efeito, consignou-se no acórdão impugnado o que se segue (fl. 77):
+"Cumpre registrar que a vítima asseverou que o reconhecimento fotográfico não se deu exclusivamente em razão do cavanhaque que o réu usava na foto identificada, mas sim em razão de outras características físicas que lhe fizeram ter certeza na identificação, como o seu rosto fino por ser magro e a cor de sua pele.
+E isso tanto se mostra verdade que, por ocasião do reconhecimento pessoal, o réu não estava de cavanhaque e, como se não bastasse, segundo a vítima, ainda havia um dublê bem parecido com ele, mas ela logo percebeu que o dublê não tinha a estatura do roubador, a qual seria igual à sua."
+Evidentemente, a disparidade das estaturas dos sujeitos a serem reconhecidos pode favorecer a ocorrência de reconhecimentos falhos. Caso a vítima tenha na memória a ideia de o indivíduo que lhe roubou seja "baixo" e, ao lado do agente sejam colocadas pessoas "altas", provavelmente a escolha do ofendido será viciada, pois seria intuitivo, desde logo, descartar outros indivíduos cujas alturas não correspondessem com sua pré-compreensão.
+Também não se olv ida que, na origem, o Paciente responda por dezenas de acusações relativas à suposta prática de roubo. Aliás, a própria Defesa, com nítida boa-fé, enuncia tal fato na inicial, porém alerta que "em vários deles já foi absolvido em razão de vícios do ato de reconhecimento e de falta de certeza quanto à autoria delitiva" (fl. 34).
+E, de fato, essa afirmativa da Defensoria Pública é corroborada pelo substancioso estudo anexado aos autos pelo <DADOS PESSOAIS REMOVIDOS> às fls. 185-381. O Instituto Coimpetrante aduz que o Paciente já foi absolvido "em 17 ações penais, nas quais o próprio Ministério Público opinou pela improcedência e, por isso, também não interpôs recurso" (fl. 306) e que "principal motivo das absolvições foi a ausência de ratificação, em Juízo, do reconhecimento policial" (fl. 307).
+Na origem, chegou a ser questionado, ao Réu, o motivo pelo qual ele teria sido reconhecido em tantos inquéritos policiais, na tentativa de conferir verossimilhança aos reconhecimentos feitos pelas vítima por meio de um critério quantitativo (tantas vítimas não poderiam cometer o mesmo erro). No entanto, a reflexão a ser feita é outra. Conforme ressaltou o <DADOS PESSOAIS REMOVIDOS> (fl. 247-248; grifos diversos do original):
+"Em nenhum dos mais de 60 casos <DADOS PESSOAIS REMOVIDOS> foi ouvido na investigação.
+ .. 
+Em todos os 61 episódios em que <DADOS PESSOAIS REMOVIDOS> foi reconhecido em sede policial - mediante apresentação de álbuns de suspeitos e/ou de fotografias com origem desconhecidas ou provenientes de redes sociais -, a denúncia somente não foi recebida em um deles.
+A realização de reconhecimento pessoal de forma presencial não foi detectada em nenhum dos inquéritos, corroborando o padrão das autoridades policiais de não investigarem autoria delitiva.
+<DADOS PESSOAIS REMOVIDOS> não foi preso em flagrante em nenhum dos procedimentos."
+Ora, se idênticas práticas que favorecem a ocorrência de reconhecimentos equivocados forem, por ventura, adotadas em todas as investigações (utilização de fotografias extraídas de redes sociais, apresentação, à vítima, de fotos de pessoas com características físicas distintas daquelas do suspeito, v.g.) é possível, sim, que os erros se repitam. Aliás, erros em cascata como, possivelmente, o do caso em tela, infelizmente, não são novos quando se trata de reconhecimento de pessoas. Gustavo Noronha de Ávila lembra de um antigo caso, ocorrido em 1895, na Inglaterra, em que a falha na composição da linha de identificação levou a reconhecimentos equivocados por 10 vítimas. Confira-se:
+"Na Inglaterra, por exemplo, em 1895, <DADOS PESSOAIS REMOVIDOS> foi acusado de uma serie de roubos de mulheres. Ele foi identificado falsamente por 10 das 15 vítimas e preso. Entretanto, depois de que o autor verdadeiro foi descoberto, o Tribunal observou que a linha de identificação foi composta por 8 9 homens, mas somente dois tinham cabelos grisalhos como <DADOS PESSOAIS REMOVIDOS>, e nenhum deles tinha qualquer semelhança física com ele." (ÁVILA, Gustavo Noronha de. Falsas memórias e sistema penal: a prova testemunhal em xeque. Rio de Janeiro: Editora Lumen Juris, 2013. p. 104.)
+Portanto, as graves incongruências no reconhecimento do ora Paciente, já expostas acima , não podem ser sanadas apenas em razão quantidade de vezes em que este foi reconhecido em outros feitos.
+Assim, considerando que, no caso em tela, o decreto condenatório está amparado tão somente nos reconhecimentos formalizados pela Vítima, além das divergências e inconsistências na referida prova, aferíveis de plano e sem a necessidade de incursão no conjunto fático-probatório, concluo que há dúvida razoável a respeito da autoria delitiva, razão pela qual deve o Paciente ser absolvido da imputação de roubo majorado.
+Ante o exposto, CONCEDO a ordem de habeas corpus para absolver o Paciente da imputação que lhe foi dirigida na Ação Penal n. 013373-74.2020.8.19.0008, com fundamento no art. 386, inciso VII, do Código de Processo Penal. Concedo, ainda, habeas corpus ex officio para determinar a soltura imediata do Paciente em relação a todos os processos, cabendo aos Juízos e Tribunais, nas ações em curso, e aos Juízos da Execução Penal, nas ações transitadas em julgado, aferirem se a dinâmica probatória é exatamente a mesma repelida nestes autos.
+Determino a expedição de ofício comunicando a íntegra desse julgado à Corregedoria de Polícia do Estado do Rio de Janeiro para apuração de eventuais responsabilidades.
+Oficie-se ao Tribunal de Justiça do Rio de Janeiro, a fim de que dê conhecimento do teor do julgado a todos os juízes de primeiro grau e integrantes de colegiado com competência criminal.
+É como voto.
+VOTO
+Sr. Presidente, eu gostaria, em um primeiro momento, de enaltecer o voto da Ministra Laurita, inclusive a iniciativa de trazer uma questão tão delicada e de uma ilegalidade tão gritante à Seção, para que esta decisão tenha a repercussão que se faz necessária.
+Eu gostaria de parabenizar tanto o Dr. <DADOS PESSOAIS REMOVIDOS> como o Dr. <DADOS PESSOAIS REMOVIDOS> pelas brilhantes sustentações e pelo cuidado especial com o caso concreto.
+Por fim, eu gostaria apenas de lamentar, porque esse é o tipo de situação que demonstra - posso até usar uma palavra meio forte - a falência do nosso sistema processual penal, pois não se trata de um caso isolado, infelizmente. Todos os dias estamos nos deparando com situações semelhantes, talvez não com essa intensidade, de a mesma pessoa estar envolvida em cerca de sessenta e poucas ações, em razão de um reconhecimento fotográfico, em que é patente o vício quanto ao procedimento do reconhecimento, seja pessoal ou fotográfico. O problema do reconhecimento fotográfico tem sido tratado com certo descaso, permitindo-me lamentar, inclusive, a atuação do Ministério Público, porque esse é o fiscal, é aquele que deve atuar e, ao receber o inquérito, deve avaliar se realmente as provas foram bem produzidas, se as provas obedeceram aos limites legais e se as provas são suficientes para prosseguir com a ação penal.
+Tal volume de ações envolvendo a mesma pessoa, com base no mesmo reconhecimento, acredito mostrar que alguma coisa não está funcionando.
+O primeiro exame da prova, que deveria partir do Ministério Público, não está acontecendo e, infelizmente, esse, vamos dizer, quase descaso com o caso concreto, está sendo endossado pela Justiça, o que é mais assustador ainda. Não em todos os casos, porque deu para perceber que, em algumas situações, o paciente foi absolvido, mas, em alguns casos, há condenação, ou seja, parece que ele tem, inclusive, condenações já transitadas em julgado, o que mostra que o sistema realmente não está funcionando.
+Em situação anterior, eu já havia votado na Turma sobre essa minha preocupação com a questão do racismo. Como disse o Dr. <DADOS PESSOAIS REMOVIDOS> da Tribuna, ele existe, não há como contestar essa realidade e, mesmo que não de uma forma clara, ou seja, mesmo que de uma forma implícita, basta a leitura dos processos, basta fazer uma análise do que chega às nossas mãos, que vamos perceber realmente que o preto pobre é o principal alvo da atuação policial.
+Se você pegar uma mesma situação em uma região periférica, vamos dizer assim, na Zona Sul do Rio, Leme, Ipanema, Leblon, o comportamento é diferente. Vemos diversas vezes, inclusive em reportagens de televisão, situações em que, quando a pessoa envolvida em determinado incidente é branca, de melhor condição, há um tratamento todo cuidadoso por parte da autoridade policial. Quando é uma pessoa preta, realmente a violência prepondera.
+Lembro-me de um caso, há pouco tempo, em um condomínio de luxo em São <DADOS PESSOAIS REMOVIDOS>, em que foi filmada a forma pela qual o dono da casa estava tratando a autoridade policial, xingando, berrando, gritando, e ela distante, simplesmente observando o que estava acontecendo. Se transportássemos aquela situação para uma região de menor poder aquisitivo, não tenho dúvida de que não seria esse o comportamento da autoridade policial. Ela atuaria com muito mais rigor, inclusive um rigor físico. Então, é uma situação realmente muito absurda que transparece nestes autos.
+Recordo que, há pouco tempo, logo que o Ministro Rogerio Schietti trouxe pela primeira vez essa questão do reconhecimento fotográfico, houve uma longa reportagem no Fantástico sobre isso e uma das pessoas entrevistadas disse que já havia sido apreendida, conduzida à delegacia, investigada tantas vezes, que passou a adotar, como rotina do seu dia a dia, um diário fotográfico de todas as suas ações. Era um trabalhador autônomo que passou a registrar seu dia a dia, de modo que, caso fosse chamado novamente a comparecer a uma delegacia, tivesse, de imediato, como comprovar o que estava fazendo em determinado dia.
+Então, ele ia trabalhar, registrava que estava trabalhando, fotografava a casa aonde ele estava indo, anotava o dia, tudo certinho, fotografava o trabalho dele, anotava a hora que ele tinha chegado, a hora que tinha saído, tudo. A pessoa está vivendo nesse nível de tensão, de estresse, algo que, realmente, com toda a certeza, nenhum de nós nem imagina. Podemos, de uma forma talvez imprecisa, ter uma ideia, mas realmente só quem sofre isso é que pode dizer o que isso significa.
+Acompanho integralmente o voto da Ministra Laurita.
+E agradeço, inclusive, por ter a eminente Relatora acolhido a minha sugestão de que sejam encaminhados a todos os processos em que o paciente figura como réu, como investigado, como apelante - não sei a situação de cada um dos processos -, cópia da presente decisão. Acredito que a defesa poderá instruir os autos com a indicação precisa desses processos, até para orientar a Secretaria quanto à comunicação desta decisão.
+Sr. Presidente, acompanho, na íntegra, com essas considerações, o voto da Ministra Laurita.
+VOTO
+O SENHOR MINISTRO ROGERIO SCHIETTI CRUZ:
+Presidente, eminentes Pares, douto representante do Ministério Público, nobres advogados, especialmente o Dr. <DADOS PESSOAIS REMOVIDOS>, pela Defensoria Pública do Rio de Janeiro, e o Dr. <DADOS PESSOAIS REMOVIDOS>, representando o <DADOS PESSOAIS REMOVIDOS>, que produziram um trabalho dos mais edificantes, porque não se ativeram a simplesmente trazer o que ocorre neste processo, mas fizeram um retrato de uma situação absolutamente vergonhosa; aliás, mais do que vergonhosa, se trata de uma situação de desprezo ao ser humano de que cuida o caso.
+A Ministra Laurita, com muita sensibilidade, trouxe o tema a esta Seção, produziu um magnífico voto, mostrando resumidamente que o reconhecimento feito neste caso decorreu de uma série de outros erros, a partir, como bem demonstrado pela defesa, de um inicial reconhecimento fotográfico feito em total desacordo com o que determina a lei. A partir deste primeiro reconhecimento, a impressão que se tem é que todos os roubos não apurados pela polícia de Belford Roxo foram atribuídos a este indivíduo, um rapaz que, à época, contava 32 anos de idade e que nunca teve absolutamente nada na sua folha penal.
+Duas testemunhas de defesa (à fl. 78) testemunharam que o acusado é um réu que trabalhou como porteiro de um condomínio de 2018 até meados de 2020 e chegou a abrir um lava-jato dentro desse condomínio, a fim de complementar sua renda. Afirmaram, ainda, nada saber sobre eventual atividade ilícita do réu nesse período.
+Não estamos diante de um caso como qualquer outro, estamos diante de um caso que, a mim particularmente, me envergonha, por ser integrante desse sistema de justiça capaz, como dito pela nobre defesa, o Dr. <DADOS PESSOAIS REMOVIDOS>, de moer gente. É uma roda-viva de crueldades. Nenhum de nós pode avaliar o que representam três anos dentro de uma cela fétida, insalubre e apinhada de gente, como é a situação desse rapaz.
+Estamos a julgar um dos setenta casos que ele está por responder, já foi absolvido em alguns. Quantos outros serão necessários chegar a este Superior Tribunal para que, singularmente, respondamos a esses casos  Quantos anos demoraremos para resolver a situação de <DADOS PESSOAIS REMOVIDOS>  Não é possível que nos ceguemos a essa realidade!
+A Ministra Laurita bem demonstrou todas as falhas de investigação deste caso, porque, infelizmente, é preciso que se diga que a polícia ainda se contenta com essa prova, que é uma prova epistemicamente falha, uma prova que depende da memória humana. E toda a Psicologia, como bem demonstrado, comprova que a memória é sujeita a uma série de fatores externos e internos, psíquicos, endógenos, exógenos, que afetam a capacidade do ser humano de reconhecer um rosto, ainda mais um rosto negro que, para nós, brancos, é muito parecido. É o cross-race effect, fenômeno presente em reconhecimentos feitos por pessoas que não têm a capacidade de distinguir características típicas, fenótipos de uma raça que não é a sua (no caso, a nossa, branca).
+Não obstante tudo isso, vemos, em muitos casos, a Justiça condenar com base só nessa prova, e por isso temos enfatizado em vários julgados da Quinta e da Sexta Turmas que, mesmo quando se observa o procedimento do art. 226, não é possível condenar alguém com base tão somente no reconhecimento formal, porque é uma prova epistemicamente inidônea.
+Não se pode enviar ao presídio alguém porque uma vítima, com todo o estresse causado pelo roubo, com uma arma apontada para sua cabeça, geralmente em ambiente escuro e, um mês, dois meses, três meses depois, indica alguém a partir de um álbum fotográfico, ou mesmo presencialmente, como o autor daquele roubo. Não é possível que essa prova seja a única a ser produzida. E a polícia pode fazer mais, porque quando se trata de crime de colarinho branco, a polícia requer interceptação telefônica, interceptação telemática, juntada de câmeras de áudio e vídeo, imagens da rua, geolocalização pelo celular do acusado, testemunhas, busca e apreensão etc. Por que em roubos somente essa prova gera condenação  Porque são pessoas pobres, pessoas invisíveis, pessoas sem recursos para custear uma boa defesa.
+São sortudos os que têm a Defensoria Pública. Aqui enalteço a Defensoria Pública do Rio de Janeiro que tem feito um trabalho magnífico em trazer esses casos para nós, mostrando o que acontece não só no Rio de Janeiro, mas no Brasil todo. Então, são raras as pessoas que têm essa sorte de contar com ou uma boa defesa técnica, um advogado, ou com a Defensoria Pública.
+Sr. Presidente, eminentes Colegas, entendo que a providência que o Ministro Sebastião propôs - encaminhar cópia da decisão aos juízes e ao egrégio Tribunal de Justiça do Rio de Janeiro para conhecimento desse fato - é extremamente salutar, mas eu ousaria propor mais.
+Estamos, acredito - pelo menos eu estou convencido de que estamos - diante de um erro judiciário gravíssimo e com consequências ainda duradouras no tempo. Temos condições de impedir isso concedendo um habeas corpus de ofício para suspender a execução penal de <DADOS PESSOAIS REMOVIDOS> e suspender todas as prisões preventivas decorrentes desses processos e inquéritos que estão em andamento até que se julguem todos esses processos em definitivo.
+Mesmo nos casos em que já foi condenado, ele foi condenado indevidamente, porque todas as condenações decorreram de um único reconhecimento, ainda que confirmado em juízo, com todos os vieses que, bem sabemos, interferem nesse ato de confirmação de uma impressão inicial, consubstanciada em um ato de reconhecimento fotográfico. Todos os inquéritos e processos foram instaurados a partir de um reconhecimento fotográfico que sabe-se lá como foi realizado.
+Proponho, dessa forma, que concedamos uma ordem de ofício para suspender as execuções penais, determinando a imediata soltura de <DADOS PESSOAIS REMOVIDOS>, e que ele não possa mais ser importunado por esses processos, a não ser responder por eles, porque cada juízo tem sua competência e, acredito, irá levar em consideração todos esses fatores que estamos debatendo, para julgar os processos que ainda estão em andamento.
+Não é possível que essa pessoa continue aguardando presa por mais anos e anos até que todos os habeas corpus sejam julgados, porque iremos receber uma infinidade de habeas corpus e nem sabemos se outros inquéritos não estão sendo instaurados contra ele a partir de uma única e inicial fotografia em um crime de receptação em que a vítima afastou a sua autoria ao ser ouvida em juízo.
+À vista do exposto, acompanho a ilustre relatora quanto à concessão da ordem para absolver o acusado da condenação a ele imposta no processo ora analisado (Processo n. 0013373-74.2020.8.19.0008), mas também proponho, em acréscimo, a concessão, de habeas corpus de ofício para determinar a imediata suspensão das execuções penais e das prisões preventivas existentes em desfavor do réu, com a imediata expedição de alvará de soltura em benefício do paciente.
+VOTO-VOGAL
+Quem já leu manuais e participou de exercícios práticos de investigação criminal na Academia Nacional de Polícia (Departamento de Polícia Federal) sabe da fragilidade, como prova, do reconhecimento de pessoas e coisas.
+Nos exercícios práticos, pede-se que o observador, durante um ou dois minutos, atente para doze itens da aparência física de determinada pessoa que casualmente passa pelo ambiente.
+Mesmo tratando-se de exercício dirigido, ou seja, o observador estimulado previamente a fixar caracteres da pessoa observada, em condições normais de iluminação e psicológicas, constatam-se grandes divergências no momento da posterior descrição prévia e reconhecimento, especialmente o reconhecimento fotográfico.
+No caso con creto, o reconhecimento baseou-se, além disso, em apenas três ou quatro itens, em relação aos quais, mesmo assim, houve divergências. A prova é, pois, fragilíssima.
+Acompanho na íntegra o voto da eminente relatora. Levo em conta que sua posição mais cautelosa permite prévia oitiva do Ministério Público, nos casos individuais com trânsito em julgado.
+</TEXTO>
+
+<EXTRACAO>
+{
+  "teseJuridica": [
+    {
+      "id": "T1",
+      "descricao": "O reconhecimento de pessoas, ainda que realizado segundo os arts. 226 a 228 do CPP, não possui força probante absoluta e, quando é o único suporte (ao lado do depoimento da vítima) para a condenação, especialmente diante de contradições e inconsistências nas descrições e do risco de falsas memórias e viés de confirmação, não pode, por si só, afirmar a autoria, de modo que a questão jurídica sobre a suficiência do depoimento da vítima e dos reconhecimentos fotográfico e pessoal para sustentar a condenação por roubo majorado, no contexto em que não houve outras provas, a res furtiva não foi apreendida e o réu negou os fatos, deve ser resolvida com absolvição, conforme a jurisprudência desta Corte que reconhece a fragilidade epistêmica do reconhecimento e a inexistência de força probante absoluta mesmo quando formalmente válido.",
+      "justificativas": [
+        "\"Consoante jurisprudência desta Corte, o reconhecimento positivo, que respeite as exigências legais, portanto, \\\"é válido, sem, todavia, força probante absoluta, de sorte que não pode induzir, por si só, à certeza da autoria delitiva, em razão de sua fragilidade epistêmica\\\" (STJ, HC n. 712.781/RJ, relator Ministro ROGERIO SCHIETTI CRUZ, Sexta Turma, julgado em 15/3/2022, DJe de 22/3/2022).\"",
+        "\"A confirmação, em juízo, do reconhecimento fotográfico extrajudicial, por si só, não torna o ato seguro e isento de erros involuntários, pois \\\"uma vez que a testemunha ou a vítima reconhece alguém como o autor do delito, há tendência, por um viés de confirmação, a repetir a mesma resposta em reconhecimentos futuros\\\" (STJ, HC n. 712.781/RJ...).\"",
+        "\"No caso, é incontroverso nos autos que (i) a condenação do Paciente encontra-se amparada tão somente no depoimento da Vítima e nos reconhecimentos realizados na fase extrajudicial e em juízo; (ii) não foram ouvidas outras testemunhas de acusação; (iii) a res furtiva não foi apreendida em poder do Acusado; (iv) o Réu negou a imputação que lhe foi dirigida.\"",
+        "\"Constata-se, primo ictu oculi e sem a necessidade de incursão aprofundada no acervo probatório, que há diversas inconsistências e contradições nas descrições feitas pela Vítima a respeito dos aspectos fisionômicos do suspeito, o que indica a possibilidade de reconhecimento falho, dado o risco de construção de falsas memórias.\""
+      ]
+    },
+    {
+      "id": "T2",
+      "descricao": "É possível, na via do habeas corpus, sem reexame aprofundado de provas, reconhecer a dúvida razoável e aplicar a regra in dubio pro reo para absolver com fundamento no art. 386, VII, do CPP, quando a questão jurídica consiste em saber se contradições e inconsistências aferíveis de plano nos únicos elementos de prova (depoimento da vítima e reconhecimentos) bastam para infirmar a condenação por roubo majorado, no contexto em que tais desconformidades são primo ictu oculi verificáveis e não há outras provas autônomas, à luz da orientação desta Corte e da Suprema Corte sobre a possibilidade de controle da idoneidade da fundamentação condenatória em habeas corpus.",
+      "justificativas": [
+        "\"HABEAS CORPUS. ROUBO MAJORADO. ... CONTRADIÇÕES E INCONSISTÊNCIAS AFERÍVEIS, PRIMO ICTU OCULI. DESNECESSIDADE DE REEXAME DO ACERVO PROBATÓRIO. DÚVIDA RAZOÁVEL. IN DUBIO PRO REO. ORDEM CONCEDIDA.\"",
+        "\"... é possível a correção do constrangimento ilegal imposto ao Réu mesmo na via do mandamus.\"",
+        "\"Considerando que o decreto condenatório está amparado tão somente nos reconhecimentos formalizados pela Vítima e, ainda, as divergências e inconsistências na referida prova, aferíveis de plano e sem a necessidade de incursão no conjunto fático-probatório, concluo que há dúvida razoável a respeito da autoria delitiva, razão pela qual é necessário adotar a regra de julgamento que decorre da máxima in dubio pro reo.\"",
+        "\"Ordem de habeas corpus concedida para absolver o Paciente, com fundamento no art. 386, inciso VII, do Código de Processo Penal.\""
+      ]
+    }
+  ],
+  "jurisprudenciaCitada": [
+    {
+      "teseId": "T1",
+      "referenciaCompleta": "STJ, HC 712.781/RJ, Rel. Min. Rogerio Schietti Cruz, Sexta Turma, julgado em 15/03/2022, DJe 22/03/2022.",
+      "assunto": "Reconhecimento é válido, mas sem força probante absoluta e sujeito a viés de confirmação.",
+      "repercussaoGeral": false,
+      "recursoRepetitivo": false,
+      "temaRepetitivo": null
+    },
+    {
+      "teseId": "T1",
+      "referenciaCompleta": "STJ, AgRg no REsp 1.969.149/RS, Rel. Min. Joel Ilan Paciornik, Quinta Turma, julgado em 28/11/2022, DJe 01/12/2022.",
+      "assunto": "Confirmação em juízo não constitui prova independente quando o reconhecimento original está contaminado.",
+      "repercussaoGeral": false,
+      "recursoRepetitivo": false,
+      "temaRepetitivo": null
+    },
+    {
+      "teseId": "T1",
+      "referenciaCompleta": "STJ, AgRg no HC 730.232/SP, Rel. Min. Rogerio Schietti Cruz, Sexta Turma, julgado em 19/12/2022, DJe 21/12/2022.",
+      "assunto": "Erros honestos e falsas memórias como limites da confiabilidade do reconhecimento.",
+      "repercussaoGeral": false,
+      "recursoRepetitivo": false,
+      "temaRepetitivo": null
+    },
+    {
+      "teseId": "T2",
+      "referenciaCompleta": "STJ, AgRg no AREsp 1.722.914/DF, Rel. Min. Laurita Vaz, Sexta Turma, julgado em 13/04/2021, DJe 28/04/2021.",
+      "assunto": "Controle, em habeas corpus, da idoneidade da fundamentação condenatória sem reexame probatório; absolvição por insuficiência de provas.",
+      "repercussaoGeral": false,
+      "recursoRepetitivo": false,
+      "temaRepetitivo": null
+    },
+    {
+      "teseId": "T2",
+      "referenciaCompleta": "STF, HC 170117, Rel. Min. Marco Aurélio, Primeira Turma, julgado em 19/05/2020, DJe 07/10/2020.",
+      "assunto": "Dúvida razoável deve beneficiar o acusado; absolvição quando a prova é insuficiente.",
+      "repercussaoGeral": false,
+      "recursoRepetitivo": false,
+      "temaRepetitivo": null
+    },
+    {
+      "teseId": "T2",
+      "referenciaCompleta": "STJ, HC 706.735/RS, Rel. Min. Sebastião Reis Júnior, Sexta Turma, julgado em 14/02/2023, DJe 17/02/2023.",
+      "assunto": "Nulidade de decisão fundada em depoimentos contraditórios e elementos inquisitoriais; exigência de prova idônea.",
+      "repercussaoGeral": false,
+      "recursoRepetitivo": false,
+      "temaRepetitivo": null
+    },
+    {
+      "teseId": "T2",
+      "referenciaCompleta": "STJ, HC 664.537/RJ, Rel. Min. Antonio Saldanha Palheiro, Sexta Turma, julgado em 16/08/2022, DJe 19/08/2022.",
+      "assunto": "Nulidade do reconhecimento tardio sem outras provas; absolvição.",
+      "repercussaoGeral": false,
+      "recursoRepetitivo": false,
+      "temaRepetitivo": null
+    },
+    {
+      "teseId": "T2",
+      "referenciaCompleta": "STJ, HC 698.058/SP, Rel. Min. Sebastião Reis Júnior, Sexta Turma, julgado em 22/02/2022, DJe 25/02/2022.",
+      "assunto": "Fragilidade do reconhecimento e contradições justificam absolvição.",
+      "repercussaoGeral": false,
+      "recursoRepetitivo": false,
+      "temaRepetitivo": null
+    },
+    {
+      "teseId": "T2",
+      "referenciaCompleta": "STJ, AgRg no HC 641.267/RS, Rel. Min. Rogerio Schietti Cruz, Sexta Turma, julgado em 13/12/2022, DJe 16/12/2022.",
+      "assunto": "Ausência de outras provas a amparar reconhecimento realizado na fase inquisitiva conduz à absolvição.",
+      "repercussaoGeral": false,
+      "recursoRepetitivo": false,
+      "temaRepetitivo": null
+    },
+    {
+      "teseId": "T2",
+      "referenciaCompleta": "STJ, HC 674.139/SP, Rel. Min. Rogerio Schietti Cruz, Sexta Turma, julgado em 15/02/2022, DJe 24/02/2022.",
+      "assunto": "Dúvida relevante resolve-se a favor da liberdade (in dubio pro libertas), reforçando o padrão decisório em habeas corpus.",
+      "repercussaoGeral": false,
+      "recursoRepetitivo": false,
+      "temaRepetitivo": null
+    }
+  ],
+  "referenciasLegislativas": [
+    {
+      "diplomaLegal": "Código de Processo Penal",
+      "dispositivo": "Art. 226",
+      "redacaoPosterior": null
+    },
+    {
+      "diplomaLegal": "Código de Processo Penal",
+      "dispositivo": "Art. 227",
+      "redacaoPosterior": null
+    },
+    {
+      "diplomaLegal": "Código de Processo Penal",
+      "dispositivo": "Art. 228",
+      "redacaoPosterior": null
+    },
+    {
+      "diplomaLegal": "Código de Processo Penal",
+      "dispositivo": "Art. 386, VII",
+      "redacaoPosterior": null
+    },
+    {
+      "diplomaLegal": "Resolução CNJ n. 484/2022",
+      "dispositivo": "Art. 7º, I",
+      "redacaoPosterior": null
+    }
+  ],
+  "notas": [],
+  "informacoesComplementares": [
+    "Julgado pela Terceira Seção do STJ.",
+    "Concedido habeas corpus de ofício para determinar soltura imediata e comunicação à Corregedoria de Polícia do Estado do Rio de Janeiro."
+  ],
+  "termosAuxiliares": [
+    "habeas corpus",
+    "roubo majorado",
+    "reconhecimento fotografico",
+    "reconhecimento pessoal",
+    "depoimento da vitima",
+    "falsas memorias",
+    "vies de confirmacao",
+    "art 226 cpp",
+    "in dubio pro reo",
+    "terceira secao",
+    "absolvicao",
+    "desnecessidade de reexame probatorio"
+  ],
+  "tema": []
+}
+</EXTRACAO>
+
+============================================================
+
+RESPOSTA LLM AS A JUDGE:
+{
+  "resposta": {
+    "precision": 0.8,
+    "recall": 0.92,
+    "metricas_por_campo": {
+      "teseJuridica": {
+        "precision": 0.95,
+        "recall": 1.0
+      },
+      "jurisprudenciaCitada": {
+        "precision": 0.6,
+        "recall": 1.0
+      },
+      "referenciasLegislativas": {
+        "precision": 0.9,
+        "recall": 1.0
+      },
+      "notas": {
+        "precision": 1.0,
+        "recall": 1.0
+      },
+      "informacoesComplementares": {
+        "precision": 0.0,
+        "recall": 1.0
+      },
+      "termosAuxiliares": {
+        "precision": 0.17,
+        "recall": 0.4
+      },
+      "tema": {
+        "precision": 1.0,
+        "recall": 1.0
+      }
+    },
+    "pontos_fortes": [
+      "Teses T1 e T2 extraídas da ementa e coerentes com relatório e voto, em frase única e com os quatro elementos, p.ex.: desnecessidade de reexame, dúvida razoável e in dubio pro reo (ementa; itens 6, 7, 10 e 11; relatório e voto corroboram).",
+      "Jurisprudência citada contempla todos os precedentes relevantes expressamente mencionados no voto, com referências completas (ex.: STJ, HC 712.781/RJ; STJ, AgRg no AREsp 1.722.914/DF; STF, HC 170117).",
+      "Referências legislativas essenciais corretamente incluídas (arts. 226 a 228 do CPP e art. 386, VII do CPP), além da Resolução CNJ n. 484/2022, art. 7º, I, todos efetivamente empregados na fundamentação.",
+      "Campos notas e tema corretamente deixados vazios diante da ausência de categorias/procedimentos especiais aplicáveis ou de menção inequívoca a Temas."
+    ],
+    "pontos_melhoria": [
+      "[PRECISION] Campo jurisprudenciaCitada utilizou a chave 'teseId' em vez da obrigatória 'id' para referenciar a tese (ex.: \"teseId\": \"T1\"), o que viola a estrutura exigida e compromete a conformidade.",
+      "[PRECISION] Campo informacoesComplementares incluiu textos não padronizados e já constantes do acórdão/ementa (\"Julgado pela Terceira Seção do STJ\"; \"Concedido habeas corpus de ofício...\"); o ICE deve conter apenas etiquetas padronizadas (ex.: repetitivos, IAC, juízo de retratação) e somente quando não constarem da ementa.",
+      "[PRECISION] Campo termosAuxiliares incluiu termos que constam da ementa (p.ex., \"habeas corpus\", \"roubo majorado\", \"reconhecimento fotografico\", \"in dubio pro reo\", \"desnecessidade de reexame probatorio\"), contrariando a regra de exclusão do TAP.",
+      "[PRECISION] Normalização legislativa: usar o padrão completo de dispositivo, p.ex., \"Art. 386, inciso VII\" e \"Art. 7º, inciso I\" (em vez de \"Art. 386, VII\" e \"Art. 7º, I\").",
+      "[RECALL] Campo termosAuxiliares poderia incluir termos relevantes não presentes na ementa/ICE para melhorar recuperação, como \"resolucao cnj 484\", \"falso positivo\", \"psicologia do testemunho\", \"cross race effect\"."
+    ],
+    "explicacao": "A precisão foi afetada por erros estruturais (uso de 'teseId' em jurisprudência), ICE com etiquetas não padronizadas e TAP contendo termos presentes na ementa. O recall é alto porque as teses centrais, os precedentes e os dispositivos efetivamente utilizados foram capturados. Para melhorar, corrigir a estrutura da associação tese↔precedente, limitar ICE às etiquetas padronizadas e refinar os termos auxiliares excluindo o que já está na ementa e incluindo termos técnicos adicionais relevantes."
+  },
+  "json": true,
+  "usage": {
+    "prompt_tokens": 28634,
+    "completion_tokens": 6983,
+    "total_tokens": 35617,
+    "cached_tokens": 25856,
+    "reasoning_tokens": 6016,
+    "finished_reason": "stop"
+  },
+  "model": "openai/gpt-5",
+  "tempo": 162.688,
+  "tratada": true
+}

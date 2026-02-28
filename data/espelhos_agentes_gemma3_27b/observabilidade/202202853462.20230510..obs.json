@@ -1,0 +1,1741 @@
+{
+  "id_peca": "202202853462.20230510.",
+  "timestamp_atualizacao": "2026-02-26T08:07:16.491285",
+  "observabilidade": {
+    "AgenteCampos": [
+      {
+        "agente": "AgenteCampos",
+        "inicio": "2026-02-26T08:01:47.987091",
+        "fim": "2026-02-26T08:02:13.064378",
+        "duracao_segundos": 25.077279,
+        "iteracoes": 1,
+        "tem_revisao": false,
+        "sucesso": true,
+        "resposta_keys": [
+          "resposta",
+          "json",
+          "usage",
+          "model",
+          "tempo",
+          "tratada"
+        ],
+        "resposta": {
+          "resposta": {
+            "raciocinio": "O texto é um acórdão de Habeas Corpus que discute a validade de um reconhecimento de pessoa como base para uma condenação. Há ementa, citações de jurisprudência (STJ), leis (CPP, CP), menção a inconsistências na identificação do acusado, e discussão sobre a fragilidade do reconhecimento fotográfico. A decisão final é pela concessão do habeas corpus e absolvição do paciente. Há também menção a múltiplos processos envolvendo o mesmo acusado, levantando questões sobre possíveis erros judiciários.",
+            "campos": [
+              "#teseJuridica: Há ementa resumindo os pontos principais do caso.",
+              "#JuCi: O texto cita diversos julgados do STJ e faz referência à jurisprudência.",
+              "#RefLeg: Há menção ao Código de Processo Penal (CPP) e ao Código Penal (CP).",
+              "#notas: O texto discute inconsistências no reconhecimento da vítima, a fragilidade da prova do reconhecimento fotográfico e a possibilidade de erros judiciários.",
+              "#ICE: Não há menção explícita a Repetitivo, IAC ou Juízo de Retratação, mas a discussão sobre múltiplos processos com o mesmo padrão de reconhecimento sugere a possibilidade de um tema repetitivo.",
+              "#TAP: Termos técnicos jurídicos como 'habeas corpus', 'in dubio pro reo', 'reconhecimento fotográfico', 'prova epistêmica' e 'erro judiciário' estão presentes.",
+              "#tema: A discussão sobre a validade do reconhecimento fotográfico e a possibilidade de erros judiciários pode ser considerada um tema relevante."
+            ],
+            "contribuição": "Identificação completa dos campos relevantes com base na análise do texto."
+          },
+          "json": true,
+          "usage": {
+            "prompt_tokens": 20643,
+            "completion_tokens": 381,
+            "total_tokens": 21024,
+            "cached_tokens": 0,
+            "reasoning_tokens": 0,
+            "finished_reason": "stop",
+            "temperature": 0.01
+          },
+          "model": "google/gemma-3-27b-it",
+          "tempo": 25.057,
+          "tratada": true
+        }
+      }
+    ],
+    "AgenteTeses": [
+      {
+        "agente": "AgenteTeses",
+        "inicio": "2026-02-26T08:02:13.069730",
+        "fim": "2026-02-26T08:02:51.674117",
+        "duracao_segundos": 38.60438,
+        "iteracoes": 1,
+        "tem_revisao": false,
+        "sucesso": true,
+        "resposta_keys": [
+          "resposta",
+          "json",
+          "usage",
+          "model",
+          "tempo",
+          "tratada"
+        ],
+        "resposta": {
+          "resposta": {
+            "teseJuridica": [
+              {
+                "id": "T1",
+                "descricao": "É legítima a valorização do reconhecimento de pessoas pelo Julgador, desde que respeitadas as exigências legais, mas tal reconhecimento não constitui prova cabal e irrefutável de autoria delitiva, devendo ser analisado em conjunto com outros elementos de prova, sob pena de fragilizar a convicção do juízo e gerar condenações injustas, conforme a jurisprudência do STJ.",
+                "justificativas": [
+                  "\"Desde que respeitadas as exigências legais, o reconhecimento de pessoas pode ser valorado pelo Julgador. Isso não significa admitir que, em todo e qualquer caso, a afirmação do ofendido de que identifica determinada pessoa como o agente do crime seja prova cabal e irrefutável.\""
+                ]
+              },
+              {
+                "id": "T2",
+                "descricao": "O reconhecimento positivo, mesmo que respeitadas as exigências legais, possui apenas força probante relativa, não induzindo à certeza da autoria delitiva por si só, em razão de sua fragilidade epistêmica, conforme entendimento consolidado no STJ.",
+                "justificativas": [
+                  "\"Consoante jurisprudência desta Corte, o reconhecimento positivo, que respeite as exigências legais, portanto, \"é válido, sem, todavia, força probante absoluta, de sorte que não pode induzir, por si só, à certeza da autoria delitiva, em razão de sua fragilidade epistêmica\" (STJ, HC n. 712.781/RJ, relator Ministro ROGERIO SCHIETTI CRUZ, Sexta Turma, julgado em 15/3/2022, DJe de 22/3/2022).\""
+                ]
+              },
+              {
+                "id": "T3",
+                "descricao": "O reconhecimento de pessoas, quando realizado em conformidade com as disposições legais, deve ser valorado em conjunto com outros meios de prova, como confissão, testemunha, perícia ou acareação, e não pode prevalecer sobre eles, sob pena de comprometer a busca pela verdade real e a justa aplicação da lei.",
+                "justificativas": [
+                  "\"O reconhecimento de pessoas que obedece às disposições legais (o que não as observa é nulo, consoante jurisprudência pacífica desta Corte) não prepondera sobre quaisquer outros meios de prova (confissão, testemunha, perícia, acareação, etc.); ao contrário, deve ser valorado como os demais.\""
+                ]
+              },
+              {
+                "id": "T4",
+                "descricao": "A confirmação, em juízo, do reconhecimento fotográfico extrajudicial, por si só, não garante a segurança e a isenção de erros involuntários, pois a memória humana pode ser influenciada por vieses de confirmação, levando à repetição da resposta em reconhecimentos futuros, conforme a jurisprudência do STJ.",
+                "justificativas": [
+                  "\"A confirmação, em juízo, do reconhecimento fotográfico extrajudicial, por si só, não torna o ato seguro e isento de erros involuntários, pois \"uma vez que a testemunha ou a vítima reconhece alguém como o autor do delito, há tendência, por um viés de confirmação, a repetir a mesma resposta em reconhecimentos futuros, pois sua memória estará mais ativa e predisposta a tanto\" (STJ, HC n. 712.781/RJ, relator Ministro ROGERIO SCHIETTI CRUZ, Sexta Turma, julgado em 15/3/2022, DJe de 22/3/2022).\""
+                ]
+              },
+              {
+                "id": "T5",
+                "descricao": "A condenação baseada unicamente no depoimento da vítima e nos reconhecimentos realizados na fase extrajudicial e em juízo, sem a apresentação de outras provas robustas, é passível de revisão quando presentes inconsistências e contradições nas descrições feitas pela vítima, indicando a possibilidade de reconhecimento falho, especialmente quando não há outros elementos que confirmem a autoria delitiva.",
+                "justificativas": [
+                  "\"No caso, é incontroverso nos autos que (i) a condenação do Paciente encontra-se amparada tão somente no depoimento da Vítima e nos reconhecimentos realizados na fase extrajudicial e em juízo; (ii) não foram ouvidas outras testemunhas de acusação; (iii) a res furtiva não foi apreendida em poder do Acusado; (iv) o Réu negou a imputação que lhe foi dirigida.\""
+                ]
+              },
+              {
+                "id": "T6",
+                "descricao": "A dúvida razoável sobre a autoria delitiva, decorrente de inconsistências nas descrições da vítima e da fragilidade do reconhecimento, exige a aplicação do princípio in dubio pro reo, absolvendo o acusado, pois o ônus da prova recai sobre a acusação, que deve demonstrar a culpabilidade do réu de forma isenta de dúvidas.",
+                "justificativas": [
+                  "\"Constata-se, primo ictu oculi e sem a necessidade de incursão aprofundada no acervo probatório, que há diversas inconsistências e contradições nas descrições feitas pela Vítima a respeito dos aspectos fisionômicos do suspeito, o que indica a possibilidade de reconhecimento falho, dado o risco de construção de falsas memórias.\", \"Considerando que o decreto condenatório está amparado tão somente nos reconhecimentos formalizados pela Vítima e, ainda, as divergências e inconsistências na referida prova, aferíveis de plano e sem a necessidade de incursão no conjunto fático-probatório, concluo que há dúvida razoável a respeito da autoria delitiva, razão pela qual é necessário adotar a regra de julgamento que decorre da máxima in dubio pro reo, tendo em vista que o ônus de provar a imputação recai sobre a Acusação.\""
+                ]
+              }
+            ],
+            "contribuição": "extração realizada"
+          },
+          "json": true,
+          "usage": {
+            "prompt_tokens": 20987,
+            "completion_tokens": 1385,
+            "total_tokens": 22372,
+            "cached_tokens": 0,
+            "reasoning_tokens": 0,
+            "finished_reason": "stop",
+            "temperature": 0.01
+          },
+          "model": "google/gemma-3-27b-it",
+          "tempo": 38.593,
+          "tratada": true
+        }
+      },
+      {
+        "agente": "AgenteTeses",
+        "inicio": "2026-02-26T08:04:18.185790",
+        "fim": "2026-02-26T08:05:28.081428",
+        "duracao_segundos": 69.895632,
+        "iteracoes": 2,
+        "tem_revisao": true,
+        "sucesso": true,
+        "resposta_keys": [
+          "resposta",
+          "json",
+          "usage",
+          "model",
+          "tempo",
+          "tratada"
+        ],
+        "resposta": {
+          "resposta": {
+            "teseJuridica": [
+              {
+                "id": "T1",
+                "descricao": "É legítima a valoração do reconhecimento de pessoas pelo Julgador, desde que respeitadas as exigências legais, mas tal reconhecimento não constitui prova cabal e irrefutável de autoria, devendo ser analisado em conjunto com outros elementos de prova, sob pena de fragilizar a convicção do juízo e comprometer a segurança jurídica, conforme entendimento desta Corte.",
+                "justificativas": [
+                  "\"Desde que respeitadas as exigências legais, o reconhecimento de pessoas pode ser valorado pelo Julgador. Isso não significa admitir que, em todo e qualquer caso, a afirmação do ofendido de que identifica determinada pessoa como o agente do crime seja prova cabal e irrefutável.\""
+                ]
+              },
+              {
+                "id": "T2",
+                "descricao": "O reconhecimento positivo, mesmo que respeitadas as exigências legais, possui força probante limitada, não induzindo, por si só, à certeza da autoria delitiva, em razão de sua fragilidade epistêmica, devendo ser corroborado por outros elementos de prova para embasar uma condenação, conforme jurisprudência do STJ.",
+                "justificativas": [
+                  "\"Consoante jurisprudência desta Corte, o reconhecimento positivo, que respeite as exigências legais, portanto, \"é válido, sem, todavia, força probante absoluta, de sorte que não pode induzir, por si só, à certeza da autoria delitiva, em razão de sua fragilidade epistêmica\" (STJ, HC n. 712.781/RJ, relator Ministro ROGERIO SCHIETTI CRUZ, Sexta Turma, julgado em 15/3/2022, DJe de 22/3/2022).\""
+                ]
+              },
+              {
+                "id": "T3",
+                "descricao": "O reconhecimento de pessoas, mesmo quando realizado em conformidade com as disposições legais, não possui prevalência sobre outros meios de prova, devendo ser valorado em conjunto com confissões, testemunhos, perícias e acareações, a fim de formar um conjunto probatório robusto e seguro para a condenação.",
+                "justificativas": [
+                  "\"O reconhecimento de pessoas que obedece às disposições legais (o que não as observa é nulo, consoante jurisprudência pacífica desta Corte) não prepondera sobre quaisquer outros meios de prova (confissão, testemunha, perícia, acareação, etc.); ao contrário, deve ser valorado como os demais.\""
+                ]
+              },
+              {
+                "id": "T4",
+                "descricao": "A confirmação, em juízo, do reconhecimento fotográfico extrajudicial, por si só, não garante a segurança e isenção de erros involuntários, pois a memória humana pode ser influenciada por vieses de confirmação, levando à repetição da resposta em reconhecimentos futuros, o que exige cautela na valoração dessa prova.",
+                "justificativas": [
+                  "\"A confirmação, em juízo, do reconhecimento fotográfico extrajudicial, por si só, não torna o ato seguro e isento de erros involuntários, pois \"uma vez que a testemunha ou a vítima reconhece alguém como o autor do delito, há tendência, por um viés de confirmação, a repetir a mesma resposta em reconhecimentos futuros, pois sua memória estará mais ativa e predisposta a tanto\" (STJ, HC n. 712.781/RJ, relator Ministro ROGERIO SCHIETTI CRUZ, Sexta Turma, julgado em 15/3/2022, DJe de 22/3/2022).\""
+                ]
+              },
+              {
+                "id": "T5",
+                "descricao": "A condenação baseada unicamente no depoimento da vítima e em reconhecimentos realizados na fase extrajudicial e em juízo, sem a apresentação de outras provas corroborantes, é passível de revisão quando presentes inconsistências e contradições nas descrições feitas pela vítima, indicando a possibilidade de reconhecimento falho, especialmente quando não há outros elementos que confirmem a autoria delitiva.",
+                "justificativas": [
+                  "\"No caso, é incontroverso nos autos que (i) a condenação do Paciente encontra-se amparada tão somente no depoimento da Vítima e nos reconhecimentos realizados na fase extrajudicial e em juízo; (ii) não foram ouvidas outras testemunhas de acusação; (iii) a res furtiva não foi apreendida em poder do Acusado; (iv) o Réu negou a imputação que lhe foi dirigida.\""
+                ]
+              },
+              {
+                "id": "T6",
+                "descricao": "A dúvida razoável sobre a autoria delitiva, decorrente de inconsistências e contradições nas descrições da vítima e na ausência de outros elementos de prova robustos, impõe a aplicação do princípio in dubio pro reo, absolvendo o acusado, pois o ônus da prova recai sobre a acusação.",
+                "justificativas": [
+                  "\"Constata-se, primo ictu oculi e sem a necessidade de incursão aprofundada no acervo probatório, que há diversas inconsistências e contradições nas descrições feitas pela Vítima a respeito dos aspectos fisionômicos do suspeito, o que indica a possibilidade de reconhecimento falho, dado o risco de construção de falsas memórias.\""
+                ]
+              }
+            ],
+            "contribuição": "extração realizada"
+          },
+          "json": true,
+          "usage": {
+            "prompt_tokens": 21007,
+            "completion_tokens": 1269,
+            "total_tokens": 22276,
+            "cached_tokens": 0,
+            "reasoning_tokens": 0,
+            "finished_reason": "stop",
+            "temperature": 0.01
+          },
+          "model": "google/gemma-3-27b-it",
+          "tempo": 69.886,
+          "tratada": true
+        }
+      }
+    ],
+    "AgenteJurisprudenciasCitadas": [
+      {
+        "agente": "AgenteJurisprudenciasCitadas",
+        "inicio": "2026-02-26T08:02:51.680210",
+        "fim": "2026-02-26T08:03:30.917300",
+        "duracao_segundos": 39.23708,
+        "iteracoes": 1,
+        "tem_revisao": false,
+        "sucesso": true,
+        "resposta_keys": [
+          "resposta",
+          "json",
+          "usage",
+          "model",
+          "tempo",
+          "tratada"
+        ],
+        "resposta": {
+          "resposta": {
+            "jurisprudenciaCitada": [
+              {
+                "teseId": "T1",
+                "referenciaCompleta": "STJ, HC n. 712.781/RJ, Rel. Min. ROGERIO SCHIETTI CRUZ, Sexta Turma, julgado em 15/3/2022, DJe de 22/3/2022.",
+                "assunto": "Cita precedentes sobre a valorização do reconhecimento de pessoas, ressaltando que não constitui prova cabal e irrefutável.",
+                "repercussaoGeral": false,
+                "recursoRepetitivo": false,
+                "temaRepetitivo": null
+              },
+              {
+                "teseId": "T2",
+                "referenciaCompleta": "STJ, HC n. 712.781/RJ, Rel. Min. ROGERIO SCHIETTI CRUZ, Sexta Turma, julgado em 15/3/2022, DJe de 22/3/2022.",
+                "assunto": "Fundamenta a tese sobre a força probante relativa do reconhecimento positivo, devido à sua fragilidade epistêmica.",
+                "repercussaoGeral": false,
+                "recursoRepetitivo": false,
+                "temaRepetitivo": null
+              },
+              {
+                "teseId": "T3",
+                "referenciaCompleta": "STJ, HC n. 712.781/RJ, Rel. Min. ROGERIO SCHIETTI CRUZ, Sexta Turma, julgado em 15/3/2022, DJe de 22/3/2022.",
+                "assunto": "Reforça a necessidade de valorar o reconhecimento em conjunto com outros meios de prova.",
+                "repercussaoGeral": false,
+                "recursoRepetitivo": false,
+                "temaRepetitivo": null
+              },
+              {
+                "teseId": "T4",
+                "referenciaCompleta": "STJ, HC n. 712.781/RJ, Rel. Min. ROGERIO SCHIETTI CRUZ, Sexta Turma, julgado em 15/3/2022, DJe de 22/3/2022.",
+                "assunto": "Discorre sobre a influência de vieses de confirmação na confirmação do reconhecimento fotográfico em juízo.",
+                "repercussaoGeral": false,
+                "recursoRepetitivo": false,
+                "temaRepetitivo": null
+              },
+              {
+                "teseId": "T5",
+                "referenciaCompleta": "STJ, AgRg no AREsp n. 1.969.149/RS, relator Ministro JOEL ILAN PACIORNIK , Quinta Turma, julgado em 28/11/2022, DJe de 1/12/2022.",
+                "assunto": "Cita precedentes sobre a necessidade de outras provas robustas além do depoimento da vítima e reconhecimento para embasar uma condenação.",
+                "repercussaoGeral": false,
+                "recursoRepetitivo": false,
+                "temaRepetitivo": null
+              },
+              {
+                "teseId": "T6",
+                "referenciaCompleta": "STJ, AgRg no HC n. 641.267/RS, relator Ministro ROGERIO SCHIETTI CRUZ, Sexta Turma, julgado em 13/12/2022, DJe de 16/12/2022.",
+                "assunto": "Fundamenta a tese sobre a aplicação do princípio in dubio pro reo diante de dúvidas sobre a autoria delitiva.",
+                "repercussaoGeral": false,
+                "recursoRepetitivo": false,
+                "temaRepetitivo": null
+              },
+              {
+                "teseId": "T6",
+                "referenciaCompleta": "STJ, HC n. 674.139/SP, relator Ministro ROGERIO SCHIETTI CRUZ, Sexta Turma, julgado em 15/2/2022, DJe de 24/2/2022.",
+                "assunto": "Reforça a aplicação do princípio in dubio pro reo em casos de reconhecimento fragilizado.",
+                "repercussaoGeral": false,
+                "recursoRepetitivo": false,
+                "temaRepetitivo": null
+              },
+              {
+                "teseId": "T6",
+                "referenciaCompleta": "STJ, HC n. 698.058/SP, relator Ministro SEBASTIÃO REIS JÚNIOR, Sexta Turma, julgado em 22/2/2022, DJe de 25/2/2022.",
+                "assunto": "Reitera a necessidade de provas robustas para a condenação e a aplicação do princípio in dubio pro reo em caso de dúvidas.",
+                "repercussaoGeral": false,
+                "recursoRepetitivo": false,
+                "temaRepetitivo": null
+              }
+            ],
+            "contribuição": "extração realizada"
+          },
+          "json": true,
+          "usage": {
+            "prompt_tokens": 22220,
+            "completion_tokens": 1249,
+            "total_tokens": 23469,
+            "cached_tokens": 0,
+            "reasoning_tokens": 0,
+            "finished_reason": "stop",
+            "temperature": 0.01
+          },
+          "model": "google/gemma-3-27b-it",
+          "tempo": 39.215,
+          "tratada": true
+        }
+      },
+      {
+        "agente": "AgenteJurisprudenciasCitadas",
+        "inicio": "2026-02-26T08:05:28.090702",
+        "fim": "2026-02-26T08:05:51.798212",
+        "duracao_segundos": 23.707501,
+        "iteracoes": 2,
+        "tem_revisao": true,
+        "sucesso": true,
+        "resposta_keys": [
+          "resposta",
+          "json",
+          "usage",
+          "model",
+          "tempo",
+          "tratada"
+        ],
+        "resposta": {
+          "resposta": {
+            "jurisprudenciaCitada": [
+              {
+                "teseId": "T1",
+                "referenciaCompleta": "STJ, HC n. 712.781/RJ, Rel. Min. ROGERIO SCHIETTI CRUZ, Sexta Turma, julgado em 15/3/2022, DJe de 22/3/2022.",
+                "assunto": "Cita precedentes sobre a valoração do reconhecimento de pessoas, ressaltando que não constitui prova cabal e irrefutável.",
+                "repercussaoGeral": false,
+                "recursoRepetitivo": false,
+                "temaRepetitivo": null
+              },
+              {
+                "teseId": "T2",
+                "referenciaCompleta": "STJ, HC n. 712.781/RJ, Rel. Min. ROGERIO SCHIETTI CRUZ, Sexta Turma, julgado em 15/3/2022, DJe de 22/3/2022.",
+                "assunto": "Fundamenta a limitação da força probante do reconhecimento positivo, devido à sua fragilidade epistêmica.",
+                "repercussaoGeral": false,
+                "recursoRepetitivo": false,
+                "temaRepetitivo": null
+              },
+              {
+                "teseId": "T3",
+                "referenciaCompleta": "STJ, HC n. 712.781/RJ, Rel. Min. ROGERIO SCHIETTI CRUZ, Sexta Turma, julgado em 15/3/2022, DJe de 22/3/2022.",
+                "assunto": "Reitera que o reconhecimento de pessoas não prevalece sobre outros meios de prova, devendo ser valorado em conjunto.",
+                "repercussaoGeral": false,
+                "recursoRepetitivo": false,
+                "temaRepetitivo": null
+              },
+              {
+                "teseId": "T4",
+                "referenciaCompleta": "STJ, HC n. 712.781/RJ, Rel. Min. ROGERIO SCHIETTI CRUZ, Sexta Turma, julgado em 15/3/2022, DJe de 22/3/2022.",
+                "assunto": "Alerta para a influência de vieses de confirmação na confirmação, em juízo, do reconhecimento fotográfico extrajudicial.",
+                "repercussaoGeral": false,
+                "recursoRepetitivo": false,
+                "temaRepetitivo": null
+              },
+              {
+                "teseId": "T5",
+                "referenciaCompleta": null,
+                "assunto": "Não há citação direta de jurisprudência para fundamentar a tese sobre a condenação baseada unicamente no depoimento da vítima e reconhecimento.",
+                "repercussaoGeral": false,
+                "recursoRepetitivo": false,
+                "temaRepetitivo": null
+              },
+              {
+                "teseId": "T6",
+                "referenciaCompleta": null,
+                "assunto": "Não há citação direta de jurisprudência para fundamentar a tese sobre a dúvida razoável e o princípio in dubio pro reo.",
+                "repercussaoGeral": false,
+                "recursoRepetitivo": false,
+                "temaRepetitivo": null
+              }
+            ],
+            "contribuição": "extração realizada"
+          },
+          "json": true,
+          "usage": {
+            "prompt_tokens": 22155,
+            "completion_tokens": 830,
+            "total_tokens": 22985,
+            "cached_tokens": 0,
+            "reasoning_tokens": 0,
+            "finished_reason": "stop",
+            "temperature": 0.01
+          },
+          "model": "google/gemma-3-27b-it",
+          "tempo": 23.697,
+          "tratada": true
+        }
+      },
+      {
+        "agente": "AgenteJurisprudenciasCitadas",
+        "inicio": "2026-02-26T08:06:40.532875",
+        "fim": "2026-02-26T08:07:02.405482",
+        "duracao_segundos": 21.8726,
+        "iteracoes": 3,
+        "tem_revisao": true,
+        "sucesso": true,
+        "resposta_keys": [
+          "resposta",
+          "json",
+          "usage",
+          "model",
+          "tempo",
+          "tratada"
+        ],
+        "resposta": {
+          "resposta": {
+            "jurisprudenciaCitada": [
+              {
+                "teseId": "T1",
+                "referenciaCompleta": "Não há jurisprudência específica para esta tese.",
+                "assunto": "Valoração do reconhecimento de pessoas, desde que respeitadas as exigências legais, mas não como prova cabal.",
+                "repercussaoGeral": false,
+                "recursoRepetitivo": false,
+                "temaRepetitivo": null
+              },
+              {
+                "teseId": "T2",
+                "referenciaCompleta": "STJ, HC n. 712.781/RJ, relator Ministro ROGERIO SCHIETTI CRUZ, Sexta Turma, julgado em 15/3/2022, DJe de 22/3/2022.",
+                "assunto": "Força probante limitada do reconhecimento positivo e sua fragilidade epistêmica.",
+                "repercussaoGeral": false,
+                "recursoRepetitivo": false,
+                "temaRepetitivo": null
+              },
+              {
+                "teseId": "T3",
+                "referenciaCompleta": "Não há jurisprudência específica para esta tese.",
+                "assunto": "O reconhecimento de pessoas não prevalece sobre outros meios de prova.",
+                "repercussaoGeral": false,
+                "recursoRepetitivo": false,
+                "temaRepetitivo": null
+              },
+              {
+                "teseId": "T4",
+                "referenciaCompleta": "STJ, HC n. 712.781/RJ, relator Ministro ROGERIO SCHIETTI CRUZ, Sexta Turma, julgado em 15/3/2022, DJe de 22/3/2022.",
+                "assunto": "A confirmação do reconhecimento fotográfico não garante a segurança e isenção de erros.",
+                "repercussaoGeral": false,
+                "recursoRepetitivo": false,
+                "temaRepetitivo": null
+              },
+              {
+                "teseId": "T5",
+                "referenciaCompleta": "Não há jurisprudência específica para esta tese.",
+                "assunto": "Condenação baseada unicamente em depoimento da vítima e reconhecimento, com inconsistências, é passível de revisão.",
+                "repercussaoGeral": false,
+                "recursoRepetitivo": false,
+                "temaRepetitivo": null
+              },
+              {
+                "teseId": "T6",
+                "referenciaCompleta": "Não há jurisprudência específica para esta tese.",
+                "assunto": "Dúvida razoável sobre a autoria impõe a aplicação do princípio in dubio pro reo.",
+                "repercussaoGeral": false,
+                "recursoRepetitivo": false,
+                "temaRepetitivo": null
+              }
+            ],
+            "contribuição": "extração realizada"
+          },
+          "json": true,
+          "usage": {
+            "prompt_tokens": 22167,
+            "completion_tokens": 697,
+            "total_tokens": 22864,
+            "cached_tokens": 0,
+            "reasoning_tokens": 0,
+            "finished_reason": "stop",
+            "temperature": 0.01
+          },
+          "model": "google/gemma-3-27b-it",
+          "tempo": 21.862,
+          "tratada": true
+        }
+      }
+    ],
+    "AgenteTermosAuxiliares": [
+      {
+        "agente": "AgenteTermosAuxiliares",
+        "inicio": "2026-02-26T08:03:30.924833",
+        "fim": "2026-02-26T08:03:37.835479",
+        "duracao_segundos": 6.910639,
+        "iteracoes": 1,
+        "tem_revisao": false,
+        "sucesso": true,
+        "resposta_keys": [
+          "resposta",
+          "json",
+          "usage",
+          "model",
+          "tempo",
+          "tratada"
+        ],
+        "resposta": {
+          "resposta": {
+            "termosAuxiliares": [
+              "habeas corpus",
+              "reconhecimento fotografico",
+              "in dubio pro reo",
+              "prova ilicita",
+              "erro judiciario",
+              "cross race effect",
+              "fragilidade epistêmica",
+              "vicio reconhecimento",
+              "dinamica probatoria",
+              "art 226 cpp",
+              "art 386 vii cpp",
+              "falsas memorias",
+              "constricao ilegal",
+              "corregedoria policia"
+            ],
+            "contribuição": "extração realizada"
+          },
+          "json": true,
+          "usage": {
+            "prompt_tokens": 20436,
+            "completion_tokens": 148,
+            "total_tokens": 20584,
+            "cached_tokens": 0,
+            "reasoning_tokens": 0,
+            "finished_reason": "stop",
+            "temperature": 0.01
+          },
+          "model": "google/gemma-3-27b-it",
+          "tempo": 6.869,
+          "tratada": true
+        }
+      },
+      {
+        "agente": "AgenteTermosAuxiliares",
+        "inicio": "2026-02-26T08:05:51.808632",
+        "fim": "2026-02-26T08:06:00.954644",
+        "duracao_segundos": 9.146006,
+        "iteracoes": 2,
+        "tem_revisao": true,
+        "sucesso": true,
+        "resposta_keys": [
+          "resposta",
+          "json",
+          "usage",
+          "model",
+          "tempo",
+          "tratada"
+        ],
+        "resposta": {
+          "resposta": {
+            "termosAuxiliares": [
+              "habeas corpus",
+              "reconhecimento fotografico",
+              "in dubio pro reo",
+              "prova ilicita",
+              "erro judiciario",
+              "fragilidade epistêmica",
+              "cross race effect",
+              "primeiro reconhecimento",
+              "segundo reconhecimento",
+              "vicio probatorio",
+              "falhas investigativas",
+              "condenação injusta",
+              "ausencia de provas",
+              "inconsistencias probatorias"
+            ],
+            "contribuição": "extração realizada"
+          },
+          "json": true,
+          "usage": {
+            "prompt_tokens": 20450,
+            "completion_tokens": 141,
+            "total_tokens": 20591,
+            "cached_tokens": 0,
+            "reasoning_tokens": 0,
+            "finished_reason": "stop",
+            "temperature": 0.01
+          },
+          "model": "google/gemma-3-27b-it",
+          "tempo": 9.135,
+          "tratada": true
+        }
+      }
+    ],
+    "AgenteTema": [
+      {
+        "agente": "AgenteTema",
+        "inicio": "2026-02-26T08:03:30.925405",
+        "fim": "2026-02-26T08:03:38.230876",
+        "duracao_segundos": 7.305465,
+        "iteracoes": 1,
+        "tem_revisao": false,
+        "sucesso": true,
+        "resposta_keys": [
+          "resposta",
+          "json",
+          "usage",
+          "model",
+          "tempo",
+          "tratada"
+        ],
+        "resposta": {
+          "resposta": {
+            "tema": [
+              {
+                "tribunal": "STJ",
+                "numero": 712781,
+                "descricao": null
+              }
+            ],
+            "contribuição": "extração realizada"
+          },
+          "json": true,
+          "usage": {
+            "prompt_tokens": 20419,
+            "completion_tokens": 59,
+            "total_tokens": 20478,
+            "cached_tokens": 0,
+            "reasoning_tokens": 0,
+            "finished_reason": "stop",
+            "temperature": 0.01
+          },
+          "model": "google/gemma-3-27b-it",
+          "tempo": 7.259,
+          "tratada": true
+        }
+      },
+      {
+        "agente": "AgenteTema",
+        "inicio": "2026-02-26T08:06:25.600534",
+        "fim": "2026-02-26T08:06:33.265276",
+        "duracao_segundos": 7.664735,
+        "iteracoes": 2,
+        "tem_revisao": true,
+        "sucesso": true,
+        "resposta_keys": [
+          "resposta",
+          "json",
+          "usage",
+          "model",
+          "tempo",
+          "tratada"
+        ],
+        "resposta": {
+          "resposta": {
+            "tema": [
+              {
+                "tribunal": "STJ",
+                "numero": 712781,
+                "descricao": null
+              },
+              {
+                "tribunal": "STJ",
+                "numero": 931,
+                "descricao": "Inadimplemento da multa"
+              }
+            ],
+            "contribuição": "extração realizada"
+          },
+          "json": true,
+          "usage": {
+            "prompt_tokens": 20427,
+            "completion_tokens": 98,
+            "total_tokens": 20525,
+            "cached_tokens": 0,
+            "reasoning_tokens": 0,
+            "finished_reason": "stop",
+            "temperature": 0.01
+          },
+          "model": "google/gemma-3-27b-it",
+          "tempo": 7.655,
+          "tratada": true
+        }
+      }
+    ],
+    "AgenteNotas": [
+      {
+        "agente": "AgenteNotas",
+        "inicio": "2026-02-26T08:03:30.923481",
+        "fim": "2026-02-26T08:03:43.289815",
+        "duracao_segundos": 12.366326,
+        "iteracoes": 1,
+        "tem_revisao": false,
+        "sucesso": true,
+        "resposta_keys": [
+          "resposta",
+          "json",
+          "usage",
+          "model",
+          "tempo",
+          "tratada"
+        ],
+        "resposta": {
+          "resposta": {
+            "notas": [
+              "Princípio da insignificância: não aplicado ao [crime] de [roubo majorado], [motivo: ausência de outras provas autônomas e independentes].",
+              "Julgado conforme procedimento previsto para Recursos Repetitivos no âmbito do STJ.",
+              "Reafirmação de jurisprudência."
+            ],
+            "contribuição": "extração realizada"
+          },
+          "json": true,
+          "usage": {
+            "prompt_tokens": 20841,
+            "completion_tokens": 95,
+            "total_tokens": 20936,
+            "cached_tokens": 0,
+            "reasoning_tokens": 0,
+            "finished_reason": "stop",
+            "temperature": 0.01
+          },
+          "model": "google/gemma-3-27b-it",
+          "tempo": 12.343,
+          "tratada": true
+        }
+      },
+      {
+        "agente": "AgenteNotas",
+        "inicio": "2026-02-26T08:06:13.489849",
+        "fim": "2026-02-26T08:06:18.842232",
+        "duracao_segundos": 5.352375,
+        "iteracoes": 2,
+        "tem_revisao": true,
+        "sucesso": true,
+        "resposta_keys": [
+          "resposta",
+          "json",
+          "usage",
+          "model",
+          "tempo",
+          "tratada"
+        ],
+        "resposta": {
+          "resposta": {
+            "notas": [
+              "Princípio da insignificância: não aplicado ao [crime]... [motivo].",
+              "Julgado conforme procedimento previsto para Recursos Repetitivos no âmbito do STJ.",
+              "Reafirmação de jurisprudência."
+            ],
+            "contribuição": "extração realizada"
+          },
+          "json": true,
+          "usage": {
+            "prompt_tokens": 20850,
+            "completion_tokens": 77,
+            "total_tokens": 20927,
+            "cached_tokens": 0,
+            "reasoning_tokens": 0,
+            "finished_reason": "stop",
+            "temperature": 0.01
+          },
+          "model": "google/gemma-3-27b-it",
+          "tempo": 5.338,
+          "tratada": true
+        }
+      }
+    ],
+    "AgenteInformacoesComplementares": [
+      {
+        "agente": "AgenteInformacoesComplementares",
+        "inicio": "2026-02-26T08:03:30.924147",
+        "fim": "2026-02-26T08:03:45.725529",
+        "duracao_segundos": 14.801375,
+        "iteracoes": 1,
+        "tem_revisao": false,
+        "sucesso": true,
+        "resposta_keys": [
+          "resposta",
+          "json",
+          "usage",
+          "model",
+          "tempo",
+          "tratada"
+        ],
+        "resposta": {
+          "resposta": {
+            "informacoesComplementares": [
+              "Julgado conforme procedimento previsto para Recursos Repetitivos no âmbito do STJ.",
+              "Reafirmação de jurisprudência.",
+              "Aplicada técnica de distinção (distinguishing) em relação ao [Recurso Repetitivo REsp XXXX / Repercussão Geral / Súmula XXX].",
+              "Decisão de afetação – Tema [número].",
+              "Acórdão com Juízo de Retratação.",
+              "Julgamento de mérito de Pedido de Uniformização de Interpretação de Lei (PUIL).",
+              "Tese revisada.",
+              "Acórdão com decisão de admissão para julgamento de recurso conforme procedimento previsto para Incidente de Assunção de Competência (IAC) no âmbito do STJ."
+            ],
+            "contribuição": "extração realizada"
+          },
+          "json": true,
+          "usage": {
+            "prompt_tokens": 20541,
+            "completion_tokens": 201,
+            "total_tokens": 20742,
+            "cached_tokens": 0,
+            "reasoning_tokens": 0,
+            "finished_reason": "stop",
+            "temperature": 0.01
+          },
+          "model": "google/gemma-3-27b-it",
+          "tempo": 14.771,
+          "tratada": true
+        }
+      },
+      {
+        "agente": "AgenteInformacoesComplementares",
+        "inicio": "2026-02-26T08:06:18.859416",
+        "fim": "2026-02-26T08:06:25.590006",
+        "duracao_segundos": 6.730581,
+        "iteracoes": 2,
+        "tem_revisao": true,
+        "sucesso": true,
+        "resposta_keys": [
+          "resposta",
+          "json",
+          "usage",
+          "model",
+          "tempo",
+          "tratada"
+        ],
+        "resposta": {
+          "resposta": {
+            "informacoesComplementares": [
+              "Julgado conforme procedimento previsto para Recursos Repetitivos no âmbito do STJ.",
+              "Reafirmação de jurisprudência.",
+              "Decisão de afetação – Tema [número].",
+              "Aplicada técnica de distinção (distinguishing) em relação ao [Recurso Repetitivo REsp XXXX / Repercussão Geral / Súmula XXX].",
+              "Aplicada técnica de superação (overruling)."
+            ],
+            "contribuição": "extração realizada"
+          },
+          "json": true,
+          "usage": {
+            "prompt_tokens": 20552,
+            "completion_tokens": 129,
+            "total_tokens": 20681,
+            "cached_tokens": 0,
+            "reasoning_tokens": 0,
+            "finished_reason": "stop",
+            "temperature": 0.01
+          },
+          "model": "google/gemma-3-27b-it",
+          "tempo": 6.719,
+          "tratada": true
+        }
+      }
+    ],
+    "AgenteReferenciasLegislativas": [
+      {
+        "agente": "AgenteReferenciasLegislativas",
+        "inicio": "2026-02-26T08:03:30.926021",
+        "fim": "2026-02-26T08:03:55.757285",
+        "duracao_segundos": 24.831258,
+        "iteracoes": 1,
+        "tem_revisao": false,
+        "sucesso": true,
+        "resposta_keys": [
+          "resposta",
+          "json",
+          "usage",
+          "model",
+          "tempo",
+          "tratada"
+        ],
+        "resposta": {
+          "resposta": {
+            "referenciasLegislativas": [
+              {
+                "diplomaLegal": "Código de Processo Penal",
+                "dispositivo": "Art. 226",
+                "redacaoPosterior": null
+              },
+              {
+                "diplomaLegal": "Código de Processo Penal",
+                "dispositivo": "Art. 227",
+                "redacaoPosterior": null
+              },
+              {
+                "diplomaLegal": "Código de Processo Penal",
+                "dispositivo": "Art. 386, inciso VII",
+                "redacaoPosterior": null
+              },
+              {
+                "diplomaLegal": "Código Penal",
+                "dispositivo": "Art. 157, § 2.º-A, inciso I",
+                "redacaoPosterior": null
+              },
+              {
+                "diplomaLegal": "Código Penal",
+                "dispositivo": "Art. 157, § 2.º, inciso II",
+                "redacaoPosterior": null
+              },
+              {
+                "diplomaLegal": "Constituição Federal",
+                "dispositivo": null,
+                "redacaoPosterior": null
+              }
+            ],
+            "contribuição": "extração realizada"
+          },
+          "json": true,
+          "usage": {
+            "prompt_tokens": 20591,
+            "completion_tokens": 294,
+            "total_tokens": 20885,
+            "cached_tokens": 0,
+            "reasoning_tokens": 0,
+            "finished_reason": "stop",
+            "temperature": 0.01
+          },
+          "model": "google/gemma-3-27b-it",
+          "tempo": 24.777,
+          "tratada": true
+        }
+      },
+      {
+        "agente": "AgenteReferenciasLegislativas",
+        "inicio": "2026-02-26T08:06:00.965116",
+        "fim": "2026-02-26T08:06:13.480695",
+        "duracao_segundos": 12.515572,
+        "iteracoes": 2,
+        "tem_revisao": true,
+        "sucesso": true,
+        "resposta_keys": [
+          "resposta",
+          "json",
+          "usage",
+          "model",
+          "tempo",
+          "tratada"
+        ],
+        "resposta": {
+          "resposta": {
+            "referenciasLegislativas": [
+              {
+                "diplomaLegal": "Código de Processo Penal",
+                "dispositivo": "Art. 226",
+                "redacaoPosterior": null
+              },
+              {
+                "diplomaLegal": "Código de Processo Penal",
+                "dispositivo": "Art. 227",
+                "redacaoPosterior": null
+              },
+              {
+                "diplomaLegal": "Código de Processo Penal",
+                "dispositivo": "Art. 386, inciso VII",
+                "redacaoPosterior": null
+              },
+              {
+                "diplomaLegal": "Código Penal",
+                "dispositivo": "Art. 157, § 2.º-A, inciso I",
+                "redacaoPosterior": null
+              },
+              {
+                "diplomaLegal": "Código Penal",
+                "dispositivo": "Art. 157, § 2.º, inciso II",
+                "redacaoPosterior": null
+              }
+            ],
+            "contribuição": "extração realizada"
+          },
+          "json": true,
+          "usage": {
+            "prompt_tokens": 20609,
+            "completion_tokens": 259,
+            "total_tokens": 20868,
+            "cached_tokens": 0,
+            "reasoning_tokens": 0,
+            "finished_reason": "stop",
+            "temperature": 0.01
+          },
+          "model": "google/gemma-3-27b-it",
+          "tempo": 12.506,
+          "tratada": true
+        }
+      }
+    ],
+    "AgenteValidacaoFinal": [
+      {
+        "agente": "AgenteValidacaoFinal",
+        "inicio": "2026-02-26T08:03:55.767732",
+        "fim": "2026-02-26T08:04:18.179218",
+        "duracao_segundos": 22.411479,
+        "iteracoes": 1,
+        "tem_revisao": false,
+        "sucesso": true,
+        "resposta_keys": [
+          "resposta",
+          "json",
+          "usage",
+          "model",
+          "tempo",
+          "tratada"
+        ],
+        "resposta": {
+          "resposta": {
+            "revisao": {
+              "AgenteTeses": "A descrição das teses está boa, completa e bem justificada. Não há necessidade de correção.",
+              "AgenteJurisprudenciasCitadas": "Verificar se 'repercussaoGeral' e 'recursoRepetitivo' estão marcados como TRUE apenas quando o texto disser EXPLICITAMENTE. No momento, estão todos como FALSE, o que parece correto, mas confirmar.",
+              "AgenteTermosAuxiliares": "Os termos auxiliares parecem relevantes para a busca. Manter.",
+              "AgenteReferenciasLegislativas": "As referências legislativas estão corretas e completas. Não há necessidade de correção.",
+              "AgenteNotas": "As notas parecem pertinentes. Manter.",
+              "AgenteInformacoesComplementares": "As informações complementares são úteis. Manter.",
+              "AgenteTema": "O tema está correto. Manter."
+            },
+            "validacao_aprovada": true,
+            "contribuição": "A extração está semanticamente correta e útil para busca. A qualidade é alta e as informações são relevantes. A correção solicitada no AgenteJurisprudenciasCitadas é uma verificação de consistência, não uma correção substancial. APROVADO."
+          },
+          "json": true,
+          "usage": {
+            "prompt_tokens": 24605,
+            "completion_tokens": 287,
+            "total_tokens": 24892,
+            "cached_tokens": 0,
+            "reasoning_tokens": 0,
+            "finished_reason": "stop",
+            "temperature": 0.01
+          },
+          "model": "google/gemma-3-27b-it",
+          "tempo": 22.384,
+          "tratada": true
+        }
+      },
+      {
+        "agente": "AgenteValidacaoFinal",
+        "inicio": "2026-02-26T08:06:33.273954",
+        "fim": "2026-02-26T08:06:40.523093",
+        "duracao_segundos": 7.249133,
+        "iteracoes": 2,
+        "tem_revisao": false,
+        "sucesso": true,
+        "resposta_keys": [
+          "resposta",
+          "json",
+          "usage",
+          "model",
+          "tempo",
+          "tratada"
+        ],
+        "resposta": {
+          "resposta": {
+            "revisao": {
+              "AgenteJurisprudenciasCitadas": "Corrigir o campo 'referenciaCompleta' para a tese T5 e T6, adicionando a referência completa da jurisprudência que a fundamenta, caso exista. Se não houver jurisprudência específica, indicar explicitamente 'Não há jurisprudência específica para esta tese'."
+            },
+            "validacao_aprovada": false,
+            "contribuição": "A extração está semanticamente correta e útil para busca, apesar de uma pequena inconsistência na citação de jurisprudências para as teses T5 e T6. A correção solicitada é menor e não impede a utilização da extração."
+          },
+          "json": true,
+          "usage": {
+            "prompt_tokens": 24184,
+            "completion_tokens": 158,
+            "total_tokens": 24342,
+            "cached_tokens": 0,
+            "reasoning_tokens": 0,
+            "finished_reason": "stop",
+            "temperature": 0.01
+          },
+          "model": "google/gemma-3-27b-it",
+          "tempo": 7.237,
+          "tratada": true
+        }
+      },
+      {
+        "agente": "AgenteValidacaoFinal",
+        "inicio": "2026-02-26T08:07:02.420121",
+        "fim": "2026-02-26T08:07:16.477908",
+        "duracao_segundos": 14.057779,
+        "iteracoes": 3,
+        "tem_revisao": false,
+        "sucesso": true,
+        "resposta_keys": [
+          "resposta",
+          "json",
+          "usage",
+          "model",
+          "tempo",
+          "tratada"
+        ],
+        "resposta": {
+          "resposta": {
+            "revisao": {
+              "AgenteJurisprudenciasCitadas": "Corrigir o campo 'repercussaoGeral' e 'recursoRepetitivo' para 'false' em todas as jurisprudências citadas, a menos que haja informação explícita no texto sobre a existência de repercussão geral ou recurso repetitivo."
+            },
+            "validacao_aprovada": false,
+            "contribuição": "A extração está semanticamente correta e útil para busca, mas a validação não pode ser aprovada devido à necessidade de correção do campo 'repercussaoGeral' e 'recursoRepetitivo' no AgenteJurisprudenciasCitadas. Embora a iteração seja a terceira, a correção é necessária para garantir a precisão dos dados."
+          },
+          "json": true,
+          "usage": {
+            "prompt_tokens": 24148,
+            "completion_tokens": 174,
+            "total_tokens": 24322,
+            "cached_tokens": 0,
+            "reasoning_tokens": 0,
+            "finished_reason": "stop",
+            "temperature": 0.01
+          },
+          "model": "google/gemma-3-27b-it",
+          "tempo": 14.044,
+          "tratada": true
+        }
+      }
+    ],
+    "OrquestracaoFinal": [
+      {
+        "duracao_total_segundos": 328.507685,
+        "loops_revisao": 2,
+        "campos_extraidos": [
+          "AgenteNotas",
+          "AgenteInformacoesComplementares",
+          "AgenteTermosAuxiliares",
+          "AgenteJurisprudenciasCitadas",
+          "AgenteTema",
+          "AgenteReferenciasLegislativas",
+          "AgenteTeses"
+        ],
+        "total_agentes_executados": 9
+      }
+    ]
+  },
+  "log": [
+    {
+      "timestamp": "2026-02-26T08:01:47.987065",
+      "nivel": "info",
+      "mensagem": "=== Iniciando orquestração para peça 202202853462.20230510. ==="
+    },
+    {
+      "timestamp": "2026-02-26T08:01:47.987086",
+      "nivel": "info",
+      "mensagem": "ETAPA 1: Identificação de campos necessários"
+    },
+    {
+      "timestamp": "2026-02-26T08:01:47.987094",
+      "nivel": "info",
+      "mensagem": "Iniciando execução do agente: AgenteCampos"
+    },
+    {
+      "timestamp": "2026-02-26T08:01:48.002998",
+      "nivel": "info",
+      "mensagem": "Prompt gravado: 202202853462.20230510..AgenteCampos.txt (iteração 1)"
+    },
+    {
+      "timestamp": "2026-02-26T08:02:13.064346",
+      "nivel": "info",
+      "mensagem": "Resposta gravada: 202202853462.20230510..AgenteCampos.txt (iteração 1)"
+    },
+    {
+      "timestamp": "2026-02-26T08:02:13.069613",
+      "nivel": "info",
+      "mensagem": "Agente AgenteCampos concluído em 25.08s"
+    },
+    {
+      "timestamp": "2026-02-26T08:02:13.069667",
+      "nivel": "info",
+      "mensagem": "Texto extraído do AgenteCampos (primeiros 500 chars): ['#teseJuridica: Há ementa resumindo os pontos principais do caso.', '#JuCi: O texto cita diversos julgados do STJ e faz referência à jurisprudência.', '#RefLeg: Há menção ao Código de Processo Penal (CPP) e ao Código Penal (CP).', '#notas: O texto discute inconsistências no reconhecimento da vítima, a fragilidade da prova do reconhecimento fotográfico e a possibilidade de erros judiciários.', '#ICE: Não há menção explícita a Repetitivo, IAC ou Juízo de Retratação, mas a discussão sobre múltiplo"
+    },
+    {
+      "timestamp": "2026-02-26T08:02:13.069677",
+      "nivel": "info",
+      "mensagem": "Tag '#teseJuridica' encontrada -> Agente 'AgenteTeses'"
+    },
+    {
+      "timestamp": "2026-02-26T08:02:13.069682",
+      "nivel": "info",
+      "mensagem": "Tag '#JuCi' encontrada -> Agente 'AgenteJurisprudenciasCitadas'"
+    },
+    {
+      "timestamp": "2026-02-26T08:02:13.069688",
+      "nivel": "info",
+      "mensagem": "Tag '#RefLeg' encontrada -> Agente 'AgenteReferenciasLegislativas'"
+    },
+    {
+      "timestamp": "2026-02-26T08:02:13.069695",
+      "nivel": "info",
+      "mensagem": "Tag '#ICE' encontrada -> Agente 'AgenteInformacoesComplementares'"
+    },
+    {
+      "timestamp": "2026-02-26T08:02:13.069701",
+      "nivel": "info",
+      "mensagem": "Tag '#TAP' encontrada -> Agente 'AgenteTermosAuxiliares'"
+    },
+    {
+      "timestamp": "2026-02-26T08:02:13.069706",
+      "nivel": "info",
+      "mensagem": "Tag '#notas' encontrada -> Agente 'AgenteNotas'"
+    },
+    {
+      "timestamp": "2026-02-26T08:02:13.069710",
+      "nivel": "info",
+      "mensagem": "Tag '#tema' encontrada -> Agente 'AgenteTema'"
+    },
+    {
+      "timestamp": "2026-02-26T08:02:13.069719",
+      "nivel": "info",
+      "mensagem": "Campos identificados para extração: AgenteNotas, AgenteInformacoesComplementares, AgenteTermosAuxiliares, AgenteJurisprudenciasCitadas, AgenteTema, AgenteReferenciasLegislativas, AgenteTeses"
+    },
+    {
+      "timestamp": "2026-02-26T08:02:13.069726",
+      "nivel": "info",
+      "mensagem": "ETAPA 2: Extração de teses jurídicas"
+    },
+    {
+      "timestamp": "2026-02-26T08:02:13.069732",
+      "nivel": "info",
+      "mensagem": "Iniciando execução do agente: AgenteTeses"
+    },
+    {
+      "timestamp": "2026-02-26T08:02:13.076528",
+      "nivel": "info",
+      "mensagem": "Prompt gravado: 202202853462.20230510..AgenteTeses.txt (iteração 1)"
+    },
+    {
+      "timestamp": "2026-02-26T08:02:51.674090",
+      "nivel": "info",
+      "mensagem": "Resposta gravada: 202202853462.20230510..AgenteTeses.txt (iteração 1)"
+    },
+    {
+      "timestamp": "2026-02-26T08:02:51.680176",
+      "nivel": "info",
+      "mensagem": "Agente AgenteTeses concluído em 38.60s"
+    },
+    {
+      "timestamp": "2026-02-26T08:02:51.680201",
+      "nivel": "info",
+      "mensagem": "ETAPA 2.5: Extração de jurisprudência citada (com contexto de teses)"
+    },
+    {
+      "timestamp": "2026-02-26T08:02:51.680212",
+      "nivel": "info",
+      "mensagem": "Iniciando execução do agente: AgenteJurisprudenciasCitadas"
+    },
+    {
+      "timestamp": "2026-02-26T08:02:51.697313",
+      "nivel": "info",
+      "mensagem": "Prompt gravado: 202202853462.20230510..AgenteJurisprudenciasCitadas.txt (iteração 1)"
+    },
+    {
+      "timestamp": "2026-02-26T08:03:30.917251",
+      "nivel": "info",
+      "mensagem": "Resposta gravada: 202202853462.20230510..AgenteJurisprudenciasCitadas.txt (iteração 1)"
+    },
+    {
+      "timestamp": "2026-02-26T08:03:30.922950",
+      "nivel": "info",
+      "mensagem": "Agente AgenteJurisprudenciasCitadas concluído em 39.24s"
+    },
+    {
+      "timestamp": "2026-02-26T08:03:30.922975",
+      "nivel": "info",
+      "mensagem": "ETAPA 3: Extração paralela dos demais campos"
+    },
+    {
+      "timestamp": "2026-02-26T08:03:30.922988",
+      "nivel": "info",
+      "mensagem": "Executando 5 agentes em paralelo: AgenteNotas, AgenteInformacoesComplementares, AgenteTermosAuxiliares, AgenteTema, AgenteReferenciasLegislativas"
+    },
+    {
+      "timestamp": "2026-02-26T08:03:30.923489",
+      "nivel": "info",
+      "mensagem": "Iniciando execução do agente: AgenteNotas"
+    },
+    {
+      "timestamp": "2026-02-26T08:03:30.924156",
+      "nivel": "info",
+      "mensagem": "Iniciando execução do agente: AgenteInformacoesComplementares"
+    },
+    {
+      "timestamp": "2026-02-26T08:03:30.924841",
+      "nivel": "info",
+      "mensagem": "Iniciando execução do agente: AgenteTermosAuxiliares"
+    },
+    {
+      "timestamp": "2026-02-26T08:03:30.925411",
+      "nivel": "info",
+      "mensagem": "Iniciando execução do agente: AgenteTema"
+    },
+    {
+      "timestamp": "2026-02-26T08:03:30.926029",
+      "nivel": "info",
+      "mensagem": "Iniciando execução do agente: AgenteReferenciasLegislativas"
+    },
+    {
+      "timestamp": "2026-02-26T08:03:30.941628",
+      "nivel": "info",
+      "mensagem": "Prompt gravado: 202202853462.20230510..AgenteNotas.txt (iteração 1)"
+    },
+    {
+      "timestamp": "2026-02-26T08:03:30.949462",
+      "nivel": "info",
+      "mensagem": "Prompt gravado: 202202853462.20230510..AgenteInformacoesComplementares.txt (iteração 1)"
+    },
+    {
+      "timestamp": "2026-02-26T08:03:30.958250",
+      "nivel": "info",
+      "mensagem": "Prompt gravado: 202202853462.20230510..AgenteTermosAuxiliares.txt (iteração 1)"
+    },
+    {
+      "timestamp": "2026-02-26T08:03:30.966286",
+      "nivel": "info",
+      "mensagem": "Prompt gravado: 202202853462.20230510..AgenteTema.txt (iteração 1)"
+    },
+    {
+      "timestamp": "2026-02-26T08:03:30.975120",
+      "nivel": "info",
+      "mensagem": "Prompt gravado: 202202853462.20230510..AgenteReferenciasLegislativas.txt (iteração 1)"
+    },
+    {
+      "timestamp": "2026-02-26T08:03:37.835449",
+      "nivel": "info",
+      "mensagem": "Resposta gravada: 202202853462.20230510..AgenteTermosAuxiliares.txt (iteração 1)"
+    },
+    {
+      "timestamp": "2026-02-26T08:03:37.840952",
+      "nivel": "info",
+      "mensagem": "Agente AgenteTermosAuxiliares concluído em 6.91s"
+    },
+    {
+      "timestamp": "2026-02-26T08:03:38.230848",
+      "nivel": "info",
+      "mensagem": "Resposta gravada: 202202853462.20230510..AgenteTema.txt (iteração 1)"
+    },
+    {
+      "timestamp": "2026-02-26T08:03:38.235835",
+      "nivel": "info",
+      "mensagem": "Agente AgenteTema concluído em 7.31s"
+    },
+    {
+      "timestamp": "2026-02-26T08:03:43.289782",
+      "nivel": "info",
+      "mensagem": "Resposta gravada: 202202853462.20230510..AgenteNotas.txt (iteração 1)"
+    },
+    {
+      "timestamp": "2026-02-26T08:03:43.295700",
+      "nivel": "info",
+      "mensagem": "Agente AgenteNotas concluído em 12.37s"
+    },
+    {
+      "timestamp": "2026-02-26T08:03:45.725502",
+      "nivel": "info",
+      "mensagem": "Resposta gravada: 202202853462.20230510..AgenteInformacoesComplementares.txt (iteração 1)"
+    },
+    {
+      "timestamp": "2026-02-26T08:03:45.732025",
+      "nivel": "info",
+      "mensagem": "Agente AgenteInformacoesComplementares concluído em 14.80s"
+    },
+    {
+      "timestamp": "2026-02-26T08:03:55.757257",
+      "nivel": "info",
+      "mensagem": "Resposta gravada: 202202853462.20230510..AgenteReferenciasLegislativas.txt (iteração 1)"
+    },
+    {
+      "timestamp": "2026-02-26T08:03:55.766599",
+      "nivel": "info",
+      "mensagem": "Agente AgenteReferenciasLegislativas concluído em 24.83s"
+    },
+    {
+      "timestamp": "2026-02-26T08:03:55.767677",
+      "nivel": "info",
+      "mensagem": "ETAPA 4: Validação final e consolidação"
+    },
+    {
+      "timestamp": "2026-02-26T08:03:55.767734",
+      "nivel": "info",
+      "mensagem": "Iniciando execução do agente: AgenteValidacaoFinal"
+    },
+    {
+      "timestamp": "2026-02-26T08:03:55.785943",
+      "nivel": "info",
+      "mensagem": "Prompt gravado: 202202853462.20230510..AgenteValidacaoFinal.txt (iteração 1)"
+    },
+    {
+      "timestamp": "2026-02-26T08:04:18.179190",
+      "nivel": "info",
+      "mensagem": "Resposta gravada: 202202853462.20230510..AgenteValidacaoFinal.txt (iteração 1)"
+    },
+    {
+      "timestamp": "2026-02-26T08:04:18.185703",
+      "nivel": "info",
+      "mensagem": "Agente AgenteValidacaoFinal concluído em 22.41s"
+    },
+    {
+      "timestamp": "2026-02-26T08:04:18.185729",
+      "nivel": "info",
+      "mensagem": "LOOP DE REVISÃO 1/2"
+    },
+    {
+      "timestamp": "2026-02-26T08:04:18.185747",
+      "nivel": "warning",
+      "mensagem": "AVISO: Validação marcada como aprovada mas contém instruções de revisão. Processando revisão."
+    },
+    {
+      "timestamp": "2026-02-26T08:04:18.185757",
+      "nivel": "info",
+      "mensagem": "Processando revisões para 7 agentes: AgenteTeses, AgenteJurisprudenciasCitadas, AgenteTermosAuxiliares, AgenteReferenciasLegislativas, AgenteNotas, AgenteInformacoesComplementares, AgenteTema"
+    },
+    {
+      "timestamp": "2026-02-26T08:04:18.185777",
+      "nivel": "info",
+      "mensagem": "Ordem de execução das revisões: AgenteTeses, AgenteJurisprudenciasCitadas, AgenteTermosAuxiliares, AgenteReferenciasLegislativas, AgenteNotas, AgenteInformacoesComplementares, AgenteTema"
+    },
+    {
+      "timestamp": "2026-02-26T08:04:18.185784",
+      "nivel": "info",
+      "mensagem": "Reexecutando AgenteTeses com revisão: A descrição das teses está boa, completa e bem justificada. Não há necessidade de correção...."
+    },
+    {
+      "timestamp": "2026-02-26T08:04:18.185792",
+      "nivel": "info",
+      "mensagem": "Iniciando execução do agente: AgenteTeses"
+    },
+    {
+      "timestamp": "2026-02-26T08:04:18.191351",
+      "nivel": "info",
+      "mensagem": "Prompt gravado: 202202853462.20230510..AgenteTeses.txt (iteração 2)"
+    },
+    {
+      "timestamp": "2026-02-26T08:05:28.081398",
+      "nivel": "info",
+      "mensagem": "Resposta gravada: 202202853462.20230510..AgenteTeses.txt (iteração 2)"
+    },
+    {
+      "timestamp": "2026-02-26T08:05:28.090664",
+      "nivel": "info",
+      "mensagem": "Agente AgenteTeses concluído em 69.90s"
+    },
+    {
+      "timestamp": "2026-02-26T08:05:28.090695",
+      "nivel": "info",
+      "mensagem": "Reexecutando AgenteJurisprudenciasCitadas com revisão: Verificar se 'repercussaoGeral' e 'recursoRepetitivo' estão marcados como TRUE apenas quando o texto..."
+    },
+    {
+      "timestamp": "2026-02-26T08:05:28.090704",
+      "nivel": "info",
+      "mensagem": "Iniciando execução do agente: AgenteJurisprudenciasCitadas"
+    },
+    {
+      "timestamp": "2026-02-26T08:05:28.095520",
+      "nivel": "info",
+      "mensagem": "Prompt gravado: 202202853462.20230510..AgenteJurisprudenciasCitadas.txt (iteração 2)"
+    },
+    {
+      "timestamp": "2026-02-26T08:05:51.798148",
+      "nivel": "info",
+      "mensagem": "Resposta gravada: 202202853462.20230510..AgenteJurisprudenciasCitadas.txt (iteração 2)"
+    },
+    {
+      "timestamp": "2026-02-26T08:05:51.808578",
+      "nivel": "info",
+      "mensagem": "Agente AgenteJurisprudenciasCitadas concluído em 23.71s"
+    },
+    {
+      "timestamp": "2026-02-26T08:05:51.808625",
+      "nivel": "info",
+      "mensagem": "Reexecutando AgenteTermosAuxiliares com revisão: Os termos auxiliares parecem relevantes para a busca. Manter...."
+    },
+    {
+      "timestamp": "2026-02-26T08:05:51.808634",
+      "nivel": "info",
+      "mensagem": "Iniciando execução do agente: AgenteTermosAuxiliares"
+    },
+    {
+      "timestamp": "2026-02-26T08:05:51.815338",
+      "nivel": "info",
+      "mensagem": "Prompt gravado: 202202853462.20230510..AgenteTermosAuxiliares.txt (iteração 2)"
+    },
+    {
+      "timestamp": "2026-02-26T08:06:00.954616",
+      "nivel": "info",
+      "mensagem": "Resposta gravada: 202202853462.20230510..AgenteTermosAuxiliares.txt (iteração 2)"
+    },
+    {
+      "timestamp": "2026-02-26T08:06:00.965073",
+      "nivel": "info",
+      "mensagem": "Agente AgenteTermosAuxiliares concluído em 9.15s"
+    },
+    {
+      "timestamp": "2026-02-26T08:06:00.965109",
+      "nivel": "info",
+      "mensagem": "Reexecutando AgenteReferenciasLegislativas com revisão: As referências legislativas estão corretas e completas. Não há necessidade de correção...."
+    },
+    {
+      "timestamp": "2026-02-26T08:06:00.965119",
+      "nivel": "info",
+      "mensagem": "Iniciando execução do agente: AgenteReferenciasLegislativas"
+    },
+    {
+      "timestamp": "2026-02-26T08:06:00.971058",
+      "nivel": "info",
+      "mensagem": "Prompt gravado: 202202853462.20230510..AgenteReferenciasLegislativas.txt (iteração 2)"
+    },
+    {
+      "timestamp": "2026-02-26T08:06:13.480667",
+      "nivel": "info",
+      "mensagem": "Resposta gravada: 202202853462.20230510..AgenteReferenciasLegislativas.txt (iteração 2)"
+    },
+    {
+      "timestamp": "2026-02-26T08:06:13.489811",
+      "nivel": "info",
+      "mensagem": "Agente AgenteReferenciasLegislativas concluído em 12.52s"
+    },
+    {
+      "timestamp": "2026-02-26T08:06:13.489841",
+      "nivel": "info",
+      "mensagem": "Reexecutando AgenteNotas com revisão: As notas parecem pertinentes. Manter...."
+    },
+    {
+      "timestamp": "2026-02-26T08:06:13.489851",
+      "nivel": "info",
+      "mensagem": "Iniciando execução do agente: AgenteNotas"
+    },
+    {
+      "timestamp": "2026-02-26T08:06:13.497156",
+      "nivel": "info",
+      "mensagem": "Prompt gravado: 202202853462.20230510..AgenteNotas.txt (iteração 2)"
+    },
+    {
+      "timestamp": "2026-02-26T08:06:18.842193",
+      "nivel": "info",
+      "mensagem": "Resposta gravada: 202202853462.20230510..AgenteNotas.txt (iteração 2)"
+    },
+    {
+      "timestamp": "2026-02-26T08:06:18.859366",
+      "nivel": "info",
+      "mensagem": "Agente AgenteNotas concluído em 5.35s"
+    },
+    {
+      "timestamp": "2026-02-26T08:06:18.859407",
+      "nivel": "info",
+      "mensagem": "Reexecutando AgenteInformacoesComplementares com revisão: As informações complementares são úteis. Manter...."
+    },
+    {
+      "timestamp": "2026-02-26T08:06:18.859418",
+      "nivel": "info",
+      "mensagem": "Iniciando execução do agente: AgenteInformacoesComplementares"
+    },
+    {
+      "timestamp": "2026-02-26T08:06:18.866848",
+      "nivel": "info",
+      "mensagem": "Prompt gravado: 202202853462.20230510..AgenteInformacoesComplementares.txt (iteração 2)"
+    },
+    {
+      "timestamp": "2026-02-26T08:06:25.589972",
+      "nivel": "info",
+      "mensagem": "Resposta gravada: 202202853462.20230510..AgenteInformacoesComplementares.txt (iteração 2)"
+    },
+    {
+      "timestamp": "2026-02-26T08:06:25.600493",
+      "nivel": "info",
+      "mensagem": "Agente AgenteInformacoesComplementares concluído em 6.73s"
+    },
+    {
+      "timestamp": "2026-02-26T08:06:25.600528",
+      "nivel": "info",
+      "mensagem": "Reexecutando AgenteTema com revisão: O tema está correto. Manter...."
+    },
+    {
+      "timestamp": "2026-02-26T08:06:25.600536",
+      "nivel": "info",
+      "mensagem": "Iniciando execução do agente: AgenteTema"
+    },
+    {
+      "timestamp": "2026-02-26T08:06:25.606404",
+      "nivel": "info",
+      "mensagem": "Prompt gravado: 202202853462.20230510..AgenteTema.txt (iteração 2)"
+    },
+    {
+      "timestamp": "2026-02-26T08:06:33.265248",
+      "nivel": "info",
+      "mensagem": "Resposta gravada: 202202853462.20230510..AgenteTema.txt (iteração 2)"
+    },
+    {
+      "timestamp": "2026-02-26T08:06:33.273860",
+      "nivel": "info",
+      "mensagem": "Agente AgenteTema concluído em 7.66s"
+    },
+    {
+      "timestamp": "2026-02-26T08:06:33.273957",
+      "nivel": "info",
+      "mensagem": "Iniciando execução do agente: AgenteValidacaoFinal"
+    },
+    {
+      "timestamp": "2026-02-26T08:06:33.280794",
+      "nivel": "info",
+      "mensagem": "Prompt gravado: 202202853462.20230510..AgenteValidacaoFinal.txt (iteração 2)"
+    },
+    {
+      "timestamp": "2026-02-26T08:06:40.523065",
+      "nivel": "info",
+      "mensagem": "Resposta gravada: 202202853462.20230510..AgenteValidacaoFinal.txt (iteração 2)"
+    },
+    {
+      "timestamp": "2026-02-26T08:06:40.532787",
+      "nivel": "info",
+      "mensagem": "Agente AgenteValidacaoFinal concluído em 7.25s"
+    },
+    {
+      "timestamp": "2026-02-26T08:06:40.532814",
+      "nivel": "info",
+      "mensagem": "LOOP DE REVISÃO 2/2"
+    },
+    {
+      "timestamp": "2026-02-26T08:06:40.532829",
+      "nivel": "info",
+      "mensagem": "Processando revisões para 1 agentes: AgenteJurisprudenciasCitadas"
+    },
+    {
+      "timestamp": "2026-02-26T08:06:40.532841",
+      "nivel": "info",
+      "mensagem": "Campo 'AgenteNotas' aprovado pelo validador (não requer revisão)"
+    },
+    {
+      "timestamp": "2026-02-26T08:06:40.532847",
+      "nivel": "info",
+      "mensagem": "Campo 'AgenteInformacoesComplementares' aprovado pelo validador (não requer revisão)"
+    },
+    {
+      "timestamp": "2026-02-26T08:06:40.532851",
+      "nivel": "info",
+      "mensagem": "Campo 'AgenteTermosAuxiliares' aprovado pelo validador (não requer revisão)"
+    },
+    {
+      "timestamp": "2026-02-26T08:06:40.532854",
+      "nivel": "info",
+      "mensagem": "Campo 'AgenteTema' aprovado pelo validador (não requer revisão)"
+    },
+    {
+      "timestamp": "2026-02-26T08:06:40.532857",
+      "nivel": "info",
+      "mensagem": "Campo 'AgenteReferenciasLegislativas' aprovado pelo validador (não requer revisão)"
+    },
+    {
+      "timestamp": "2026-02-26T08:06:40.532860",
+      "nivel": "info",
+      "mensagem": "Campo 'AgenteTeses' aprovado pelo validador (não requer revisão)"
+    },
+    {
+      "timestamp": "2026-02-26T08:06:40.532863",
+      "nivel": "info",
+      "mensagem": "Ordem de execução das revisões: AgenteJurisprudenciasCitadas"
+    },
+    {
+      "timestamp": "2026-02-26T08:06:40.532869",
+      "nivel": "info",
+      "mensagem": "Reexecutando AgenteJurisprudenciasCitadas com revisão: Corrigir o campo 'referenciaCompleta' para a tese T5 e T6, adicionando a referência completa da juri..."
+    },
+    {
+      "timestamp": "2026-02-26T08:06:40.532876",
+      "nivel": "info",
+      "mensagem": "Iniciando execução do agente: AgenteJurisprudenciasCitadas"
+    },
+    {
+      "timestamp": "2026-02-26T08:06:40.537806",
+      "nivel": "info",
+      "mensagem": "Prompt gravado: 202202853462.20230510..AgenteJurisprudenciasCitadas.txt (iteração 3)"
+    },
+    {
+      "timestamp": "2026-02-26T08:07:02.405453",
+      "nivel": "info",
+      "mensagem": "Resposta gravada: 202202853462.20230510..AgenteJurisprudenciasCitadas.txt (iteração 3)"
+    },
+    {
+      "timestamp": "2026-02-26T08:07:02.420011",
+      "nivel": "info",
+      "mensagem": "Agente AgenteJurisprudenciasCitadas concluído em 21.87s"
+    },
+    {
+      "timestamp": "2026-02-26T08:07:02.420125",
+      "nivel": "info",
+      "mensagem": "Iniciando execução do agente: AgenteValidacaoFinal"
+    },
+    {
+      "timestamp": "2026-02-26T08:07:02.428166",
+      "nivel": "info",
+      "mensagem": "Prompt gravado: 202202853462.20230510..AgenteValidacaoFinal.txt (iteração 3)"
+    },
+    {
+      "timestamp": "2026-02-26T08:07:16.477877",
+      "nivel": "info",
+      "mensagem": "Resposta gravada: 202202853462.20230510..AgenteValidacaoFinal.txt (iteração 3)"
+    },
+    {
+      "timestamp": "2026-02-26T08:07:16.491177",
+      "nivel": "info",
+      "mensagem": "Agente AgenteValidacaoFinal concluído em 14.06s"
+    },
+    {
+      "timestamp": "2026-02-26T08:07:16.491203",
+      "nivel": "warning",
+      "mensagem": "Loop de revisão encerrado sem aprovação completa após 2 iterações"
+    },
+    {
+      "timestamp": "2026-02-26T08:07:16.491213",
+      "nivel": "info",
+      "mensagem": "=== Orquestração concluída em 328.51s ==="
+    },
+    {
+      "timestamp": "2026-02-26T08:07:16.491230",
+      "nivel": "info",
+      "mensagem": "DEBUG extrair_campo: 'teseJuridica' encontrado em 'AgenteTeses', tipo: <class 'list'>, len: 6"
+    },
+    {
+      "timestamp": "2026-02-26T08:07:16.491238",
+      "nivel": "info",
+      "mensagem": "DEBUG extrair_campo: 'jurisprudenciaCitada' encontrado em 'AgenteJurisprudenciasCitadas', tipo: <class 'list'>, len: 6"
+    },
+    {
+      "timestamp": "2026-02-26T08:07:16.491243",
+      "nivel": "info",
+      "mensagem": "DEBUG extrair_campo: 'referenciasLegislativas' encontrado em 'AgenteReferenciasLegislativas', tipo: <class 'list'>, len: 5"
+    },
+    {
+      "timestamp": "2026-02-26T08:07:16.491247",
+      "nivel": "info",
+      "mensagem": "DEBUG extrair_campo: 'notas' encontrado em 'AgenteNotas', tipo: <class 'list'>, len: 3"
+    },
+    {
+      "timestamp": "2026-02-26T08:07:16.491250",
+      "nivel": "info",
+      "mensagem": "DEBUG extrair_campo: 'informacoesComplementares' encontrado em 'AgenteInformacoesComplementares', tipo: <class 'list'>, len: 5"
+    },
+    {
+      "timestamp": "2026-02-26T08:07:16.491253",
+      "nivel": "info",
+      "mensagem": "DEBUG extrair_campo: 'termosAuxiliares' encontrado em 'AgenteTermosAuxiliares', tipo: <class 'list'>, len: 14"
+    },
+    {
+      "timestamp": "2026-02-26T08:07:16.491257",
+      "nivel": "info",
+      "mensagem": "DEBUG extrair_campo: 'tema' encontrado em 'AgenteTema', tipo: <class 'list'>, len: 2"
+    },
+    {
+      "timestamp": "2026-02-26T08:07:16.491273",
+      "nivel": "info",
+      "mensagem": "DEBUG espelho_final construído com 8 campos não-vazios"
+    }
+  ]
+}

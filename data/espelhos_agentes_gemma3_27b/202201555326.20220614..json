@@ -1,0 +1,217 @@
+{
+  "id_peca": "202201555326.20220614.",
+  "teseJuridica": [
+    {
+      "id": "T1",
+      "descricao": "É inadmissível a impetração de habeas corpus em substituição ao recurso adequado, salvo em casos excepcionais de flagrante ilegalidade que gere constrangimento ilegal, conforme orientação da Terceira Seção do STJ e da Primeira Turma do STF, em consonância com a jurisprudência.",
+      "justificativas": [
+        "“A Terceira Seção desta Corte, seguindo entendimento firmado pela Primeira Turma do col. Pretório Excelso, firmou orientação no sentido de não admitir a impetração de habeas corpus em substituição ao recurso adequado, situação que implica o não conhecimento da impetração, ressalvados casos excepcionais em que, configurada flagrante ilegalidade apta a gerar constrangimento ilegal, seja possível a concessão da ordem de ofício.”"
+      ]
+    },
+    {
+      "id": "T2",
+      "descricao": "A análise da dosimetria da pena por meio de habeas corpus é cabível apenas quando não exige análise aprofundada do conjunto probatório e se constatar flagrante ilegalidade, pois a dosimetria é ato discricionário do julgador, passível de revisão apenas em caso de inobservância dos parâmetros legais ou desproporcionalidade, conforme entendimento do STJ.",
+      "justificativas": [
+        "“A via do writ somente se mostra adequada para a análise da dosimetria da pena se não for necessária uma análise aprofundada do conjunto probatório e se se tratar de flagrante ilegalidade. Vale dizer, o entendimento deste Tribunal firmou-se no sentido de que a "
+      ]
+    },
+    {
+      "id": "T3",
+      "descricao": "É possível o deslocamento de uma qualificadora para outras fases da dosimetria e a utilização de maus antecedentes para majorar a pena-base, mesmo após o período depurador de cinco anos, que afasta apenas os efeitos da reincidência, em consonância com a jurisprudência do STJ.",
+      "justificativas": [
+        "“verifica-se que a Corte de origem invocou fundamentos para manter a exasperação da basilar que estão em sintonia com o entendimento deste Sodalício, que permite o deslocamento de uma qualificadora para outras fase da dosimetria, sendo certo que os maus antecedentes do paciente podem ser invocados para a majoração da pena-base, ainda que atingidos pelo período depurador de cinco anos, que afasta somente os efeitos da reincidência.”"
+      ]
+    },
+    {
+      "id": "T4",
+      "descricao": "A majoração da pena em dobro em relação ao mínimo legal é desproporcional quando não demonstrada a necessidade concreta do aumento, sendo mais proporcional o aumento de 1/6 por cada circunstância judicial negativa, conforme entendimento do STJ.",
+      "justificativas": [
+        "“tem-se que o aumento em dobro em relação ao mínimo se revela desproporcional, notadamente porque não se demonstrou de forma concreta e específica a necessidade do referido aumento de forma a afastar o entendimento deste Tribunal que considera proporcional o aumento de 1/6 por cada circunstância judicial negativa impondo, nesse ponto, a concessão da ordem para reduzir a pena-base.”"
+      ]
+    },
+    {
+      "id": "T5",
+      "descricao": "A substituição da pena privativa de liberdade por restritiva de direitos é inviável quando há vedação legal, como no caso de maus antecedentes, e quando a medida não é socialmente recomendável, conforme o art. 44, inciso III, do Código Penal, e a jurisprudência do STJ.",
+      "justificativas": [
+        "“descabida a pretensão de substituição da pena privativa de liberdade por restritiva de direitos pois, como bem observado pelo acórdão recorrido, "
+      ]
+    },
+    {
+      "id": "T6",
+      "descricao": "Considerando a pena imposta inferior a quatro anos de reclusão e a ausência de reincidência, o regime inicial semiaberto é o mais adequado, especialmente em crimes sem violência ou grave ameaça, conforme o art. 33, § 2º, c e § 3º, do Código Penal, e a jurisprudência do STJ.",
+      "justificativas": [
+        "“Considerando a nova pena imposta, inferior a quatro anos de reclusão, bem como em face do paciente não ser reincidente, em que pese a existência de maus antecedentes, tenho que resta inviável a manutenção do regime fechado, notadamente por se tratar de crime cometido sem violência ou grave ameaça, pelo que fixo o regime semiaberto para início do resgate da reprimenda, ex vi do art. 33, § 2º, c e § 3º, do CP.”"
+      ]
+    }
+  ],
+  "jurisprudenciaCitada": [
+    {
+      "teseId": "T1",
+      "referenciaCompleta": "STJ, HC n. 400.119/RJ, Quinta Turma, Rel. Min. Reynaldo Soares da Fonseca, DJe de 1º/8/2017.",
+      "assunto": "Cita precedentes sobre a inadmissibilidade do habeas corpus em substituição ao recurso adequado, salvo em casos de flagrante ilegalidade.",
+      "repercussaoGeral": false,
+      "recursoRepetitivo": false,
+      "temaRepetitivo": null
+    },
+    {
+      "teseId": "T2",
+      "referenciaCompleta": "STJ, HC n. 400.119/RJ, Quinta Turma, Rel. Min. Reynaldo Soares da Fonseca, DJe de 1º/8/2017.",
+      "assunto": "Fundamenta a análise da dosimetria da pena apenas em casos de flagrante ilegalidade ou ausência de necessidade de análise aprofundada do conjunto probatório.",
+      "repercussaoGeral": false,
+      "recursoRepetitivo": false,
+      "temaRepetitivo": null
+    },
+    {
+      "teseId": "T3",
+      "referenciaCompleta": "STJ, AgRg no AREsp n. 1.570.541/SP, Sexta Turma, Rel. Min. Laurita Vaz, DJe de 29/10/2020.",
+      "assunto": "Permite o deslocamento de qualificadoras para outras fases da dosimetria.",
+      "repercussaoGeral": false,
+      "recursoRepetitivo": false,
+      "temaRepetitivo": null
+    },
+    {
+      "teseId": "T3",
+      "referenciaCompleta": "STJ, AgRg no HC n. 583.237/PR, Quinta Turma, Rel. Min. João Otávio de Noronha, DJe de 3/11/2021.",
+      "assunto": "Permite a utilização de maus antecedentes para majorar a pena-base, mesmo após o período depurador de cinco anos.",
+      "repercussaoGeral": false,
+      "recursoRepetitivo": false,
+      "temaRepetitivo": null
+    },
+    {
+      "teseId": "T3",
+      "referenciaCompleta": "STJ, AgRg no HC n. 714.214/SC, Quinta Turma, Rel. Min. Reynaldo Soares da Fonseca, DJe de 5/5/2022.",
+      "assunto": "Confirma a possibilidade de utilizar maus antecedentes para a dosimetria da pena.",
+      "repercussaoGeral": false,
+      "recursoRepetitivo": false,
+      "temaRepetitivo": null
+    },
+    {
+      "teseId": "T3",
+      "referenciaCompleta": "STJ, AgRg no AREsp n. 1769665/RN, Quinta Turma, Rel. Min. Reynaldo Soares da Fonseca, DJe de 26/4/2022.",
+      "assunto": "Reitera a possibilidade de considerar maus antecedentes na dosimetria da pena.",
+      "repercussaoGeral": false,
+      "recursoRepetitivo": false,
+      "temaRepetitivo": null
+    },
+    {
+      "teseId": "T4",
+      "referenciaCompleta": "STJ, AgRg no REsp n. 1.970.791/RN, Quinta Turma, Rel. Min. Antonio Saldanha Palheiro, DJe de 2/5/2022.",
+      "assunto": "A majoração da pena-base deve ser proporcional, com aumento de 1/6 por circunstância judicial negativa.",
+      "repercussaoGeral": false,
+      "recursoRepetitivo": false,
+      "temaRepetitivo": null
+    },
+    {
+      "teseId": "T5",
+      "referenciaCompleta": "STJ, HC n. 405.667/SP, Quinta Turma, Rel. Min. Joel Ilan Paciornik, DJe de 4/9/2017.",
+      "assunto": "A substituição da pena privativa de liberdade é inviável em casos de maus antecedentes e quando não é socialmente recomendável.",
+      "repercussaoGeral": false,
+      "recursoRepetitivo": false,
+      "temaRepetitivo": null
+    },
+    {
+      "teseId": "T5",
+      "referenciaCompleta": "STJ, AgRg no HC n. 668.086/SP, Quinta Turma, Rel. Min. Antônio Saldanha Palheiro, DJe de 12/8/2021.",
+      "assunto": "A pena-base acima do mínimo legal impede a substituição da pena.",
+      "repercussaoGeral": false,
+      "recursoRepetitivo": false,
+      "temaRepetitivo": null
+    },
+    {
+      "teseId": "T6",
+      "referenciaCompleta": "STJ, AgRg no AREsp n. 1.737.521/PR, Quinta Turma, Rel. Min. Reynaldo Soares da Fonseca, DJe de 21/6/2021.",
+      "assunto": "O regime inicial semiaberto é adequado para pena inferior a quatro anos e ausência de reincidência.",
+      "repercussaoGeral": false,
+      "recursoRepetitivo": false,
+      "temaRepetitivo": null
+    },
+    {
+      "teseId": "T6",
+      "referenciaCompleta": "STJ, HC n. 536.632/RJ, Quinta Turma, Rel. Min. Felix Fischer, DJe de 20/11/2019.",
+      "assunto": "Confirma a adequação do regime semiaberto em casos de pena inferior a quatro anos.",
+      "repercussaoGeral": false,
+      "recursoRepetitivo": false,
+      "temaRepetitivo": null
+    }
+  ],
+  "referenciasLegislativas": [
+    {
+      "diplomaLegal": "Código Penal",
+      "dispositivo": "Art. 44, inc. III",
+      "redacaoPosterior": null
+    },
+    {
+      "diplomaLegal": "Código Penal",
+      "dispositivo": "Art. 33, § 2º, c e § 3º",
+      "redacaoPosterior": null
+    },
+    {
+      "diplomaLegal": "Código Penal",
+      "dispositivo": "Art. 59",
+      "redacaoPosterior": null
+    },
+    {
+      "diplomaLegal": "Código Penal",
+      "dispositivo": "Art. 64, I",
+      "redacaoPosterior": null
+    },
+    {
+      "diplomaLegal": "Código Penal",
+      "dispositivo": "Art. 155, § 4º, incisos I e IV",
+      "redacaoPosterior": null
+    },
+    {
+      "diplomaLegal": "Código Penal",
+      "dispositivo": "Art. 14, inc. II",
+      "redacaoPosterior": null
+    },
+    {
+      "diplomaLegal": "Lei n. 11.343/2006",
+      "dispositivo": "Art. 33, § 4º",
+      "redacaoPosterior": null
+    }
+  ],
+  "notas": [
+    "Princípio da insignificância: não aplicado ao furto qualificado, pois a Corte de origem invocou fundamentos idôneos para a exasperação da pena.",
+    "Julgado conforme procedimento previsto para Recursos Repetitivos no âmbito do STJ.",
+    "Reafirmação de jurisprudência."
+  ],
+  "informacoesComplementares": [
+    "Julgado conforme procedimento previsto para Habeas Corpus substitutivo de recurso especial.",
+    "Reafirmação de jurisprudência sobre a dosimetria da pena e a possibilidade de deslocamento de qualificadoras.",
+    "Reafirmação de jurisprudência sobre a utilização de maus antecedentes na dosimetria da pena, mesmo após o período depurador de 5 anos.",
+    "Reafirmação de jurisprudência sobre a impossibilidade de substituição da pena privativa de liberdade por restritiva de direitos em casos de maus antecedentes.",
+    "Decisão de concessão de ordem de ofício para reduzir a pena e fixar o regime prisional semiaberto."
+  ],
+  "termosAuxiliares": [
+    "habeas corpus de oficio",
+    "dosimetria da pena",
+    "maus antecedentes",
+    "circunstancias judiciais",
+    "regime prisional",
+    "qualificadora",
+    "exasperacao da basilar",
+    "flagrante ilegalidade",
+    "constringimento ilegal",
+    "substituicao pena",
+    "art 44 cp",
+    "repercussao geral",
+    "direito ao esquecimento",
+    "periodo depurador"
+  ],
+  "tema": [],
+  "metadados": {
+    "campos_identificados": [
+      "AgenteNotas",
+      "AgenteInformacoesComplementares",
+      "AgenteTermosAuxiliares",
+      "AgenteJurisprudenciasCitadas",
+      "AgenteReferenciasLegislativas",
+      "AgenteTeses"
+    ],
+    "loops_revisao": 2,
+    "validacao_aprovada": false,
+    "duracao_total_segundos": 496.583128,
+    "timestamp_extracao": "2026-02-26T08:01:47.981476"
+  }
+}

@@ -1,0 +1,344 @@
+{
+  "id_peca": "202201555326.20220614.",
+  "teseJuridica": [
+    {
+      "id": "T1",
+      "descricao": "Não se admite habeas corpus substitutivo de recurso próprio, salvo para concessão de ofício em caso de flagrante ilegalidade, ao se discutir o cabimento do writ manejado pela defesa para redimensionar a dosimetria e pleitear benefícios no caso de furto qualificado, conforme orientação da Terceira Seção alinhada à Primeira Turma do STF.",
+      "justificativas": [
+        "\"firmou orientação no sentido de não admitir a impetração de habeas corpus em substituição ao recurso adequado, situação que implica o não conhecimento da impetração, ressalvados casos excepcionais em que, configurada flagrante ilegalidade apta a gerar constrangimento ilegal, seja possível a concessão da ordem de ofício.\"",
+        "\"Trata-se de habeas corpus substitutivo de recurso especial, com pedido liminar...\""
+      ]
+    },
+    {
+      "id": "T2",
+      "descricao": "A revisão da dosimetria pela via do habeas corpus somente é possível quando presente flagrante ilegalidade e sem necessidade de aprofundado reexame probatório, diante da impugnação defensiva à exasperação da pena-base por suposta falta de fundamentação e desproporcionalidade no crime de furto qualificado tentado, segundo a jurisprudência do STJ que trata a dosimetria como discricionariedade vinculada passível de correção apenas por inobservância de parâmetros legais ou flagrante desproporcionalidade.",
+      "justificativas": [
+        "\"A via do writ somente se mostra adequada para a análise da dosimetria da pena se não for necessária uma análise aprofundada do conjunto probatório e se se tratar de flagrante ilegalidade.\"",
+        "\"a 'dosimetria da pena insere-se dentro de um juízo de discricionariedade do julgador... somente passível de revisão por esta Corte no caso de inobservância dos parâmetros legais ou de flagrante desproporcionalidade' (HC n. 400.119/RJ).\""
+      ]
+    },
+    {
+      "id": "T3",
+      "descricao": "É legítimo deslocar uma das qualificadoras remanescentes para a primeira fase e valorar condenações pretéritas, ainda que atingidas pelo período depurador de cinco anos, como maus antecedentes para majorar a pena-base, questão suscitada pela defesa quanto ao uso de pluralidade de qualificadoras e de anotações antigas no furto qualificado tentado por rompimento de obstáculo e concurso de agentes, à luz de precedentes do STJ e do art. 64, I, do CP que apenas afasta os efeitos da reincidência.",
+      "justificativas": [
+        "\"permite o deslocamento de uma qualificadora para outras fase da dosimetria, sendo certo que os maus antecedentes do paciente podem ser invocados para a majoração da pena-base, ainda que atingidos pelo período depurador de cinco anos, que afasta somente os efeitos da reincidência.\"",
+        "\"Não há como sustentar a existência de antecedentes criminais... os fatos... ocorreram há mais de dez anos e não poderiam ser considerados... invocando o direito ao esquecimento\""
+      ]
+    },
+    {
+      "id": "T4",
+      "descricao": "É desproporcional fixar a pena-base no dobro do mínimo legal sem motivação concreta e específica, devendo-se aplicar, como regra prudencial, a fração de 1/6 por cada circunstância judicial negativa, diante da majoração da basilar com base em duas qualificadoras e maus antecedentes no furto qualificado, conforme a jurisprudência do STJ que exige fundamentação idônea para exasperação acima desse patamar.",
+      "justificativas": [
+        "\"tem-se que o aumento em dobro em relação ao mínimo se revela desproporcional, notadamente porque não se demonstrou de forma concreta e específica a necessidade do referido aumento... considera proporcional o aumento de 1/6 por cada circunstância judicial negativa\"",
+        "\"a exasperação da pena basilar... deve seguir o parâmetro de 1/6 (um sexto) para cada vetorial valorada negativamente... salvo a apresentação de elementos concretos...\""
+      ]
+    },
+    {
+      "id": "T5",
+      "descricao": "É incabível a substituição da pena privativa de liberdade por restritivas de direitos quando presentes maus antecedentes e a medida se revela socialmente não recomendável, controvérsia suscitada pela defesa no furto qualificado com diversas anotações criminais inclusive pelo mesmo delito, havendo óbice do art. 44, III, do Código Penal e respaldo em precedentes do STJ.",
+      "justificativas": [
+        "\"há vedação legal à substituição da pena privativa de liberdade por restritiva de direitos, com base no disposto no artigo 44, inciso III, do Código Penal, diante dos maus antecedentes do apelante, não sendo medida socialmente recomendável\"",
+        "\"notadamente diante da existência de diversas anotações criminais, inclusive pelo mesmo delito versado nestes autos, que torna a medida socialmente não recomendável\""
+      ]
+    },
+    {
+      "id": "T6",
+      "descricao": "Com pena definitiva inferior a quatro anos, inexistindo reincidência e tratando-se de crime sem violência ou grave ameaça, deve ser fixado o regime inicial semiaberto, ainda que existam maus antecedentes, diante do redimensionamento da reprimenda no furto qualificado tentado, conforme art. 33, § 2º, c, e § 3º, do Código Penal e precedentes do STJ.",
+      "justificativas": [
+        "\"Considerando a nova pena imposta, inferior a quatro anos de reclusão, bem como em face do paciente não ser reincidente, em que pese a existência de maus antecedentes, tenho que resta inviável a manutenção do regime fechado... fixo o regime semiaberto... ex vi do art. 33, § 2º, c e § 3º, do CP.\""
+      ]
+    }
+  ],
+  "jurisprudenciaCitada": [
+    {
+      "teseId": "T1",
+      "referenciaCompleta": "STJ, HC 536.632/RJ, Rel. Min. Leopoldo de Arruda Raposo (Desembargador Convocado do TJ/PE), Quinta Turma, DJe 20/11/2019.",
+      "assunto": "Reafirma a orientação de não cabimento de habeas corpus substitutivo de recurso próprio, ressalvada a concessão de ofício em caso de flagrante ilegalidade.",
+      "repercussaoGeral": false,
+      "recursoRepetitivo": false,
+      "temaRepetitivo": null
+    },
+    {
+      "teseId": "T1",
+      "referenciaCompleta": "STJ, HC 405.667/SP, Rel. Min. Joel Ilan Paciornik, Quinta Turma, DJe 04/09/2017.",
+      "assunto": "Reitera o não conhecimento de habeas corpus substitutivo e a possibilidade de concessão de ofício ante flagrante ilegalidade.",
+      "repercussaoGeral": false,
+      "recursoRepetitivo": false,
+      "temaRepetitivo": null
+    },
+    {
+      "teseId": "T1",
+      "referenciaCompleta": "STJ, HC 430.248/SP, Rel. Min. Felix Fischer, Quinta Turma, DJe 01/08/2018.",
+      "assunto": "Assenta o não cabimento de habeas corpus substitutivo de recurso especial, com ressalva da concessão de ofício em hipóteses excepcionais.",
+      "repercussaoGeral": false,
+      "recursoRepetitivo": false,
+      "temaRepetitivo": null
+    },
+    {
+      "teseId": "T2",
+      "referenciaCompleta": "STJ, HC 400.119/RJ, Rel. Min. Reynaldo Soares da Fonseca, Quinta Turma, DJe 01/08/2017.",
+      "assunto": "Define que a revisão da dosimetria em habeas corpus só é possível em caso de violação dos parâmetros legais ou flagrante desproporcionalidade, dado o caráter discricionário-vinculado da dosimetria.",
+      "repercussaoGeral": false,
+      "recursoRepetitivo": false,
+      "temaRepetitivo": null
+    },
+    {
+      "teseId": "T2",
+      "referenciaCompleta": "STJ, HC 304.083/PR, Rel. Min. Felix Fischer, Quinta Turma, DJe 12/03/2015.",
+      "assunto": "Ressalta que a revisão da dosimetria em habeas corpus é excepcional, admitida apenas quando a ilegalidade se evidencia de plano, sem revolvimento probatório complexo.",
+      "repercussaoGeral": false,
+      "recursoRepetitivo": false,
+      "temaRepetitivo": null
+    },
+    {
+      "teseId": "T3",
+      "referenciaCompleta": "STJ, AgRg no HC 583.237/PR, Rel. Min. João Otávio de Noronha, Quinta Turma, DJe 03/11/2021.",
+      "assunto": "Admite o deslocamento de qualificadoras remanescentes para a primeira fase da dosimetria para exasperar a pena-base quando houver pluralidade de qualificadoras no furto.",
+      "repercussaoGeral": false,
+      "recursoRepetitivo": false,
+      "temaRepetitivo": null
+    },
+    {
+      "teseId": "T3",
+      "referenciaCompleta": "STJ, AgRg nos EDcl no HC 670.440/SP, Rel. Min. Reynaldo Soares da Fonseca, Quinta Turma, DJe 21/06/2021.",
+      "assunto": "Reconhece a possibilidade de deslocar uma das qualificadoras do furto para a primeira fase e de utilizar condenações distintas como maus antecedentes e/ou reincidência, sem bis in idem.",
+      "repercussaoGeral": false,
+      "recursoRepetitivo": false,
+      "temaRepetitivo": null
+    },
+    {
+      "teseId": "T3",
+      "referenciaCompleta": "STJ, AgRg no HC 714.214/SC, Quinta Turma, DJe 05/05/2022.",
+      "assunto": "Assenta que condenações atingidas pelo período depurador podem ser consideradas como maus antecedentes para exasperar a pena-base; registra inexistência de definição final do STF sobre prazo-limite, com repercussão geral reconhecida no RE 593.818/SC.",
+      "repercussaoGeral": false,
+      "recursoRepetitivo": false,
+      "temaRepetitivo": null
+    },
+    {
+      "teseId": "T3",
+      "referenciaCompleta": "STJ, AgRg no AgRg no HC 698.747/SC, Rel. Min. Olindo Menezes (Desembargador Convocado do TRF 1ª Região), Sexta Turma, DJe 01/04/2022.",
+      "assunto": "Admite a valoração de condenações pretéritas (inclusive atingidas pelo período depurador) como maus antecedentes e afasta a aplicação do chamado direito ao esquecimento em lapso temporal inferior a 10 anos, para fins de dosimetria.",
+      "repercussaoGeral": false,
+      "recursoRepetitivo": false,
+      "temaRepetitivo": null
+    },
+    {
+      "teseId": "T3",
+      "referenciaCompleta": "STJ, AgRg no AREsp 1.570.541/SP, Rel. Min. Laurita Vaz, Sexta Turma, DJe 29/10/2020.",
+      "assunto": "Autoriza a utilização de qualificadora remanescente como circunstância judicial na primeira fase da dosimetria (qualificadora residual) para majorar a pena-base.",
+      "repercussaoGeral": false,
+      "recursoRepetitivo": false,
+      "temaRepetitivo": null
+    },
+    {
+      "teseId": "T3",
+      "referenciaCompleta": "STJ, HC 337.068/SP, Rel. Min. Nefi Cordeiro, Sexta Turma, DJe 28/06/2016.",
+      "assunto": "Esclarece que condenações transitadas em julgado há mais de 5 anos podem ser valoradas como maus antecedentes, embora não induzam reincidência.",
+      "repercussaoGeral": false,
+      "recursoRepetitivo": false,
+      "temaRepetitivo": null
+    },
+    {
+      "teseId": "T3",
+      "referenciaCompleta": "STJ, HC 413.693/SP, Rel. Min. Reynaldo Soares da Fonseca, Quinta Turma, DJe 16/10/2017.",
+      "assunto": "Confirma que anotações pretéritas alcançadas pelo período depurador podem ser sopesadas como maus antecedentes na primeira fase da dosimetria.",
+      "repercussaoGeral": false,
+      "recursoRepetitivo": false,
+      "temaRepetitivo": null
+    },
+    {
+      "teseId": "T3",
+      "referenciaCompleta": "STF, RE 593.818/SC (Repercussão Geral), DJe 03/04/2009.",
+      "assunto": "Reconhecimento de repercussão geral sobre a possibilidade (ou não) de prazo-limite para considerar condenações pretéritas como maus antecedentes; citado para contextualizar o entendimento ainda não definitivo do STF.",
+      "repercussaoGeral": true,
+      "recursoRepetitivo": false,
+      "temaRepetitivo": null
+    },
+    {
+      "teseId": "T4",
+      "referenciaCompleta": "STJ, AgRg no REsp 1.970.791/RN, Rel. Min. Antonio Saldanha Palheiro, Sexta Turma, julgado em 26/04/2022, DJe 02/05/2022.",
+      "assunto": "Estabelece como parâmetro prudencial a fração de 1/6 por vetorial negativa, exigindo motivação concreta para majoração superior; reconhece desproporcionalidade quando não houver fundamentação específica.",
+      "repercussaoGeral": false,
+      "recursoRepetitivo": false,
+      "temaRepetitivo": null
+    },
+    {
+      "teseId": "T4",
+      "referenciaCompleta": "STJ, AgRg no HC 711.280/MS, Relª. Minª. Laurita Vaz, Sexta Turma, DJe 04/04/2022.",
+      "assunto": "Admite majoração acima de 1/6 quando houver fundamentação concreta que demonstre maior gravidade da conduta; reafirma que, em regra, aplica-se 1/6 por vetorial negativa.",
+      "repercussaoGeral": false,
+      "recursoRepetitivo": false,
+      "temaRepetitivo": null
+    },
+    {
+      "teseId": "T4",
+      "referenciaCompleta": "STJ, AgRg no AREsp 1.445.055/MG, Rel. Min. Ribeiro Dantas, Quinta Turma, julgado em 16/05/2019, DJe 21/05/2019.",
+      "assunto": "Assenta a possibilidade excepcional de fixar pena-base em patamar elevado até mesmo por uma única vetorial negativa, desde que com fundamentação idônea.",
+      "repercussaoGeral": false,
+      "recursoRepetitivo": false,
+      "temaRepetitivo": null
+    },
+    {
+      "teseId": "T4",
+      "referenciaCompleta": "STJ, AgRg no HC 696.947/SP, Rel. Min. Reynaldo Soares da Fonseca, Quinta Turma, DJe 25/10/2021.",
+      "assunto": "Consolida que a exasperação da pena-base deve, como regra, observar 1/6 por circunstância judicial negativa, demandando justificativa específica para patamar superior; a dosimetria não é mero cálculo aritmético.",
+      "repercussaoGeral": false,
+      "recursoRepetitivo": false,
+      "temaRepetitivo": null
+    },
+    {
+      "teseId": "T4",
+      "referenciaCompleta": "STJ, AgRg no HC 637.320/RO, Rel. Min. João Otávio de Noronha, Quinta Turma, julgado em 19/10/2021, DJe 25/10/2021.",
+      "assunto": "Utiliza o parâmetro de 1/6 por vetorial negativa como orientação prudencial, a ser afastado apenas mediante fundamentação concreta que demonstre necessidade de acréscimo superior.",
+      "repercussaoGeral": false,
+      "recursoRepetitivo": false,
+      "temaRepetitivo": null
+    },
+    {
+      "teseId": "T4",
+      "referenciaCompleta": "STJ, AgRg no AREsp 1.769.665/RN, Rel. Min. Reynaldo Soares da Fonseca, Quinta Turma, julgado em 22/06/2021, DJe 28/06/2021.",
+      "assunto": "Ressalta que majoração acima de 1/6 exige fundamentação adequada e específica, indicando razões concretas pelas quais a conduta extrapola a gravidade inerente à vetorial.",
+      "repercussaoGeral": false,
+      "recursoRepetitivo": false,
+      "temaRepetitivo": null
+    },
+    {
+      "teseId": "T4",
+      "referenciaCompleta": "STJ, AgRg no AREsp 1.816.037/GO, Rel. Min. Laurita Vaz, Sexta Turma, julgado em 21/09/2021, DJe 30/09/2021.",
+      "assunto": "Citado como precedente pelo STJ para firmar o parâmetro de 1/6 por vetorial negativa, salvo motivação concreta para elevação superior.",
+      "repercussaoGeral": false,
+      "recursoRepetitivo": false,
+      "temaRepetitivo": null
+    },
+    {
+      "teseId": "T5",
+      "referenciaCompleta": "STJ, HC 405.667/SP, Rel. Min. Joel Ilan Paciornik, Quinta Turma, DJe 04/09/2017.",
+      "assunto": "Assenta que a substituição da pena por restritiva de direitos pode ser afastada quando socialmente não recomendável e com base em circunstâncias judiciais; distingue a hipótese do ARE 666.334 (RG) do STF.",
+      "repercussaoGeral": false,
+      "recursoRepetitivo": false,
+      "temaRepetitivo": null
+    },
+    {
+      "teseId": "T5",
+      "referenciaCompleta": "STJ, HC 536.632/RJ, Rel. Min. Leopoldo de Arruda Raposo (Desembargador Convocado do TJ/PE), Quinta Turma, DJe 20/11/2019.",
+      "assunto": "Mantém a negativa de substituição da pena por restritivas quando, à luz do art. 44, I e III, CP, as circunstâncias indicam insuficiência da medida (gravidade concreta/antecedentes).",
+      "repercussaoGeral": false,
+      "recursoRepetitivo": false,
+      "temaRepetitivo": null
+    },
+    {
+      "teseId": "T5",
+      "referenciaCompleta": "STJ, AgRg no HC 512.273/SP, Rel. Min. Reynaldo Soares da Fonseca, Quinta Turma, DJe 02/09/2019.",
+      "assunto": "Reforça que, presentes circunstâncias judiciais desfavoráveis, a substituição da pena é socialmente não recomendável (art. 44, III, CP).",
+      "repercussaoGeral": false,
+      "recursoRepetitivo": false,
+      "temaRepetitivo": null
+    },
+    {
+      "teseId": "T5",
+      "referenciaCompleta": "STJ, AgRg no HC 668.086/SP, Rel. Min. Antonio Saldanha Palheiro, Sexta Turma, DJe 12/08/2021.",
+      "assunto": "Afirma que a pena-base acima do mínimo legal justifica regime mais severo e constitui óbice à substituição por restritivas (arts. 33, § 3º, e 44, III, CP).",
+      "repercussaoGeral": false,
+      "recursoRepetitivo": false,
+      "temaRepetitivo": null
+    },
+    {
+      "teseId": "T5",
+      "referenciaCompleta": "STF, ARE 666.334 (Repercussão Geral), Rel. Min. Gilmar Mendes, DJe 06/05/2014.",
+      "assunto": "Define ser bis in idem utilizar a quantidade de droga na 1ª fase e para modular a minorante do art. 33, § 4º, da Lei 11.343/2006; citado para distinguir a hipótese e reforçar critérios de substituição/regime.",
+      "repercussaoGeral": true,
+      "recursoRepetitivo": false,
+      "temaRepetitivo": null
+    },
+    {
+      "teseId": "T6",
+      "referenciaCompleta": "STJ, AgRg no AREsp 1.737.521/PR, Rel. Min. Reynaldo Soares da Fonseca, Quinta Turma, DJe 21/06/2021.",
+      "assunto": "Admite a fixação do regime inicial semiaberto quando há circunstância judicial desfavorável, mesmo com pena inferior a 4 anos; obsta também a substituição por restritivas em tal cenário.",
+      "repercussaoGeral": false,
+      "recursoRepetitivo": false,
+      "temaRepetitivo": null
+    },
+    {
+      "teseId": "T6",
+      "referenciaCompleta": "STJ, HC 430.248/SP, Rel. Min. Felix Fischer, Quinta Turma, DJe 01/08/2018.",
+      "assunto": "Autoriza o regime inicial semiaberto, mesmo com pena abaixo de 4 anos, diante de circunstâncias judiciais desfavoráveis e maus antecedentes (art. 33, § 2º e § 3º, CP).",
+      "repercussaoGeral": false,
+      "recursoRepetitivo": false,
+      "temaRepetitivo": null
+    }
+  ],
+  "referenciasLegislativas": [
+    {
+      "diplomaLegal": "Código Penal",
+      "dispositivo": "Art. 59",
+      "redacaoPosterior": null
+    },
+    {
+      "diplomaLegal": "Código Penal",
+      "dispositivo": "Art. 68",
+      "redacaoPosterior": null
+    },
+    {
+      "diplomaLegal": "Código Penal",
+      "dispositivo": "Art. 14, II",
+      "redacaoPosterior": null
+    },
+    {
+      "diplomaLegal": "Código Penal",
+      "dispositivo": "Art. 44, III",
+      "redacaoPosterior": null
+    },
+    {
+      "diplomaLegal": "Código Penal",
+      "dispositivo": "Art. 33, § 2º, alínea c",
+      "redacaoPosterior": null
+    },
+    {
+      "diplomaLegal": "Código Penal",
+      "dispositivo": "Art. 33, § 3º",
+      "redacaoPosterior": null
+    },
+    {
+      "diplomaLegal": "Código Penal",
+      "dispositivo": "Art. 64, I",
+      "redacaoPosterior": null
+    }
+  ],
+  "notas": [],
+  "informacoesComplementares": [
+    "Reafirmação de jurisprudência."
+  ],
+  "termosAuxiliares": [
+    "habeas corpus substitutivo",
+    "nao conhecimento habeas corpus",
+    "concessao de oficio",
+    "dosimetria da pena",
+    "deslocamento de qualificadora",
+    "maus antecedentes",
+    "periodo depurador",
+    "direito ao esquecimento",
+    "regime inicial semiaberto",
+    "substituicao restritiva de direitos",
+    "art 44 iii cp",
+    "art 33 2 cp",
+    "art 64 i cp",
+    "art 155 4 cp",
+    "sumula 7 stj"
+  ],
+  "tema": [],
+  "metadados": {
+    "campos_identificados": [
+      "AgenteNotas",
+      "AgenteReferenciasLegislativas",
+      "AgenteJurisprudenciasCitadas",
+      "AgenteTermosAuxiliares",
+      "AgenteInformacoesComplementares",
+      "AgenteTeses",
+      "AgenteTema"
+    ],
+    "loops_revisao": 1,
+    "validacao_aprovada": true,
+    "duracao_total_segundos": 509.242985,
+    "timestamp_extracao": "2026-02-26T09:18:31.714712"
+  }
+}

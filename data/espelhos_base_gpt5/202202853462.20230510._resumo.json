@@ -1,0 +1,12 @@
+{
+  "input_tokens": 46386,
+  "output_tokens": 8798,
+  "reasoning_tokens": 6080,
+  "cached_tokens": 0,
+  "finish_reason": "stop",
+  "model": "or:openai/gpt-5",
+  "think": "medium",
+  "time": 178.53547167778015,
+  "id_peca": "202202853462.20230510.",
+  "model_id": "openai/gpt-5"
+}

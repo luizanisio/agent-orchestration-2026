@@ -1,0 +1,64 @@
+{
+  "resposta": {
+    "precision": 0.29,
+    "recall": 0.42,
+    "metricas_por_campo": {
+      "teseJuridica": {
+        "precision": 0.35,
+        "recall": 0.6
+      },
+      "jurisprudenciaCitada": {
+        "precision": 0.2,
+        "recall": 0.2
+      },
+      "referenciasLegislativas": {
+        "precision": 0.6,
+        "recall": 0.55
+      },
+      "notas": {
+        "precision": 0.0,
+        "recall": 1.0
+      },
+      "informacoesComplementares": {
+        "precision": 0.0,
+        "recall": 1.0
+      },
+      "termosAuxiliares": {
+        "precision": 0.35,
+        "recall": 0.4
+      },
+      "tema": {
+        "precision": 0.0,
+        "recall": 1.0
+      }
+    },
+    "pontos_fortes": [
+      "Boa identificação, a partir da ementa, da tese central sobre a limitação probatória do reconhecimento pessoal/fotográfico, com citação literal em justificativas (ex.: item 2 da ementa: \"é válido, sem, todavia, força probante absoluta\").",
+      "Inclusão correta de dispositivos efetivamente empregados na decisão (art. 386, VII, CPP) e dos artigos de reconhecimento (arts. 226 e 227 do CPP) usados na fundamentação.",
+      "Registro de precedente chave (STJ, HC 712.781/RJ) que é expressamente citado no voto para sustentar a fragilidade epistêmica do reconhecimento."
+    ],
+    "pontos_melhoria": [
+      "[PRECISION] As teses (T1–T6) não atendem ao requisito estrutural de conter, em uma única frase, os 4 elementos (entendimento + questão jurídica + contexto fático + fundamentos jurídicos); p. ex., T1 não traz o contexto fático específico do caso (condenação lastreada apenas em depoimento da vítima e reconhecimentos com contradições) nem fundamentos normativos/citacionais (arts. 226–228 do CPP; HC 712.781/RJ), o que compromete a conformidade com o Manual.",
+      "[RECALL] Omissão de tese clara da ementa: \"desnecessidade de reexame do acervo probatório\" em habeas corpus quando as contradições são aferíveis primo ictu oculi (ementa: \"DESNECESSIDADE DE REEXAME DO ACERVO PROBATÓRIO\"; itens 7 e 10), que também está correlacionada ao relatório e amplamente fundamentada no voto.",
+      "[PRECISION] Campo jurisprudenciaCitada com estrutura e conteúdo inadequados: uso de chave \"teseId\" em vez de \"id\" e inclusão de entradas com \"Não há jurisprudência específica...\", que não são precedentes; isso viola o padrão e reduz a precisão.",
+      "[RECALL] Campo jurisprudenciaCitada omite diversos precedentes que fundamentam diretamente as teses: STF HC 170.117; STJ AgRg no AREsp 1.722.914/DF; STJ HC 706.735/RS; STJ HC 664.537/RJ; STJ HC 698.058/SP; STJ AgRg no HC 641.267/RS; STJ AgRg no REsp 1.969.149/RS, todos expressamente citados no voto para sustentar a insuficiência/contradição das provas e os limites do reconhecimento.",
+      "[PRECISION] Campo referenciasLegislativas incluiu dispositivos do Código Penal (art. 157, § 2º-A, I e § 2º, II) que não foram objeto de interpretação/aplicação na decisão (apenas contexto fático), violando o critério de inclusão; por outro lado, faltou considerar a Resolução n. 484/2022 (art. 7º, I) expressamente mencionada no voto.",
+      "[PRECISION] Campos notas e informacoesComplementares trazem etiquetas inexistentes no caso (ex.: \"Princípio da insignificância...\"; \"Julgado conforme Recursos Repetitivos\"; \"Decisão de afetação – Tema [número]\"; \"distinguishing\"; \"overruling\"); não há qualquer evidência textual que as sustente, e as frases não seguem os formatos exatos quando exigido.",
+      "[PRECISION] Campo termosAuxiliares contém termos já presentes na ementa (\"habeas corpus\", \"reconhecimento fotografico\", \"in dubio pro reo\") e termos com acentos (\"fragilidade epistêmica\", \"condenação injusta\"), violando a normalização; sugerem‑se substituições como \"art 226 cpp\", \"art 386 vii cpp\", \"falsas memorias\", \"vies de confirmacao\", \"resolucao 484 cnj\".",
+      "[PRECISION] Campo tema inclui \"STJ, Tema 712781\" (que é número de HC, não Tema) e \"Tema 931\" sem menção no texto; o correto seria manter o campo vazio, pois não há referência inequívoca a Temas de RG (STF) ou Repetitivos (STJ)."
+    ],
+    "explicacao": "A precisão é baixa sobretudo por teses sem os 4 elementos exigidos, jurisprudências com estrutura/conteúdo inválidos e inclusão de notas/ICE/temas inexistentes. O recall é limitado pela omissão de precedentes amplamente citados no voto e de ao menos uma tese clara da ementa (desnecessidade de reexame aprofundado em HC). Para melhorar, reestruturar as teses com contexto e fundamentos, vincular corretamente todos os precedentes do voto às teses e manter notas/ICE/tema vazios quando não houver base inequívoca."
+  },
+  "json": true,
+  "usage": {
+    "prompt_tokens": 28432,
+    "completion_tokens": 6979,
+    "total_tokens": 35411,
+    "cached_tokens": 25856,
+    "reasoning_tokens": 5696,
+    "finished_reason": "stop"
+  },
+  "model": "openai/gpt-5",
+  "tempo": 106.54,
+  "tratada": true
+}

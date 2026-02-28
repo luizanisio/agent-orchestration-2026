@@ -1,0 +1,62 @@
+{
+  "resposta": {
+    "precision": 0.83,
+    "recall": 0.94,
+    "metricas_por_campo": {
+      "teseJuridica": {
+        "precision": 0.9,
+        "recall": 1.0
+      },
+      "jurisprudenciaCitada": {
+        "precision": 0.75,
+        "recall": 0.95
+      },
+      "referenciasLegislativas": {
+        "precision": 0.72,
+        "recall": 0.95
+      },
+      "notas": {
+        "precision": 1.0,
+        "recall": 1.0
+      },
+      "informacoesComplementares": {
+        "precision": 0.95,
+        "recall": 1.0
+      },
+      "termosAuxiliares": {
+        "precision": 0.4,
+        "recall": 0.85
+      },
+      "tema": {
+        "precision": 1.0,
+        "recall": 1.0
+      }
+    },
+    "pontos_fortes": [
+      "Teses T1 a T7 bem ancoradas na EMENTA (itens 1–5, 9–11), com correlação clara com o RELATÓRIO (alegação de vícios do art. 226 CPP e inconsistências) e o VOTO (valoração do reconhecimento, viés de confirmação, in dubio pro reo).",
+      "Citações jurisprudenciais principais foram corretamente identificadas com referências completas, como HC 712.781/RJ (STJ, Sexta Turma, 15/3/2022, DJe 22/3/2022) e AgRg no AREsp 1.722.914/DF (STJ, 13/4/2021, DJe 28/4/2021).",
+      "Referências legislativas centrais ao fundamento da decisão foram incluídas adequadamente (arts. 226 a 228 do CPP; art. 386, VII, CPP; art. 7º, I, da Resolução 484/2022 do CNJ).",
+      "Campo notas corretamente vazio, em conformidade com a ausência de categorias padronizadas aplicáveis no texto."
+    ],
+    "pontos_melhoria": [
+      "[PRECISION] Campo jurisprudenciaCitada utilizou a chave \"teseId\" em vez de \"id\" para referenciar a tese (ex.: {\"teseId\": \"T1\"}), contrariando o padrão estrutural exigido, o que impacta a conformidade do JSON.",
+      "[PRECISION] Campo termosAuxiliares incluiu termos que constam da EMENTA/decisão, violando o critério de exclusão (ex.: \"habeas corpus ex officio\", \"in dubio pro reo\", \"primo ictu oculi\", \"reconhecimento pessoal\", \"vies de confirmacao\", \"fragilidade epistemica\", \"roubo majorado\", \"art 386 vii cpp\"). Esses termos devem ser excluídos do TAP.",
+      "[PRECISION] Campo referenciasLegislativas incluiu dispositivos periféricos não interpretados na fundamentação (\"Código Penal, Art. 157, § 2º, II\" e \"Art. 157, § 2º-A, I\"), e não observou a ordenação por diploma e número de artigo (arts. 226–228 deveriam preceder o art. 386 no CPP).",
+      "[PRECISION] Em jurisprudenciaCitada, ao menos um precedente é tangencial à tese específica (HC 674.139/SP sobre busca domiciliar foi usado de modo ilustrativo para in dubio pro libertas e não fundamenta diretamente a tese sobre reconhecimento), devendo-se priorizar apenas julgados que sustentem especificamente a tese identificada.",
+      "[RECALL] Campo termosAuxiliares poderia contemplar outros termos técnicos úteis e não presentes na EMENTA/ICE, como \"art 227 cpp\" e \"art 228 cpp\", aumentando a recuperabilidade sem infringir as regras do TAP."
+    ],
+    "explicacao": "Precision ficou em 0.83 por falhas estruturais (jurisprudência com chave incorreta de vinculação), inclusão de dispositivos legais periféricos e termos auxiliares vedados por constarem da ementa. Recall alto (0.94) porque as teses centrais, os principais precedentes e os dispositivos efetivamente aplicados foram majoritariamente capturados. Para melhorar, ajustar a estrutura do campo jurisprudenciaCitada, refinar o filtro de TAP excluindo termos da ementa e manter apenas dispositivos e precedentes diretamente aplicados às teses."
+  },
+  "json": true,
+  "usage": {
+    "prompt_tokens": 30826,
+    "completion_tokens": 9266,
+    "total_tokens": 40092,
+    "cached_tokens": 0,
+    "reasoning_tokens": 8256,
+    "finished_reason": "stop"
+  },
+  "model": "openai/gpt-5",
+  "tempo": 293.927,
+  "tratada": true
+}

@@ -1,0 +1,64 @@
+{
+  "resposta": {
+    "precision": 0.38,
+    "recall": 0.56,
+    "metricas_por_campo": {
+      "teseJuridica": {
+        "precision": 0.5,
+        "recall": 0.75
+      },
+      "jurisprudenciaCitada": {
+        "precision": 0.64,
+        "recall": 0.5
+      },
+      "referenciasLegislativas": {
+        "precision": 0.45,
+        "recall": 0.67
+      },
+      "notas": {
+        "precision": 0.0,
+        "recall": 1.0
+      },
+      "informacoesComplementares": {
+        "precision": 0.0,
+        "recall": 1.0
+      },
+      "termosAuxiliares": {
+        "precision": 0.22,
+        "recall": 0.35
+      },
+      "tema": {
+        "precision": 1.0,
+        "recall": 1.0
+      }
+    },
+    "pontos_fortes": [
+      "As teses T3, T4 e T5 foram extraídas diretamente da EMENTA e têm correlação clara com o RELATÓRIO (impugnação dos maus antecedentes e da exasperação da pena-base; pedido de substituição da pena) e com o VOTO (manutenção do deslocamento de qualificadora e dos maus antecedentes; redução da pena-base; óbice do art. 44, III, do CP).",
+      "O campo jurisprudenciaCitada trouxe precedentes centrais e efetivamente mencionados no VOTO, como HC 400.119/RJ (dosimetria em HC), AgRg no REsp 1.970.791/RN (parâmetro de 1/6) e HC 405.667/SP (substituição da pena), mostrando boa cobertura básica.",
+      "As referências legislativas nucleares aplicadas no caso foram identificadas (art. 44, inciso III, do CP; art. 33, § 2º, c, e § 3º, do CP; art. 59 e art. 64, I, do CP), coerentes com a fundamentação do VOTO.",
+      "A ausência de Temas (STF/STJ) foi corretamente refletida com campo vazio, pois o acórdão não menciona número de Tema inequívoco."
+    ],
+    "pontos_melhoria": [
+      "[PRECISION] Tese T1 (inadmissibilidade de HC substitutivo) e T2 (cabimento restrito para dosimetria em HC) não guardam correlação com uma questão posta pela parte no RELATÓRIO, violando o critério de correlação tríplice EMENTA–RELATÓRIO–VOTO; devem ser excluídas ou reescritas com todos os 4 elementos e a correlação exigida.",
+      "[PRECISION] Em jurisprudenciaCitada há associações e metadados incorretos: (i) HC 400.119/RJ foi associado a T1, embora fundamente T2 (dosimetria em HC); (ii) AgRg no AREsp 1.769.665/RN foi vinculado a T3, mas trata do parâmetro de 1/6 (T4); (iii) AgRg no REsp 1.970.791/RN consta como Quinta Turma, quando o VOTO indica Sexta Turma; (iv) HC 536.632/RJ está com relatoria trocada (no VOTO: Min. Leopoldo de Arruda Raposo).",
+      "[RECALL] Jurisprudência relevante citada no VOTO não foi capturada: AgRg nos EDcl no HC 670.440/SP; AgRg no AgRg no HC 698.747/SC; AgRg no HC 711.280/MS; AgRg no HC 696.947/SP; AgRg no HC 512.273/SP; HC 430.248/SP; AgRg no HC 637.320/RO (citações do corpo do VOTO e das razões do MPF).",
+      "[PRECISION] Referências legislativas com problemas: inclusão indevida de Lei 11.343/2006, art. 33, § 4º (apenas em precedente ilustrativo, não aplicada ao caso) e normalização fora do padrão (\"inc.\" em vez de \"inciso\", falta de \"alínea\" no art. 33, § 2º, alínea c; e desordenação dos dispositivos).",
+      "[RECALL] Campo referenciasLegislativas omitiu o art. 68 do Código Penal, expressamente mencionado no VOTO na refacção da dosimetria (\"atento às diretrizes dos arts. 59 e 68, ambos do CP\").",
+      "[PRECISION] Notas e ICE incluem informações inexistentes ou fora do padrão: \"Princípio da insignificância\" (não tratado), \"Julgado conforme procedimento previsto para Recursos Repetitivos\" (não há afetação ou rito repetitivo), e variações não padronizadas em ICE; quando não houver evidência inequívoca, esses campos devem ficar vazios.",
+      "[PRECISION] Termos auxiliares repetem conteúdos já presentes na EMENTA (p. ex., \"dosimetria da pena\", \"maus antecedentes\", \"qualificadora\") e há erro de grafia (\"constringimento ilegal\"); TAP deve conter apenas termos não constantes na EMENTA/ICE, normalizados e relevantes (p. ex., \"habeas corpus substitutivo\", \"sumula 7 stj\", \"sumula 284 stf\", \"bis in idem\", \"iter criminis\")."
+    ],
+    "explicacao": "A precisão ficou baixa (0.38) sobretudo por incluir teses sem correlação tríplice, notas/ICE sem respaldo no texto e erros/associações incorretas nas citações de precedentes e na normalização dos dispositivos legais. O recall ficou moderado (0.56) porque, embora as teses principais tenham sido capturadas, faltaram diversos precedentes do VOTO e o art. 68 do CP nas referências legais, além de termos auxiliares relevantes. Para melhorar, foque em: (i) manter apenas teses com correlação EMENTA–RELATÓRIO–VOTO e em frase única com os 4 elementos; (ii) alinhar rigorosamente as referências jurisprudenciais/legais ao que está no VOTO (classe, número, relator, Turma) e (iii) deixar Notas/ICE vazios quando não houver evidência inequívoca."
+  },
+  "json": true,
+  "usage": {
+    "prompt_tokens": 23513,
+    "completion_tokens": 12627,
+    "total_tokens": 36140,
+    "cached_tokens": 20224,
+    "reasoning_tokens": 11200,
+    "finished_reason": "stop"
+  },
+  "model": "openai/gpt-5",
+  "tempo": 198.159,
+  "tratada": true
+}

@@ -1,0 +1,179 @@
+{
+  "id_peca": "202202853462.20230510.",
+  "teseJuridica": [
+    {
+      "id": "T1",
+      "descricao": "É legítima a valoração do reconhecimento de pessoas pelo Julgador, desde que respeitadas as exigências legais, mas tal reconhecimento não constitui prova cabal e irrefutável de autoria, devendo ser analisado em conjunto com outros elementos de prova, sob pena de fragilizar a convicção do juízo e comprometer a segurança jurídica, conforme entendimento desta Corte.",
+      "justificativas": [
+        "\"Desde que respeitadas as exigências legais, o reconhecimento de pessoas pode ser valorado pelo Julgador. Isso não significa admitir que, em todo e qualquer caso, a afirmação do ofendido de que identifica determinada pessoa como o agente do crime seja prova cabal e irrefutável.\""
+      ]
+    },
+    {
+      "id": "T2",
+      "descricao": "O reconhecimento positivo, mesmo que respeitadas as exigências legais, possui força probante limitada, não induzindo, por si só, à certeza da autoria delitiva, em razão de sua fragilidade epistêmica, devendo ser corroborado por outros elementos de prova para embasar uma condenação, conforme jurisprudência do STJ.",
+      "justificativas": [
+        "\"Consoante jurisprudência desta Corte, o reconhecimento positivo, que respeite as exigências legais, portanto, \"é válido, sem, todavia, força probante absoluta, de sorte que não pode induzir, por si só, à certeza da autoria delitiva, em razão de sua fragilidade epistêmica\" (STJ, HC n. 712.781/RJ, relator Ministro ROGERIO SCHIETTI CRUZ, Sexta Turma, julgado em 15/3/2022, DJe de 22/3/2022).\""
+      ]
+    },
+    {
+      "id": "T3",
+      "descricao": "O reconhecimento de pessoas, mesmo quando realizado em conformidade com as disposições legais, não possui prevalência sobre outros meios de prova, devendo ser valorado em conjunto com confissões, testemunhos, perícias e acareações, a fim de formar um conjunto probatório robusto e seguro para a condenação.",
+      "justificativas": [
+        "\"O reconhecimento de pessoas que obedece às disposições legais (o que não as observa é nulo, consoante jurisprudência pacífica desta Corte) não prepondera sobre quaisquer outros meios de prova (confissão, testemunha, perícia, acareação, etc.); ao contrário, deve ser valorado como os demais.\""
+      ]
+    },
+    {
+      "id": "T4",
+      "descricao": "A confirmação, em juízo, do reconhecimento fotográfico extrajudicial, por si só, não garante a segurança e isenção de erros involuntários, pois a memória humana pode ser influenciada por vieses de confirmação, levando à repetição da resposta em reconhecimentos futuros, o que exige cautela na valoração dessa prova.",
+      "justificativas": [
+        "\"A confirmação, em juízo, do reconhecimento fotográfico extrajudicial, por si só, não torna o ato seguro e isento de erros involuntários, pois \"uma vez que a testemunha ou a vítima reconhece alguém como o autor do delito, há tendência, por um viés de confirmação, a repetir a mesma resposta em reconhecimentos futuros, pois sua memória estará mais ativa e predisposta a tanto\" (STJ, HC n. 712.781/RJ, relator Ministro ROGERIO SCHIETTI CRUZ, Sexta Turma, julgado em 15/3/2022, DJe de 22/3/2022).\""
+      ]
+    },
+    {
+      "id": "T5",
+      "descricao": "A condenação baseada unicamente no depoimento da vítima e em reconhecimentos realizados na fase extrajudicial e em juízo, sem a apresentação de outras provas corroborantes, é passível de revisão quando presentes inconsistências e contradições nas descrições feitas pela vítima, indicando a possibilidade de reconhecimento falho, especialmente quando não há outros elementos que confirmem a autoria delitiva.",
+      "justificativas": [
+        "\"No caso, é incontroverso nos autos que (i) a condenação do Paciente encontra-se amparada tão somente no depoimento da Vítima e nos reconhecimentos realizados na fase extrajudicial e em juízo; (ii) não foram ouvidas outras testemunhas de acusação; (iii) a res furtiva não foi apreendida em poder do Acusado; (iv) o Réu negou a imputação que lhe foi dirigida.\""
+      ]
+    },
+    {
+      "id": "T6",
+      "descricao": "A dúvida razoável sobre a autoria delitiva, decorrente de inconsistências e contradições nas descrições da vítima e na ausência de outros elementos de prova robustos, impõe a aplicação do princípio in dubio pro reo, absolvendo o acusado, pois o ônus da prova recai sobre a acusação.",
+      "justificativas": [
+        "\"Constata-se, primo ictu oculi e sem a necessidade de incursão aprofundada no acervo probatório, que há diversas inconsistências e contradições nas descrições feitas pela Vítima a respeito dos aspectos fisionômicos do suspeito, o que indica a possibilidade de reconhecimento falho, dado o risco de construção de falsas memórias.\""
+      ]
+    }
+  ],
+  "jurisprudenciaCitada": [
+    {
+      "teseId": "T1",
+      "referenciaCompleta": "Não há jurisprudência específica para esta tese.",
+      "assunto": "Valoração do reconhecimento de pessoas, desde que respeitadas as exigências legais, mas não como prova cabal.",
+      "repercussaoGeral": false,
+      "recursoRepetitivo": false,
+      "temaRepetitivo": null
+    },
+    {
+      "teseId": "T2",
+      "referenciaCompleta": "STJ, HC n. 712.781/RJ, relator Ministro ROGERIO SCHIETTI CRUZ, Sexta Turma, julgado em 15/3/2022, DJe de 22/3/2022.",
+      "assunto": "Força probante limitada do reconhecimento positivo e sua fragilidade epistêmica.",
+      "repercussaoGeral": false,
+      "recursoRepetitivo": false,
+      "temaRepetitivo": null
+    },
+    {
+      "teseId": "T3",
+      "referenciaCompleta": "Não há jurisprudência específica para esta tese.",
+      "assunto": "O reconhecimento de pessoas não prevalece sobre outros meios de prova.",
+      "repercussaoGeral": false,
+      "recursoRepetitivo": false,
+      "temaRepetitivo": null
+    },
+    {
+      "teseId": "T4",
+      "referenciaCompleta": "STJ, HC n. 712.781/RJ, relator Ministro ROGERIO SCHIETTI CRUZ, Sexta Turma, julgado em 15/3/2022, DJe de 22/3/2022.",
+      "assunto": "A confirmação do reconhecimento fotográfico não garante a segurança e isenção de erros.",
+      "repercussaoGeral": false,
+      "recursoRepetitivo": false,
+      "temaRepetitivo": null
+    },
+    {
+      "teseId": "T5",
+      "referenciaCompleta": "Não há jurisprudência específica para esta tese.",
+      "assunto": "Condenação baseada unicamente em depoimento da vítima e reconhecimento, com inconsistências, é passível de revisão.",
+      "repercussaoGeral": false,
+      "recursoRepetitivo": false,
+      "temaRepetitivo": null
+    },
+    {
+      "teseId": "T6",
+      "referenciaCompleta": "Não há jurisprudência específica para esta tese.",
+      "assunto": "Dúvida razoável sobre a autoria impõe a aplicação do princípio in dubio pro reo.",
+      "repercussaoGeral": false,
+      "recursoRepetitivo": false,
+      "temaRepetitivo": null
+    }
+  ],
+  "referenciasLegislativas": [
+    {
+      "diplomaLegal": "Código de Processo Penal",
+      "dispositivo": "Art. 226",
+      "redacaoPosterior": null
+    },
+    {
+      "diplomaLegal": "Código de Processo Penal",
+      "dispositivo": "Art. 227",
+      "redacaoPosterior": null
+    },
+    {
+      "diplomaLegal": "Código de Processo Penal",
+      "dispositivo": "Art. 386, inciso VII",
+      "redacaoPosterior": null
+    },
+    {
+      "diplomaLegal": "Código Penal",
+      "dispositivo": "Art. 157, § 2.º-A, inciso I",
+      "redacaoPosterior": null
+    },
+    {
+      "diplomaLegal": "Código Penal",
+      "dispositivo": "Art. 157, § 2.º, inciso II",
+      "redacaoPosterior": null
+    }
+  ],
+  "notas": [
+    "Princípio da insignificância: não aplicado ao [crime]... [motivo].",
+    "Julgado conforme procedimento previsto para Recursos Repetitivos no âmbito do STJ.",
+    "Reafirmação de jurisprudência."
+  ],
+  "informacoesComplementares": [
+    "Julgado conforme procedimento previsto para Recursos Repetitivos no âmbito do STJ.",
+    "Reafirmação de jurisprudência.",
+    "Decisão de afetação – Tema [número].",
+    "Aplicada técnica de distinção (distinguishing) em relação ao [Recurso Repetitivo REsp XXXX / Repercussão Geral / Súmula XXX].",
+    "Aplicada técnica de superação (overruling)."
+  ],
+  "termosAuxiliares": [
+    "habeas corpus",
+    "reconhecimento fotografico",
+    "in dubio pro reo",
+    "prova ilicita",
+    "erro judiciario",
+    "fragilidade epistêmica",
+    "cross race effect",
+    "primeiro reconhecimento",
+    "segundo reconhecimento",
+    "vicio probatorio",
+    "falhas investigativas",
+    "condenação injusta",
+    "ausencia de provas",
+    "inconsistencias probatorias"
+  ],
+  "tema": [
+    {
+      "tribunal": "STJ",
+      "numero": 712781,
+      "descricao": null
+    },
+    {
+      "tribunal": "STJ",
+      "numero": 931,
+      "descricao": "Inadimplemento da multa"
+    }
+  ],
+  "metadados": {
+    "campos_identificados": [
+      "AgenteNotas",
+      "AgenteInformacoesComplementares",
+      "AgenteTermosAuxiliares",
+      "AgenteJurisprudenciasCitadas",
+      "AgenteTema",
+      "AgenteReferenciasLegislativas",
+      "AgenteTeses"
+    ],
+    "loops_revisao": 2,
+    "validacao_aprovada": false,
+    "duracao_total_segundos": 328.507685,
+    "timestamp_extracao": "2026-02-26T08:01:47.983521"
+  }
+}

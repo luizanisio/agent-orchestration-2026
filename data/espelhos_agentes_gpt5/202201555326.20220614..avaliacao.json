@@ -1,0 +1,63 @@
+{
+  "resposta": {
+    "precision": 0.88,
+    "recall": 0.94,
+    "metricas_por_campo": {
+      "teseJuridica": {
+        "precision": 0.98,
+        "recall": 1.0
+      },
+      "jurisprudenciaCitada": {
+        "precision": 0.9,
+        "recall": 0.96
+      },
+      "referenciasLegislativas": {
+        "precision": 0.88,
+        "recall": 0.95
+      },
+      "notas": {
+        "precision": 1.0,
+        "recall": 1.0
+      },
+      "informacoesComplementares": {
+        "precision": 0.4,
+        "recall": 1.0
+      },
+      "termosAuxiliares": {
+        "precision": 0.55,
+        "recall": 0.82
+      },
+      "tema": {
+        "precision": 1.0,
+        "recall": 1.0
+      }
+    },
+    "pontos_fortes": [
+      "Teses T1–T6 extraídas diretamente dos itens I–VI da EMENTA, em frases únicas, contendo entendimento, questão, contexto fático (furto qualificado tentado, dosimetria, substituição e regime) e fundamentos (jurisprudência/arts. do CP), com justificativas literais do voto/ementa.",
+      "Boa cobertura e associação de precedentes centrais às teses: p. ex., T4 amparada por AgRg no REsp 1.970.791/RN e AgRg no HC 711.280/MS (parâmetro de 1/6 e necessidade de fundamentação específica), e T3 por AgRg no HC 583.237/PR e AgRg nos EDcl no HC 670.440/SP (qualificadora residual e maus antecedentes).",
+      "Referências legislativas pertinentes e normalizadas aos pontos efetivamente aplicados/interpretados (arts. 59, 68, 44, III; 33, § 2º, c e § 3º; 64, I; 14, II), coerentes com o redimensionamento da pena e fixação do regime.",
+      "Acertos na marcação de metadados: identificação de Repercussão Geral apenas quando expressamente indicada (RE 593.818/SC e ARE 666.334)."
+    ],
+    "pontos_melhoria": [
+      "[PRECISION] Informações Complementares: inclusão de \"Reafirmação de jurisprudência.\" sem menção inequívoca nem essencialidade à compreensão das teses; o texto apenas aplica orientação consolidada, mas não declara 'reafirmação de jurisprudência', o que viola o critério de inclusão do ICE.",
+      "[PRECISION] Termos Auxiliares com duplicação do conteúdo da ementa/ICE (p. ex., \"deslocamento de qualificadora\", \"maus antecedentes\", \"regime inicial semiaberto\", \"substituicao restritiva de direitos\", \"art 44 iii cp\", \"art 33 2 cp\"), contrariando a regra de que não devem constar na ementa/ICE; substituir por termos não presentes, como \"bis in idem\", \"sumula 284 stf\", \"iter criminis\", \"fracao de um sexto\", \"reexame probatorio\".",
+      "[PRECISION] Jurisprudência citada com referência incompleta em alguns itens (ex.: STJ, AgRg no HC 714.214/SC sem relator; STF, RE 593.818/SC sem relator), e associação um pouco frouxa de casos voltados a substituição/regime para fundamentar a tese de não cabimento do habeas substitutivo (T1); completar relatoria/órgão e priorizar precedentes citados especificamente no trecho sobre admissibilidade.",
+      "[PRECISION] Referências legislativas fora da ordem exigida (ordenar por diploma e número do artigo – ex.: 14; 33, § 2º; 33, § 3º; 44; 59; 64; 68), o que fere o padrão estrutural do Manual.",
+      "[RECALL] Termos Auxiliares: ausência de expressões técnicas relevantes não presentes na ementa/ICE, mas citadas no voto (p. ex., \"bis in idem\", \"sumula 284 stf\", \"iter criminis\"), que auxiliariam na recuperação do julgado.",
+      "[RECALL] Referências legislativas: considerar acrescentar, se extraível de forma inequívoca, o \"Art. 14, parágrafo único, do CP\" (base normativa da redução pela tentativa), pois a fração de 1/3 foi aplicada na terceira fase exatamente com fundamento nesse dispositivo, ainda que não citado textualmente."
+    ],
+    "explicacao": "A precisão ficou em 0.88 por pequenas não conformidades estruturais (ordenação dos dispositivos), referências jurisprudenciais incompletas e inclusão indevida de \"Reafirmação de jurisprudência\" no ICE, além de termos auxiliares que repetem a ementa. O recall alcançou 0.94 pela boa cobertura das teses e precedentes centrais, com poucas omissões pontuais em termos auxiliares e possível detalhamento do art. 14 (parágrafo único). Para melhorar, completar metadados das citações, ajustar a ordenação dos artigos, remover ICE indevido e refinar os termos auxiliares evitando duplicar a ementa."
+  },
+  "json": true,
+  "usage": {
+    "prompt_tokens": 26036,
+    "completion_tokens": 9754,
+    "total_tokens": 35790,
+    "cached_tokens": 0,
+    "reasoning_tokens": 8576,
+    "finished_reason": "stop"
+  },
+  "model": "openai/gpt-5",
+  "tempo": 302.85,
+  "tratada": true
+}
