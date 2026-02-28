@@ -284,7 +284,8 @@ def _gerar_grafico_erros(dados_analise, pasta_saida):
     from util_graficos import UtilGraficos, Cores
     import pandas as pd
     
-    rotulos_modelos = dados_analise.rotulos_modelos
+    # Usa rotulos[1:] para incluir também o modelo de origem (base) mantendo a mesma ordem do YAML
+    rotulos_modelos = dados_analise.rotulos[1:] if len(dados_analise.rotulos) > 1 else []
     stats = {m: {'Sucesso': 0, 'Erro': 0, 'Inexistente': 0} for m in rotulos_modelos}
     
     for linha in dados_analise.dados:
