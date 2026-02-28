@@ -1295,7 +1295,7 @@ class AgenteOrquestradorEspelho():
             }
         }
         
-        # Não adiciona mais a chave 'resultado' - agentes_gerar_espelhos.py verifica campos_identificados vazio
+        # Não adiciona mais a chave 'resultado' - 02_agentes_gerar_espelhos.py verifica campos_identificados vazio
         
         # Log de debug do espelho final
         self._registrar_log(f"DEBUG espelho_final construído com {sum(1 for k, v in espelho_final.items() if k != 'metadados' and v and len(v) > 0)} campos não-vazios")

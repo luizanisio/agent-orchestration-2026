@@ -119,7 +119,7 @@ The experiment begins by constructing the dataset of judicial decisions using a 
 
 After assembling the dataset, the next step is performing the extractions using the single-prompt baseline approach.
 
-- **Script:** `02_extractions/gerar_espelho_sjr_base.py`
+- **Script:** `02_extractions/01_gerar_espelho_sjr_base.py`
 - **Execution:** Run the script directly from the terminal (ensure your environment variables and API keys are properly set in your `.env` file).
 - **Configuration Points:** You can adjust the models to test or perform trial runs using a subset of documents. Look for the following tags in the script:
   - `[TAG: EXTRACTION_TEST_IDS]`: Uncomment or edit the test array to limit extraction to specific document IDs for quick testing.
@@ -129,7 +129,7 @@ After assembling the dataset, the next step is performing the extractions using 
 
 With the baseline complete, you can generate the extractions using the JAMEX multi-agent orchestration.
 
-- **Script:** `02_extractions/agentes_gerar_espelhos.py`
+- **Script:** `02_extractions/02_agentes_gerar_espelhos.py`
 - **Execution:** Similar to the baseline, run this via terminal from within the extractions folder.
 - **Configuration Points:** Follows the same logic for customization:
   - `[TAG: EXTRACTION_TEST_IDS]`: For limiting the run to specific test document IDs.
@@ -137,7 +137,16 @@ With the baseline complete, you can generate the extractions using the JAMEX mul
 
 ### 4. Reproducing Evaluation Metrics and Analysis
 
-Once both extraction strategies finish generating their unstructured and structured JSON outputs, you can evaluate their performance.
+Once both extraction strategies finish generating their unstructured and structured JSON outputs, you can evaluate their performance using the LLM-as-a-Judge technique.
+
+- **Script:** `02_extractions/03_avaliacao_llm_as_a_judge.py`
+- **Execution:** Run the script via terminal from within the extractions folder to generate the `.avaliacao.json` assessments based on the target folders.
+- **Configuration Points:** By default, it runs over all generated outputs. You can adjust the execution scope by looking for these tags in the script:
+  - `[TAG: EVALUATION_TEST_IDS]`: To limit the evaluation to specific piece IDs.
+  - `[TAG: EVALUATION_LIMIT]`: To set a maximum number of random pieces to evaluate (0 for all).
+  - `[TAG: EVALUATION_TARGET_FOLDERS]`: To specify which generated folders should be evaluated.
+
+After the evaluation runs, you can utilize the comparison tools to aggregate the results.
 
 - **Script:** `03_analysis/comparar_extracoes.py`
 - **Configuration File:** `03_analysis/config_espelho.yaml`
@@ -146,7 +155,7 @@ Once both extraction strategies finish generating their unstructured and structu
   - `[TAG: ANALYSIS_BASE_MODEL]`: Modifies the reference (gold-standard/baseline) model for comparisons.
   - `[TAG: ANALYSIS_COMPARE_MODELS]`: Modifies the list of extraction models to be evaluated against the base pattern.
 
-See the notebooks in `01_notebooks/` and scripts in `03_analysis/` for additional step-by-step replication of all paper results.
+See the notebooks in `01_notebooks/` and scripts in `03_analysis/` for additional step-by-step replication of all paper results. Furthermore, please consult the `data/README.md` file for detailed information regarding the consolidated evaluation reports, charts, and JSON artifacts resulting from the analysis scripts.
 
 ---
 

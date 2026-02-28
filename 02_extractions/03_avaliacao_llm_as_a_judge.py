@@ -107,17 +107,33 @@ def gerar_respostas(row, pasta_extracao):
 
         extracao = json.dumps(extracao, ensure_ascii=False, indent=2)    
         msg_prompt = PROMPT_LLM_AS_A_JUDGE.replace('<--texto-->', texto).replace('<--extracao-->', extracao)
-        avaliacao = send_prompt(prompt=msg_prompt, papel=PAPEL_LLM_AS_A_JUDGE,
-                            sg_modelo=MODELO_JUIZ, 
-                            think=MODELO_JUIZ_THINK,
-                            sem_erro=True, prompt_retorna_json=True,
-                            retorno_resumido=True,
-                            temperature=0.0)
-
-        if isinstance(avaliacao, dict) and 'erro' in avaliacao:
-            print(f'{_linha}\nErro na resposta do LLM para peça {id_peca}: {avaliacao["erro"]}\n{_linha}\n')
+        try:
+            avaliacao_res = send_prompt(prompt=msg_prompt, papel=PAPEL_LLM_AS_A_JUDGE,
+                                sg_modelo=MODELO_JUIZ, 
+                                think=MODELO_JUIZ_THINK,
+                                prompt_retorna_json=True,
+                                temperature=0.0)
+        except Exception as e:
+            print(f'{_linha}\nErro na API para peça {id_peca}: {str(e)}\n{_linha}\n')
             sessao['com_erro'] = sessao.get('com_erro', 0) + 1
-            return
+            return {'erro': 'erro_api', 'nota': 0, 'explicacao': str(e)}
+
+        if isinstance(avaliacao_res, dict) and 'erro' in avaliacao_res:
+            print(f'{_linha}\nErro na resposta do LLM para peça {id_peca}: {avaliacao_res["erro"]}\n{_linha}\n')
+            sessao['com_erro'] = sessao.get('com_erro', 0) + 1
+            return {'erro': 'erro_modelo', 'nota': 0, 'explicacao': avaliacao_res["erro"]}
+
+        try:
+            tratada = avaliacao_res.pop('tratada', False) if isinstance(avaliacao_res, dict) else False
+            if not tratada:
+                resposta = avaliacao_res.get('resposta', '') if isinstance(avaliacao_res, dict) else avaliacao_res
+                avaliacao = UtilTextos.mensagem_to_json(resposta, padrao=resposta)
+            else:
+                avaliacao = avaliacao_res.get('resposta')
+        except Exception as e:
+            print(f'{_linha}\nErro convertendo JSON para peça {id_peca}: {str(e)}\n{traceback.format_exc()}\n{_linha}\n')
+            sessao['com_erro'] = sessao.get('com_erro', 0) + 1
+            return {'erro': 'erro_json', 'nota': 0, 'explicacao': str(e)}
 
         if (not isinstance(avaliacao, dict)) or len(avaliacao) == 0:
             print(f'\n{_linha}\nArquivo de avaliação inválido para peça {id_peca}.\n{avaliacao}\n{_linha}\n')
@@ -137,18 +153,25 @@ def gerar_respostas(row, pasta_extracao):
         print(f'Erro ao processar peça id_peca={id_peca}: {traceback.format_exc()}')
 
 
+##################################################################
+### Ajustes para rodar o experimento - ponto de entrada principal
+##################################################################
 if __name__ == '__main__':
-    #id_peca = ['202200038900.29.', '202200205729.40.']
-    #id_peca = '202200205729.40.'
+    # [TAG: EVALUATION_TEST_IDS]
     id_peca = None
+    # lista opcional de ids para rodadas de teste (None = todos os registros)
+    # id_peca = ['202202853462.20230510.', '202201555326.20220614.']
     
-    # Opcionalmente Limitar quantas avaliações deseja fazer 
-    # 0 para todas
+    # [TAG: EVALUATION_LIMIT]
+    # Opcionalmente limitar quantas avaliações deseja fazer 
+    # 0 para todas as peças filtradas/disponíveis
     QTD_LLM_AS_A_JUDGE = 0
     print(f'Quantidade de LLM as a Judge por peça: {QTD_LLM_AS_A_JUDGE}')
     PASTA_RAIZ = '../data/'
 
+    # [TAG: EVALUATION_TARGET_FOLDERS]
     # ajuste com as saídas dos modelos que serão avaliadas
+    # folders não encontradas serão ignoradas
     PASTAS_EXTRACAO = [
         'espelhos_agentes_gpt5/',
         'espelhos_agentes_gemma3_12b/',
@@ -156,7 +179,7 @@ if __name__ == '__main__':
         'espelhos_base_gpt5/',
         'espelhos_base_gemma3_12b/',
         'espelhos_base_gemma3_27b/',
-        'espelhos_raw/',  # se quiser usar o espelho dos dados abertos - mas é diferente do padrão do experimento
+        'espelhos_raw/',  # se quiser usar o espelho dos dados abertos - é diferente do padrão do experimento, é útil apenas para análise
     ]
     PASTAS_EXTRACAO = [os.path.join(PASTA_RAIZ, p) for p in PASTAS_EXTRACAO]
     
