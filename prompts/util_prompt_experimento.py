@@ -21,16 +21,21 @@ from util_openai import get_resposta
 # cria um método simplificado de chamada do prompt usando util_openai.get_resposta 
 # pode ser adaptado de acordo com a api que for utilizada para as extrações
 def send_prompt(*args, **kwargs):
-    if not UtilEnv.get_str('PESSOAL_OPENROUTER_API_KEY'):
-        raise EnvironmentError('⚠️ Não foi possível carregar a sua API-KEY do OpenRouter em PESSOAL_OPENROUTER_API_KEY no arquivo .env!')
     if 'sg_modelo' in kwargs:
         kwargs['modelo'] = kwargs.pop('sg_modelo','')
     if 'prompt_retorna_json' in kwargs:
         kwargs['as_json'] = kwargs.pop('prompt_retorna_json')
     kwargs['silencioso'] = True
-    res = get_resposta(*args, **kwargs)
-    res['tratada'] = True
-    return res
+    try:
+        res = get_resposta(*args, **kwargs)
+        if isinstance(res, dict):
+            res['tratada'] = True
+            return res
+        else:
+            return {'resposta': res, 'tratada': False}
+    except Exception as e:
+        import traceback
+        return {'erro': f'Erro na chamada da API: {str(e)}\n{traceback.format_exc()}', 'tratada': True}
 
 def teste_open_router():
     from util_openai import get_resposta
