@@ -1222,6 +1222,16 @@ class JsonAnaliseGraficos:
         rotulos_modelos = self.rotulos[1:] if len(self.rotulos) > 1 else []
         
         # ═════════════════════════════════════════════════════════════════════
+        # EXPORTA CSV CONSOLIDADO COM MÉTRICAS LLM (GLOBAL + POR CAMPO)
+        # ═════════════════════════════════════════════════════════════════════
+        try:
+            self._exportar_csv_avaliacao_llm(
+                df_global, df_campos, rotulos_modelos, nome_campo_id, pasta_saida
+            )
+        except Exception as e:
+            print(f"⚠️  Erro ao exportar CSV de avaliação LLM: {e}")
+        
+        # ═════════════════════════════════════════════════════════════════════
         # GERA GRÁFICOS PARA MÉTRICAS GLOBAIS
         # ═════════════════════════════════════════════════════════════════════
         if df_global is not None:
@@ -1410,6 +1420,106 @@ class JsonAnaliseGraficos:
             print(f"✅ {len(arquivos_gerados)} gráficos de avaliação LLM gerados em: {pasta_saida}")
         
         return arquivos_gerados
+
+    def _exportar_csv_avaliacao_llm(self, df_global, df_campos, rotulos_modelos, 
+                                     nome_campo_id, pasta_saida):
+        """
+        Exporta CSV consolidado com métricas P, R, F1 da avaliação LLM.
+        
+        Formato:
+            Modelo, Campo, Precision, Recall, F1
+            GPT-5, Global, 0.78, 0.82, 0.87
+            GPT-5, tema, 0.77, 0.81, 0.87
+            ...
+        
+        Args:
+            df_global: DataFrame com métricas globais (pode ser None)
+            df_campos: DataFrame com métricas por campo (pode ser None)
+            rotulos_modelos: lista de rótulos dos modelos
+            nome_campo_id: nome da coluna ID
+            pasta_saida: pasta para salvar o CSV
+        """
+        linhas_csv = []
+        lang = self._lang
+        
+        # Rótulos de coluna segundo o idioma
+        col_modelo = traduzir_rotulos('modelo_xlabel', lang)
+        col_campo = traduzir_rotulos('campo_xlabel', lang)
+        campo_global = 'Global'
+        
+        # ── Métricas globais ────────────────────────────────────────────────
+        if df_global is not None:
+            for modelo in rotulos_modelos:
+                p_col = f'{modelo}_P'
+                r_col = f'{modelo}_R'
+                f1_col = f'{modelo}_F1'
+                
+                p_val = df_global[p_col].mean() if p_col in df_global.columns else None
+                r_val = df_global[r_col].mean() if r_col in df_global.columns else None
+                f1_val = df_global[f1_col].mean() if f1_col in df_global.columns else None
+                
+                if any(v is not None for v in [p_val, r_val, f1_val]):
+                    linhas_csv.append({
+                        col_modelo: modelo,
+                        col_campo: campo_global,
+                        'Precision': round(p_val, 4) if p_val is not None else '',
+                        'Recall': round(r_val, 4) if r_val is not None else '',
+                        'F1': round(f1_val, 4) if f1_val is not None else ''
+                    })
+        
+        # ── Métricas por campo ──────────────────────────────────────────────
+        if df_campos is not None:
+            # Descobre campos disponíveis a partir das colunas
+            campos_encontrados = set()
+            for col in df_campos.columns:
+                if col == nome_campo_id:
+                    continue
+                for modelo in rotulos_modelos:
+                    if col.startswith(modelo + '_'):
+                        resto = col[len(modelo) + 1:]  # campo_METRICA
+                        partes = resto.split('_')
+                        if len(partes) >= 2 and partes[-1] in ('P', 'R', 'F1'):
+                            campo = '_'.join(partes[:-1])
+                            campos_encontrados.add(campo)
+                        break
+            
+            # Para cada modelo+campo, extrai médias de P, R, F1
+            for modelo in rotulos_modelos:
+                for campo in sorted(campos_encontrados):
+                    p_col = f'{modelo}_{campo}_P'
+                    r_col = f'{modelo}_{campo}_R'
+                    f1_col = f'{modelo}_{campo}_F1'
+                    
+                    p_val = df_campos[p_col].mean() if p_col in df_campos.columns else None
+                    r_val = df_campos[r_col].mean() if r_col in df_campos.columns else None
+                    f1_val = df_campos[f1_col].mean() if f1_col in df_campos.columns else None
+                    
+                    if any(v is not None for v in [p_val, r_val, f1_val]):
+                        linhas_csv.append({
+                            col_modelo: modelo,
+                            col_campo: campo,
+                            'Precision': round(p_val, 4) if p_val is not None else '',
+                            'Recall': round(r_val, 4) if r_val is not None else '',
+                            'F1': round(f1_val, 4) if f1_val is not None else ''
+                        })
+        
+        if not linhas_csv:
+            print("⚠️  Nenhum dado de avaliação LLM para exportar como CSV")
+            return
+        
+        # Monta DataFrame e salva
+        df_csv = pd.DataFrame(linhas_csv, columns=[col_modelo, col_campo, 'Precision', 'Recall', 'F1'])
+        
+        # Separador decimal conforme idioma (vírgula para pt, ponto para en)
+        sep_decimal = ',' if lang == 'pt' else '.'
+        sep_csv = ';' if lang == 'pt' else ','
+        
+        # Salva na pasta de análise caso a pasta de saída seja filha dela 
+        _pasta = self.pasta_analises if self.pasta_analises and self.pasta_analises in pasta_saida else pasta_saida
+        arquivo_csv = os.path.join(_pasta, 'avaliacao_llm.csv')
+        
+        df_csv.to_csv(arquivo_csv, index=False, sep=sep_csv, decimal=sep_decimal, encoding='utf-8-sig')
+        print(f"   ✓ CSV de avaliação LLM exportado: {os.path.basename(arquivo_csv)} ({len(linhas_csv)} linhas)")
 
     def gerar_graficos_observabilidade(self, arquivo_excel: str = None, pasta_saida: str = None,
                                        paleta: str = 'Cividis') -> List[str]:

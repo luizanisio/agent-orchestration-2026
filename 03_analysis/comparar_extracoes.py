@@ -588,7 +588,7 @@ def main():
     if flag_llm and analisador_instanciado:
         print("\n⚖️  Executando LLM-as-a-Judge (atualização do Excel)...")
         if os.path.isfile(arquivo_excel):
-            analisador.atualizar_avaliacao_llm_no_excel(arquivo_excel, gerar_graficos=True)
+            analisador.atualizar_avaliacao_llm_no_excel(arquivo_excel, gerar_graficos=True, pasta_saida=pasta_saida)
 
     if config['execucao'].get('analise_estatistica', False):
         processar_analise_estatistica(dados_analise, pasta_saida, config)

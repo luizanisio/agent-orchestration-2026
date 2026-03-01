@@ -3037,7 +3037,8 @@ class JsonAnaliseDataFrame():
         
         return tem_global, tem_campos
     
-    def atualizar_avaliacao_llm_no_excel(self, arquivo_excel: str, gerar_graficos: bool = True) -> str:
+    def atualizar_avaliacao_llm_no_excel(self, arquivo_excel: str, gerar_graficos: bool = True,
+                                          pasta_saida: str = None) -> str:
         """
         Atualiza as abas 'Avaliação LLM' e 'Avaliação LLM Campos' no Excel existente.
         Mantém todas as outras abas intactas.
@@ -3047,6 +3048,7 @@ class JsonAnaliseDataFrame():
         Args:
             arquivo_excel: caminho do arquivo Excel existente para atualizar
             gerar_graficos: se True, gera gráficos boxplot de avaliação LLM
+            pasta_saida: pasta para salvar gráficos (se None, usa diretório do Excel)
         
         Returns:
             caminho do arquivo Excel atualizado
@@ -3141,8 +3143,8 @@ class JsonAnaliseDataFrame():
         
         # Gera gráficos se solicitado
         if gerar_graficos:
-            pasta_saida = self.pasta_analises or '.'
-            self.gerar_graficos_avaliacao_llm(arquivo_excel=arquivo_excel, pasta_saida=pasta_saida)
+            _pasta = pasta_saida or os.path.dirname(arquivo_excel) or '.'
+            self.gerar_graficos_avaliacao_llm(arquivo_excel=arquivo_excel, pasta_saida=_pasta)
         
         return arquivo_excel
     
