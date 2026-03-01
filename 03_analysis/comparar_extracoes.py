@@ -288,7 +288,7 @@ def _gerar_grafico_erros(dados_analise, pasta_saida):
     rotulos_modelos = dados_analise.rotulos[1:] if len(dados_analise.rotulos) > 1 else []
     stats = {m: {'Sucesso': 0, 'Erro': 0, 'Inexistente': 0} for m in rotulos_modelos}
     
-    for linha in dados_analise.dados:
+    for linha in dados_analise.dados_completos:
         for modelo in rotulos_modelos:
             val = linha.get(modelo)
             # Verifica status baseado no valor

@@ -140,6 +140,7 @@ class CargaDadosComparacao():
         
         # Atributos públicos
         self.dados = None
+        self.dados_completos = None
         self.rotulos = None
         self.tokens = None
         self.avaliacao_llm = None
@@ -387,6 +388,9 @@ class CargaDadosComparacao():
         dados_original = self._ler_arquivo(caminho_arquivo)
         if not dados_original:
             return None
+            
+        if self.ignorar_erro_extracao and isinstance(dados_original, dict) and 'erro' in dados_original:
+            return None
 
         # Suporte para formato onde as métricas estão dentro de "resposta"
         root_data = dados_original.get('resposta', dados_original) if isinstance(dados_original, dict) else dados_original
@@ -546,6 +550,7 @@ class CargaDadosComparacao():
         
         # Inicializa containers
         self.dados = []
+        self.dados_completos = []
         tokens_dict = {}     # {id: {chave: valor}}
         avaliacoes_dict = {} # {id: {chave: valor}}
         obs_dict = {}        # {id: {chave: valor}}
@@ -640,6 +645,9 @@ class CargaDadosComparacao():
             for i, jd in enumerate(jsons_destinos):
                 linha[self.rotulos[2+i]] = jd
             
+            # mesnmo ignorando erros, guarda um conjunto com todos os dados para o gráfico de status ficar completo
+            self.dados_completos.append(linha)
+            
             # Se ignorar_erro_extracao=True, ignora documentos com erro
             if self.ignorar_erro_extracao and tem_erro:
                 continue
@@ -657,6 +665,7 @@ class CargaDadosComparacao():
         return JsonAnaliseDados(
             dados=self.dados,
             rotulos=self.rotulos,
+            dados_completos=self.dados_completos,
             tokens=self.tokens,
             avaliacao_llm=self.avaliacao_llm,
             observabilidade=self.observabilidade,
