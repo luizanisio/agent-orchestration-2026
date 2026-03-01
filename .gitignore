@@ -209,6 +209,8 @@ __marimo__/
 # Data
 _temp/**
 artigo**
+data_full**
+data/analises_comparacao_base_**
 01_notebooks/downloads_stj/**
 data/espelhos_*com_texto*.parquet
 data/exemplo*.parquet
