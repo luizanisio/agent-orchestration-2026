@@ -187,9 +187,9 @@ _in progress_
 
 ## License
 
-This project is licensed under the **MIT License** — see the [LICENSE](LICENSE) file for details.
+All code in this project is licensed under the **MIT License** with the goal of encouraging research, allowing the replication of the experiment in whole or in part, as well as exploring the data available in the STJ Open Data Portal — see the [LICENSE](LICENSE) file for details.
 
-The dataset derived from STJ public records is subject to the terms of the [STJ Open Data Portal](https://dadosabertos.web.stj.jus.br). Ground truth metadata was produced under institutional standards of the STJ indexing division and is provided here for research reproducibility only.
+The dataset derived from STJ public records is subject to the terms of the [STJ Open Data Portal](https://dadosabertos.web.stj.jus.br).
 
 ---
 
