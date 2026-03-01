@@ -10,6 +10,7 @@ saida:
   pasta: "../data/analises_comparacao_base_gpt5"
   arquivo_base: "comparacao_extracoes"
   regerar_planilha_base: true # Se false, não regera a planilha se ela já existir
+  linguagem_graficos: "en" # pt ou en para as legendas dos gráficos
 
 # Configurações de Execução
 execucao:

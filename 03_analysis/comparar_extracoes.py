@@ -279,13 +279,15 @@ def resolver_caminho(caminho_relativo, base_dir):
         return caminho_relativo
     return os.path.normpath(os.path.join(base_dir, caminho_relativo))
 
-def _gerar_grafico_erros(dados_analise, pasta_saida):
+def _gerar_grafico_erros(dados_analise, pasta_saida, lang='pt'):
     """Gera gráfico de barras empilhadas com status dos documentos por modelo."""
     from util_graficos import UtilGraficos, Cores
+    from util_json_graficos import traduzir_rotulos
     import pandas as pd
     
     # Usa rotulos[1:] para incluir também o modelo de origem (base) mantendo a mesma ordem do YAML
     rotulos_modelos = dados_analise.rotulos[1:] if len(dados_analise.rotulos) > 1 else []
+    # Chaves internas em português para processamento
     stats = {m: {'Sucesso': 0, 'Erro': 0, 'Inexistente': 0} for m in rotulos_modelos}
     
     for linha in dados_analise.dados_completos:
@@ -310,9 +312,7 @@ def _gerar_grafico_erros(dados_analise, pasta_saida):
     # 2. Erro (Yellow/Orange)
     # 3. Sucesso (Green)
     cols_ordem = ['Inexistente', 'Erro', 'Sucesso']
-    # Garante que as colunas existem no DF
-    cols_existentes = [c for c in cols_ordem] # Sempre cria as 3 para consistência de cor?
-    
+
     # Garante que todas as colunas existem
     for c in cols_ordem:
         if c not in df_stats.columns:
@@ -323,12 +323,20 @@ def _gerar_grafico_erros(dados_analise, pasta_saida):
             
     df_stats = df_stats[cols_ordem]
     
+    # Traduz nomes de colunas para exibição no gráfico
+    cols_traduzidas = {
+        'Inexistente': traduzir_rotulos('status_inexistente', lang),
+        'Erro': traduzir_rotulos('status_erro', lang),
+        'Sucesso': traduzir_rotulos('status_sucesso', lang)
+    }
+    df_stats = df_stats.rename(columns=cols_traduzidas)
+    
     arquivo = os.path.join(pasta_graficos, 'status_modelos.png')
     UtilGraficos.gerar_grafico_empilhado(
         df_stats, 
-        titulo='Status das Extrações por Modelo',
-        ylabel='Quantidade de Documentos',
-        xlabel='Modelo',
+        titulo=traduzir_rotulos('status_titulo', lang),
+        ylabel=traduzir_rotulos('status_ylabel', lang),
+        xlabel=traduzir_rotulos('modelo_xlabel', lang),
         arquivo_saida=arquivo,
         paleta_cores=Cores.RdYlGn
     )
@@ -493,6 +501,9 @@ def main():
     # Define flags de execução
     flag_graficos = config['execucao'].get('gerar_graficos', False)
     flag_llm = config['execucao'].get('llm_as_a_judge', False)
+    lang_graficos = config['saida'].get('linguagem_graficos', '').strip().lower()
+    if lang_graficos not in ('pt', 'en'):
+        lang_graficos = 'en'
     
     # Lógica Principal de Execução ou Reuso
     if os.path.isfile(arquivo_excel) and not regerar:
@@ -512,7 +523,8 @@ def main():
                 max_workers=max_workers,
                 incluir_valores_analise=True,
                 gerar_exemplos_md=False,
-                gerar_relatorio=False
+                gerar_relatorio=False,
+                lang=lang_graficos
             )
             analisador_instanciado = True
     else:
@@ -528,7 +540,8 @@ def main():
             incluir_valores_analise=True,
             gerar_exemplos_md=True,
             max_exemplos_md_por_metrica=5,
-            gerar_relatorio=True
+            gerar_relatorio=True,
+            lang=lang_graficos
         )
         analisador_instanciado = True
         
@@ -567,7 +580,7 @@ def main():
     if flag_graficos and analisador_instanciado:
         print("\n📈 Gerando/Atualizando Gráficos no Excel...")
         # Gera gráfico de status/erros
-        _gerar_grafico_erros(dados_analise, pasta_saida)
+        _gerar_grafico_erros(dados_analise, pasta_saida, lang=lang_graficos)
         
         if os.path.isfile(arquivo_excel):
             analisador.gerar_graficos_de_excel(arquivo_excel, pasta_saida=pasta_saida)
