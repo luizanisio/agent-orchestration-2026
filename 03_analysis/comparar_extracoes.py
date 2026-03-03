@@ -27,7 +27,7 @@ import pandas as pd
 # PROTEÇÃO E SETUP INICIAL
 # ============================================================================
 # Adiciona paths de utilitários
-sys.path.extend(['../src', './src'])
+sys.path.extend(['../src', './src','../../src'])
 
 # Verificação para multiprocessing (BERTScore safe)
 _IS_MAIN_PROCESS = __name__ == '__main__' or not hasattr(sys.modules.get('__mp_main__', None), '__file__')
@@ -128,6 +128,55 @@ def processar_analise_estatistica(dados_analise, pasta_saida, config):
     analise.processar_analise()
     analise.salvar_relatorio()
     print(f"\n✅ Análise Estatística concluída e salva em: {arquivo_saida}")
+
+def calcular_divisao_grupos(config):
+    """
+    Calcula os percentuais de divisão de grupos baseado no yaml e aplica regras
+    de distribuição de valores não informados. Retorna tupla (treino, teste, validacao).
+    """
+    divisao = config.get('execucao', {}).get('divisao')
+    if not isinstance(divisao, dict):
+        divisao = config.get('execucao-divisao')
+        
+    if not isinstance(divisao, dict):
+        return (0.7, 0.2, 0.1) # treino, teste, validacao
+
+    treino = divisao.get('treino')
+    teste = divisao.get('teste')
+    validacao = divisao.get('validacao')
+
+    valores = []
+    for v in [treino, teste, validacao]:
+        if v is not None:
+            valores.append(float(v))
+        else:
+            valores.append(None)
+            
+    treino, teste, validacao = valores
+
+    usando_porcentagem = any(v > 1.0 for v in [treino, teste, validacao] if v is not None)
+    if usando_porcentagem:
+        treino = treino / 100.0 if treino is not None else None
+        teste = teste / 100.0 if teste is not None else None
+        validacao = validacao / 100.0 if validacao is not None else None
+
+    soma_atual = sum(v for v in [treino, teste, validacao] if v is not None)
+    num_faltantes = sum(1 for v in [treino, teste, validacao] if v is None)
+
+    if num_faltantes > 0:
+        restante = max(0.0, 1.0 - soma_atual)
+        parte = restante / num_faltantes
+        if treino is None: treino = parte
+        if teste is None: teste = parte
+        if validacao is None: validacao = parte
+
+    soma_final = round(treino + teste + validacao, 4)
+    if soma_final > 0 and soma_final != 1.0:
+        treino /= soma_final
+        teste /= soma_final
+        validacao /= soma_final
+
+    return (treino, teste, validacao)
 
 def configurar_metricas(config_yaml):
     """Converte a configuração YAML para o formato esperado pelo JsonAnalise."""
@@ -593,7 +642,18 @@ def main():
     if config['execucao'].get('analise_estatistica', False):
         processar_analise_estatistica(dados_analise, pasta_saida, config)
 
-    # 8. Estatísticas Finais no Console
+    # 8. Divisão dos Dados (Treino/Teste/Validação)
+    print("\n🗂️  Gerando divisões de dados (Treino/Teste/Validação)...")
+    try:
+        from util_json_divisoes import UtilJsonDivisoes
+        divisao_grupos = calcular_divisao_grupos(config)
+        print(f"   Configuração de divisão: Treino={divisao_grupos[0]:.2f}, Teste={divisao_grupos[1]:.2f}, Validação={divisao_grupos[2]:.2f}")
+        util_divisoes = UtilJsonDivisoes(pasta_analises=pasta_saida, divisao_grupos=divisao_grupos)
+        util_divisoes.processar()
+    except Exception as e:
+        print(f"❌ Erro ao gerar divisões: {e}")
+
+    # 9. Estatísticas Finais no Console
     if analisador_instanciado:
         print("\n📈 Estatísticas Globais (Resumo):")
         stats = analisador.estatisticas_globais()
