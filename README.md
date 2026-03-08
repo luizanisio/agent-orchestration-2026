@@ -13,9 +13,10 @@ PROPOR is a biennial event held alternately in Brazil and Portugal (and now Gali
 
 ## Abstract
 
-This work proposes and evaluates **JAMEX** (Judicial Multi-Agent Metadata Extraction), a multi-agent pipeline for extracting structured metadata from Brazilian court decisions (*Espelho do Acórdão*), and compares it against a strong single-prompt baseline under an IR-only setting.
-
-We first ran a pilot on 300 decisions and then re-executed the experiment on a stratified dataset of *n* = 1,225; only 735 instances were completed by all evaluated models, so paired comparisons use this common set (*n* = 735). Across re-executions, the accuracy impact of agents was strategy-dependent: GPT-5 improves in multiple agentic strategies but not across all orchestration variants, while smaller models (Gemma 3 12B/27B) show no robust gains and reduce the comparable set due to non-completion. Orchestration refinements motivated by agent design literature (memory, planning, directed review) improved traceability, but performance remained sensitive to task decomposition and context fragmentation. Overall, JAMEX increases token usage and operational complexity, so deployment must balance accuracy, completion reliability, and cost for Portuguese legal metadata extraction.
+This work introduces and evaluates JAMEX (Judicial Multi-Agent Metadata Extraction), a multi-agent pipeline for extracting structured metadata from Brazilian court decisions (*Espelho do Acórdão*), and compares it against a strong single-prompt baseline under an Information Retrieval-only (IR-only) setting.
+We first ran a pilot on 300 decisions and then reran the experiment on a stratified dataset of n=1,225. Across re-executions, the accuracy impact of agents was *strategy-dependent*: GPT-5 improves over the baseline in multiple agentic strategies but not across all orchestration variants, while smaller models (Gemma 3 12B/27B) show no robust gains and reduce the paired subset due to non-completion.
+Orchestration refinements motivated by agent design literature (memory, planning and directed review) improved traceability, but performance remained sensitive to task decomposition and context splitting.
+Overall, JAMEX increases token usage and operational complexity, so deployment must balance accuracy, completion reliability, and cost for Portuguese legal metadata extraction.
 
 ---
 
