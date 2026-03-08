@@ -133,8 +133,8 @@ def processar_analise_estatistica(dados_analise, pasta_saida, config):
     arquivo_saida = os.path.join(pasta_saida, 'relatorio_analise_estatistica.md')
     
     analise = AnaliseEstatistica(df_stat, config={
-        'rotulo1': 'Base',
-        'rotulo2': 'Agente',
+        'rotulo_base': rotulo_base,
+        'familia_base': familia_base,
         'arquivo_saida': arquivo_saida
     })
     analise.processar_analise()
