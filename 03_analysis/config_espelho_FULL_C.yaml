@@ -1,0 +1,118 @@
+# Configuração para comparação de extrações - Experimento Espelhos Base GPT-5 vs Modelos
+# Executar com: python comparar_extracoes.py config_espelho.yaml
+#
+# Fluxo equivalente ao cenário base_gpt5() do código antigo:
+#   ORIGEM: espelhos_base_gpt5 (referência)
+#   DESTINOS: agentes_gpt5, base_gemma3_12b, agentes_gemma3_12b, base_gemma3_27b, agentes_gemma3_27b
+
+# Configuração Global de Saída
+saida:
+  pasta: "../data_full/analises_comparacao_base_gpt5 (C)"
+  arquivo_base: "comparacao_extracoes"
+  regerar_planilha_base: true # Se false, não regera a planilha se ela já existir
+  linguagem_graficos: "en" # pt ou en para as legendas dos gráficos
+
+# Configurações de Execução
+execucao:
+  max_workers: 10
+  teste_rapido: false # Defina como true para pular métricas pesadas (BERTScore)
+  gerar_graficos: true 
+  llm_as_a_judge: true
+  analise_estatistica: true
+  ignorar_erro_extracao: true # contabiliza apenas extrações completas nos cálculos de métricas
+
+# [TAG: ANALYSIS_BASE_MODEL]
+# Modelo Base (Gabarito/Referência) - GPT-5 Base como origem
+modelo_base:
+  pasta: "../data_full/espelhos_base_gpt5"
+  rotulo: "base_gpt5"
+  familia: "GPT-5"
+
+# [TAG: ANALYSIS_COMPARE_MODELS]
+# Modelos Comparados - todos os outros modelos como destinos de comparação
+modelos_comparacao:
+  - pasta: "../data_full/espelhos_agentes_gpt5 (C)"
+    rotulo: "agentes_gpt5"
+    familia: "GPT-5"
+    ativo: true
+
+  - pasta: "../data_full/espelhos_base_gemma3_12b"
+    rotulo: "base_gemma3(12)"
+    familia: "Gemma 3 12b"
+    ativo: true
+
+  - pasta: "../data_full/espelhos_agentes_gemma3_12b (C)"
+    rotulo: "agentes_gemma3(12)"
+    familia: "Gemma 3 12b"
+    ativo: true
+
+  - pasta: "../data_full/espelhos_base_gemma3_27b"
+    rotulo: "base_gemma3(27)"
+    familia: "Gemma 3 27b"
+    ativo: true
+
+  - pasta: "../data_full/espelhos_agentes_gemma3_27b (C)"
+    rotulo: "agentes_gemma3(27)"
+    familia: "Gemma 3 27b"
+    ativo: true
+
+# Configuração das Métricas e Campos
+configuracao_comparacao:
+  nivel_campos: 1
+  padronizar_simbolos: true
+  rouge_stemmer: true
+  
+  # Configuração do campo ID
+  nome_campo_id: "id"  # Nome interno do campo de ID (usado em DataFrames, gráficos, etc)
+  rotulo_campo_id: "ID"  # Rótulo de exibição do campo ID (usado em relatórios)
+  
+  # Máscaras de arquivos (Regex ou Sufixo)
+  # Se começar com '^', é tratado como Regex.
+  # Se não, é tratado como sufixo e o script adiciona '^(.+)' antes e escape no sufixo.
+  mascaras:
+    extracao: "^(\\d{12})\\.\\d+\\.\\d*\\.json$"
+    tokens: "^(\\d{12})\\.\\d+\\.\\d*[._]resumo\\.json$" 
+    avaliacao: "^(\\d{12})\\.\\d+\\.\\d*\\.avaliacao\\.json$"
+    observabilidade: "^(\\d{12})\\.\\d+\\.\\d*\\.obs\\.json$"
+
+  # Mapeamento de campos para métricas
+  campos:
+    # BERTScore: similaridade semântica profunda (textos longos)
+    bertscore:
+      - "(global)"
+      - "teseJuridica"
+      - "notas"
+      - "termosAuxiliares"
+      - "informacoesComplementares"
+      - "jurisprudenciaCitada"
+      - "referenciasLegislativas"
+      - "tema"
+
+    # SBERT: similaridade semântica por sentenças (textos longos)
+    sbert:
+      - "(global)"
+      - "teseJuridica"
+      - "notas"
+      - "termosAuxiliares"
+      - "informacoesComplementares"
+
+    rouge_1:
+      - "(estrutura)"
+
+    # ROUGE-2: precision de bigramas (fraseamento técnico e termos exatos)
+    rouge_2:
+      - "termosAuxiliares"
+      - "tema"
+      - "jurisprudenciaCitada"
+
+    # ROUGE-L: sequências estruturadas (ordem importa)
+    rouge_l:
+      - "(global)"
+      - "jurisprudenciaCitada"
+      - "informacoesComplementares"
+      - "referenciasLegislativas"
+      - "notas"
+      - "teseJuridica"
+
+    # Levenshtein: não utilizado no cenário base_gpt5 original
+    levenshtein:
