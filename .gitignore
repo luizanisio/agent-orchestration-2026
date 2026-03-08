@@ -221,4 +221,8 @@ data/exemplo*.parquet
 *.7z
 *.zip
 replace_names*.py
+data (c)**
+data (a)**
+data (b)**
+data full**
 data_artigo_final/**
