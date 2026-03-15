@@ -40,6 +40,21 @@ def ler_configuracao(caminho_yaml):
     with open(caminho_yaml, 'r', encoding='utf-8') as f:
         config = yaml.safe_load(f)
     print(f"📖 Configuração carregada de: {caminho_yaml}")
+    
+    # Validação de rótulos únicos
+    rotulo_base = config.get('modelo_base', {}).get('rotulo')
+    if rotulo_base:
+        rotulos_comp = [m.get('rotulo') for m in config.get('modelos_comparacao', []) if m.get('ativo', True)]
+        if rotulo_base in rotulos_comp:
+            raise ValueError(f"ERRO DE CONFIGURAÇÃO: O rótulo do modelo base ('{rotulo_base}') é igual a um dos rótulos de comparação. Altere para torná-los únicos (ex: '{rotulo_base}(Base)').")
+            
+        rotulos_vistos = set()
+        for r in rotulos_comp:
+            if not r: continue
+            if r in rotulos_vistos:
+                raise ValueError(f"ERRO DE CONFIGURAÇÃO: O rótulo '{r}' aparece duplicado em 'modelos_comparacao'. Cada rótulo deve ser único.")
+            rotulos_vistos.add(r)
+            
     return config
 
 def _inicializar_ambiente():
