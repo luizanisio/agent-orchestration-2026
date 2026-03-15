@@ -71,7 +71,7 @@ configuracao_comparacao:
   # Se não, é tratado como sufixo e o script adiciona '^(.+)' antes e escape no sufixo.
   mascaras:
     extracao: ".json"
-    tokens: ".json" 
+    tokens: ".resumo.json" 
     avaliacao: ".avaliacao.json"
     observabilidade: ".obs.json"
 
