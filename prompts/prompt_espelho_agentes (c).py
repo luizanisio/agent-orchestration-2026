@@ -6,7 +6,7 @@ Prompts especializados para cada agente do sistema de extração de espelhos.
 
 Autor: Luiz Anísio, Rhodie e Luciane
 Fonte: https://github.com/luizanisio/agent-orchestration-2026
-Data do prompt: 14/11/2025
+Data do prompt: 01/2026
 
 Descrição:
 -----------

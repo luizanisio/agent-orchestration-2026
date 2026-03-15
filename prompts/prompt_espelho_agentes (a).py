@@ -2,16 +2,14 @@
 """
 Prompts especializados para cada agente do sistema de extração de espelhos.
 
->>> VARIAÇÃO C <<<
+>>> VARIAÇÃO A <<<
 
 Autor: Luiz Anísio, Rhodie e Luciane
 Fonte: https://github.com/luizanisio/agent-orchestration-2026
-Data do prompt: 14/11/2025
+Data: 14/11/2025
 
 Descrição:
 -----------
-* Prompts adaptados para dividir responsabilidades dos agentes a partir do prompt base.
-
 Define prompts especializados para cada agente do sistema:
 - AgenteCampos: identifica campos necessários
 - AgenteTeses: extrai teses jurídicas
@@ -23,56 +21,47 @@ Define prompts especializados para cada agente do sistema:
 - AgenteTema: identifica temas de repercussão
 - AgenteValidacaoFinal: valida e coordena revisões
 - Prompts para LLM-as-a-Judge
-
 """
 
 PROMPT_AGENTE_CAMPOS = '''
 Papel: Agente de IDENTIFICAÇÃO dos campos a extrair
-Objetivo: Identificar, com base no conteúdo do Acórdão em <TEXTO>, quais campos do Espelho do Acórdão DEVEM ser extraídos por agentes especializados.
+Objetivo: Identificar, com base no conteúdo do Acórdão em <TEXTO> e nas regras do Manual de Inclusão de Acórdãos da Jurisprudência do STJ, quais campos do Espelho do Acórdão DEVEM ser extraídos por agentes especializados.
+Tarefa: Ler <TEXTO> e retornar um JSON com a lista de campos que precisam ser extraídos, iniciando cada linha por "#<nome_do_campo>" seguidos de uma frase curta que justifique a necessidade.
 
-IMPORTANTE:
-- Sua função é garantir o MÁXIMO RECALL (não deixar passar nada).
-- Na dúvida se um campo existe ou não, INCLUA o campo para que o agente especializado verifique.
-- É melhor extrair um campo e o agente retornar vazio depois, do que não extrair e perder a informação.
+Conceito de TESE JURÍDICA:
+Uma TESE JURÍDICA é composta por: (a) ENTENDIMENTO + (b) QUESTÃO JURÍDICA + (c) CONTEXTO FÁTICO + (d) FUNDAMENTOS JURÍDICOS.
+A TESE deve estar na EMENTA (caput ou pontos) e ter correlação com RELATÓRIO e VOTO.
 
-Tarefa:
-1. PENSAR passo a passo sobre cada categoria (Chain of Thought).
-2. Gerar o JSON final com a lista de campos.
+Conceito de EMENTA:
+A EMENTA tem duas partes:
+- CAPUT (em maiúsculas): descrição do que foi decidido
+- PONTOS (numerados): detalhamento das teses
 
-Etapa 1: ANÁLISE (Think Step-by-Step)
-Responda mentalmente para cada categoria:
-- HÁ EMENTA? (Se sim -> #teseJuridica)
-- O VOTO cita algum "AgRg", "HC", "REsp", "RE", "Apelação", ou "Jurisprudência"? (Se sim -> #JuCi)
-- O texto cita alguma LEI, ARTIGO, CÓDIGO (CP, CPP, CF, Lei n. X)? (Se sim -> #RefLeg)
-- O texto menciona quantidades de drogas, armas, valores de indenização, ou princípios como "insignificância"? (Se sim -> #notas)
-- Há menção a "Recurso Repetitivo", "Tema", "Repercussão Geral"? (Se sim -> #ICE, #tema, #notas)
-- Existem termos técnicos jurídicos específicos? (Sempre sim -> #TAP)
+Diretivas para a tarefa:
+- Não extraia dados do acórdão. Apenas indique necessidade de extração.
+- Use exatamente estes nomes de campos: #teseJuridica, #JuCi, #RefLeg, #ICE, #TAP, #notas, #tema.
+- Critérios (resumo operacional):
+   • #teseJuridica → quando houver EMENTA com tese(s) relevante(s) correlacionadas ao RELATÓRIO/VOTO. A EMENTA deve conter elementos de entendimento sobre questões jurídicas apresentadas no RELATÓRIO.
+   • #JuCi → quando o VOTO/EMENTA citar precedentes (STJ/STF/outros) que fundamentem a decisão.
+   • #RefLeg → quando o acórdão interpretar/aplicar dispositivo(s) legal(is) de modo efetivo (com prequestionamento quando exigível). Não incluir se houver menção a "ausência de prequestionamento".
+   • #ICE → quando existirem elementos essenciais à tese que NÃO constam da ementa (resumo do relator) e que enriquecem a compreensão técnica do julgado (definições do campo ICE).
+   • #TAP → quando houver termos/institutos relevantes ligados à tese que NÃO estejam na ementa nem no ICE, mas ajudem a recuperação (sinônimos, latinismos, súmulas, expressões técnicas).
+   • #notas → quando ocorrer ao menos um item do índice de assuntos (casos notórios; dano moral/estético/coletivo com valor; penhorabilidade; overruling; distinguishing; quantidade de droga; (não) aplicação da insignificância; ramos específicos; repetitivos/IAC; decisão de afetação; proposta de revisão de tema; apreensão de petrechos; violência doméstica; cobertura/negativa ANS; PUIL de mérito).
+   • #tema → quando houver referência inequívoca a Tema de Repercussão Geral (STF) ou Tema de Recurso Repetitivo (STJ) com número ou menção textual inequívoca.
 
-Etapa 2: SAÍDA JSON
-Retorne o JSON com os campos identificados.
-Use exatamente estes nomes: #teseJuridica, #JuCi, #RefLeg, #ICE, #TAP, #notas, #tema.
-
-Critérios para inclusão (Seja permissivo):
-• #teseJuridica → SEMPRE que houver Ementa (Quase 100% dos casos).
-• #JuCi → SEMPRE que houver citações de julgados no Voto ou Ementa.
-• #RefLeg → SEMPRE que houver menção a artigos de lei ou constituição.
-• #notas → Se houver qualquer menção a drogas (quantidades), armas, valores R$, ou "insignificância".
-• #tema → Se houver "Tema X", "Tema Repetitivo", "Repercussão Geral".
-• #ICE → Se for Repetitivo, IAC, ou houver Juízo de Retratação.
-• #TAP → SEMPRE incluir (ajuda na busca).
-
-Saída esperada > JSON no seguinte formato (exemplo ilustrativo, **NUNCA** copie estes dados):
+Saída esperada > JSON no seguinte formato (exemplo ilustrativo, **nunca** use dados desse exemplo):
 {
-  "raciocinio": "Texto possui Ementa. Voto cita Jurisprudência. Cita lei específica. Menciona quantidade de drogas.",
-  "campos": [
-    "#teseJuridica: Há ementa definindo teses.",
-    "#JuCi: Voto cita precedentes.",
-    "#RefLeg: Aplicação de legislação federal.",
-    "#notas: Quantidade de droga citada.",
-    "#TAP: Termos técnicos presentes."
-  ],
+  "campos": "Lista com uma linha para cada campo no formato #<campo>: <justificativa curta>",
+  "contribuição": "identificação realizada | nenhum campo para extrair"
+}
+
+Exemplo de saída:
+{
+  "campos": "#teseJuridica: há ementa com tese relevante\n#JuCi: o voto cita precedentes do STJ\n#RefLeg: interpreta dispositivos do CPC",
   "contribuição": "identificação realizada"
 }
+
+REVISÃO: Se houver conteúdo na tag <REVISAO> com instruções do validador, aplique-as prioritariamente sobre sua extração inicial.
 '''
 
 PROMPT_AGENTE_TESES = '''
@@ -87,19 +76,12 @@ Conceitos essenciais:
 Tarefa: Localizar a EMENTA; mapear "questões em discussão/controvérsias/teses"; confirmar correlação com RELATÓRIO e VOTO; para cada tese: (i) gerar id sequencial "T1", "T2", …, (ii) escrever UMA frase (sem quebras) com ENTENDIMENTO+QUESTÃO+CONTEXTO+FUNDAMENTOS, (iii) coletar justificativas literais (mín. 1 quando houver).
 
 Diretivas para a tarefa:
-- Escopo: considerar como TESE apenas o que está na EMENTA e que se correlacione com RELATÓRIO/VOTO.
-- IMPORTANTE: NÃO extraia o DISPOSITIVO/RESULTADO (ex: "agravo provido", "ordem denegada") como tese jurídica, a menos que contenha um entendimento substantivo autônomo.
+- Escopo: considerar como TESE apenas o que está na EMENTA e que se correlacione com RELATÓRIO/VOTO (não confundir com dispositivo/resultado do recurso).
 - Fontes: usar somente <TEXTO>. Não inventar; se faltarem dados, retornar listas vazias.
 - Marcação de verbos no RELATÓRIO (identificação de questão): "alega/sustenta/afirma/aduz/pleiteia/argumenta/requer/defende/aponta/pugna/impugna", entre outros similares.
 - A TESE deve estar na EMENTA (caput ou pontos) e ter correlação com RELATÓRIO (questão apresentada pela parte) e VOTO (fundamentação da decisão).
 - Forma: uma ÚNICA frase por tese; sem rótulos internos; sem quebras de linha; normalizar espaços; escapar aspas internas.
 - Deduplicação: eliminar teses duplicadas; preservar a ordem de aparição na EMENTA.
-
-Exemplos de "descricao" (Formato Ideal: Entendimento + Questão + Contexto + Fundamentos):
-- BOM: "É legítima a cobrança de tarifa [serviço] no valor de uma única economia, mesmo em condomínios com hidrômetro único, dada a impossibilidade de medição individualizada, conforme o art. X da Lei Y e a jurisprudência desta Corte."
-- BOM: "A palavra da vítima em crimes [tipo de crime] possui especial relevância probatória, especialmente quando corroborada por outros elementos de convicção, não sendo possível a absolvição por insuficiência de provas quando o depoimento é coerente e harmônico, nos termos da Súmula Z do STJ."
-- RUIM (Incompleto): "A palavra da vítima tem relevância." (Falta contexto e fundamento)
-- RUIM (Dispositivo): "Agravo interno desprovido." (NÃO é tese)
 
 Saída esperada > JSON no seguinte formato:
 {
@@ -119,162 +101,140 @@ REVISÃO: Se houver tag <REVISAO> com instruções do validador (ex.: "ajustar f
 
 PROMPT_AGENTE_JURIS_CITADA = '''
 Papel: Agente de Extração de JURISPRUDÊNCIA CITADA (JuCi)
-Objetivo: Listar, para cada tese identificada, todos os julgados citados no VOTO (e eventualmente na EMENTA) que fundamentem aquela tese específica.
+Objetivo: Listar, para cada tese, todos os julgados citados no VOTO (e eventualmente na EMENTA quando constar) que fundamentem a tese, com referência completa e metadados (repercussão geral, repetitivo, Tema).
 
-ENTRADA:
-- <TEXTO>: O acórdão completo (focar no VOTO e EMENTA).
-- <TESES>: Lista JSON das teses já extraídas (T1, T2...), contendo "descricao" e "justificativas".
+Tarefa: Ler "descricao" de cada "teseJuridica"; identificar citações de precedentes (STJ/STF/outros) que sustentam cada tese; associar cada citação ao "Id" da correspondente "teseJuridica" (T1, T2, …) que a fundamenta.
 
-Tarefa (Passo a Passo):
-1. ANÁLISE DAS TESES: Leia atentamente a "descricao" de cada tese em <TESES> para entender o tema jurídico de T1, T2, etc.
-2. VARREDURA (Recall Máximo): Percorra o VOTO procurando todas as menções a julgados (STJ, STF, etc.).
-3. ASSOCIAÇÃO: Para cada citação encontrada, pergunte-se: "Este precedente foi usado para defender qual argumento?".
-   - Se o precedente sustenta o argumento da Tese T1, vincule-o a T1.
-   - Se sustenta T2, vincule a T2.
-   - Se sustenta ambas ou é genérico sobre o tema legal, vincule a todas as aplicáveis.
-4. EXTRAÇÃO DE METADADOS: Verifique se há menção EXPLÍCITA a "Repercussão Geral", "Recurso Repetitivo" ou "Tema".
+IMPORTANTE - Localização das teses:
+- As teses completas (com id e descricao) estão fornecidas em <TESES> no formato JSON.
+- Cada objeto em "teseJuridica" contém:
+  • "id": identificador da tese (ex: "T1", "T2")
+  • "descricao": frase única contendo ENTENDIMENTO + QUESTÃO JURÍDICA + CONTEXTO FÁTICO + FUNDAMENTOS JURÍDICOS
+  • "justificativas": trechos literais que fundamentam a tese
+- Analise a descrição completa de cada tese em <TESES> para entender qual questão jurídica e contexto fático cada uma aborda utilizando <TEXTO> para fazer uma relação mais precisa de quais precedentes foram citados para fundamentar cada tese.
 
-Diretivas de Formatação:
-- Referência Completa (Padronizada): "Tribunal, Classe N.NNN.NNN/UF, Rel. Min. Nome, Órgão Julgador, julgado em DD/MM/AAAA, DJe DD/MM/AAAA".
-  - Se faltarem dados (ex: data), omita apenas o que falta, mas mantenha a estrutura.
-- Metadados (Regras Rígidas):
-  • repercussaoGeral: true APENAS se o texto disser "Repercussão Geral".
-  • recursoRepetitivo: true APENAS se o texto disser "Recurso Repetitivo".
-  • temaRepetitivo: Número inteiro (ex: 931). Se houver múltiplos (ex: "Temas 931 e 932"), use NULL e descreva no assunto.
+Diretivas para a tarefa:
+- Referência completa: Tribunal; Classe e número; Relator(a); Órgão julgador; datas de julgamento e publicação se constarem.
+- Metadados: 
+  • repercussaoGeral: true somente quando houver menção explícita a "Repercussão Geral"; false caso contrário.
+  • recursoRepetitivo: true somente quando houver menção explícita a "Recurso Repetitivo" ou "Recursos Repetitivos"; false caso contrário.
+  • temaRepetitivo: número inteiro do Tema quando inequívoco (ex: "Tema 931"); se múltiplos temas citados juntos (ex: "Temas 718 e 719"); se não houver tema, usar null.
+- "assunto": síntese objetiva do elo da citação com a tese específica (como o precedente fundamenta aquela tese).
+- Normalização: aparar espaços; substituir quebras por espaço; escapar aspas; deduplicar acórdãos idênticos.
+- Se não houver citação: lista vazia.
+- Exemplos de formato de Repercussão Geral: "RE 603616-RO (Repercussão Geral)", "RE 573232-SC (Tema 280 - Repercussão Geral)".
+- Exemplos de formato de Recurso Repetitivo: "REsp 1785383-SP (Recurso Repetitivo - Tema 931)", "REsp 1480881-PI (Tema 918)".
 
-Exemplos de Saída JSON (Use APENAS como modelo de estrutura, **NUNCA** copie os dados abaixo):
+Saída esperada > JSON no seguinte formato (exemplo ilustrativo, **nunca** use dados desse exemplo):
 {
   "jurisprudenciaCitada": [
-    {
-      "teseId": "T1",
-      "referenciaCompleta": "Tribunal, Classe 0.000.000/UF, Rel. Min. Nome do Relator, Órgão Julgador, julgado em DD/MM/AAAA, DJe DD/MM/AAAA.",
-      "assunto": "Cita precedentes sobre o tema X para fundamentar a inadmissibilidade.",
-      "repercussaoGeral": false,
-      "recursoRepetitivo": false,
-      "temaRepetitivo": null
-    },
-    {
-      "teseId": "T2",
-      "referenciaCompleta": "Tribunal, Classe 000.000/UF (Tema 999 - Repercussão Geral), Rel. Min. Nome do Relator.",
-      "assunto": "Fundamenta a tese sobre o tema Y.",
-      "repercussaoGeral": true,
-      "recursoRepetitivo": false,
-      "temaRepetitivo": 999
-    }
+    { "id": "T1", "referenciaCompleta": "STJ, ...", "assunto": "...", "repercussaoGeral": false, "recursoRepetitivo": false, "temaRepetitivo": null }
   ],
-  "contribuição": "extração realizada"
+  "contribuição": "extração realizada | nenhuma informação encontrada"
 }
 
-Importante:
-- Se o Voto lista uma sequência de precedentes ("No mesmo sentido: ..."), EXTRAIA TODOS.
-- **NUNCA** use os números de processo ou temas dos exemplos acima (000.000, Tema 999). Extraia apenas o que está no texto.
-- Não invente dados. Se não houver citações para uma tese, não crie itens.
-- Retorne JSON válido conforme o esquema acima.
-'''
+IMPORTANTE sobre o campo "contribuição":
+- Use "extração realizada" APENAS quando o array jurisprudenciaCitada contiver ao menos um item extraído.
+- Use "nenhuma informação encontrada" quando o array jurisprudenciaCitada estiver vazio (não há citações).
+- Quando não há dados, retorne array vazio: {"jurisprudenciaCitada": [], "contribuição": "nenhuma informação encontrada"}
 
+REVISÃO: Se houver conteúdo na tag <REVISAO> com instruções do validador (ex.: "marcar RE 573232 como Repercussão Geral", "associar citação X à T2"), aplique-as prioritariamente.
+'''
 
 PROMPT_AGENTE_REF_LEG = '''
 Papel: Agente de Extração de REFERÊNCIAS LEGISLATIVAS (RefLeg)
-Objetivo: Extrair APENAS os dispositivos legais efetivamente utilizados/interpretados pelo acórdão, aplicando filtro rigoroso de Prequestionamento para REsp/AREsp.
+Objetivo: Extrair APENAS os dispositivos legais efetivamente utilizados/interpretados pelo acórdão (com prequestionamento quando exigível), normalizando diploma e dispositivo e registrando redação posterior quando explicitada.
 
-Tarefa (Passo a Passo com Chain of Thought):
-1. SCAN: Localize todas as menções a artigos, leis, códigos, incisos e alíneas no texto.
-2. FILTRO DE USO EFETIVO: O dispositivo foi usado como base para a decisão?
-   - Se apenas citado no relatório como "alegação da parte" sem análise no voto -> DESCARTAR.
-   - Se citado genericamente ("nos termos da lei") -> DESCARTAR.
-3. FILTRO DE PREQUESTIONAMENTO (Crítico):
-   - Para REsp/AREsp: O tribunal de origem debateu esse artigo?
-   - Se o texto diz "ausência de prequestionamento", "Súmula 282/STF", "Súmula 356/STF" associado ao artigo -> DESCARTAR.
-   - Exemplo: "Quanto ao art. 33, não houve prequestionamento." -> NÃO extrair o art. 33.
-4. NORMALIZAÇÃO: Padronize o nome do diploma e o dispositivo.
+Conceito de PREQUESTIONAMENTO:
+- Em Recurso Especial (REsp) ou Agravo em Recurso Especial (AREsp): o dispositivo legal deve ter sido analisado/decidido pela instância inferior (tribunal de origem).
+- Se o acórdão mencionar "ausência de prequestionamento", "não prequestionado" ou "Súmula 282/STF", "Súmula 356/STF" sobre algum dispositivo, NÃO incluir esse dispositivo.
+- Em demais ações (HC, RHC, etc.): incluir dispositivos efetivamente aplicados/interpretados na fundamentação.
 
-Diretivas de Formatação:
-- Diploma Legal: Use nomes completos e oficiais.
-  - "CP" -> "Código Penal"
-  - "CPP" -> "Código de Processo Penal"
-  - "CF", "Constituição" -> "Constituição Federal"
-  - "Lei 11.343" -> "Lei n. 11.343/2006"
-- Dispositivo: Formato "Art. X, §Y, inciso Z, alínea W".
-  - Use "Art." (maiúsculo), "§" (símbolo), números arábicos ou romanos conforme original.
-- Redação Posterior: Preencha APENAS se o texto disser explicitamente "com redação dada pela Lei...".
+Tarefa: Ler <TEXTO>; identificar diplomas/dispositivos (art., §, inc., al.); incluir somente os efetivamente aplicados/interpretados na decisão; normalizar e ordenar.
 
-Exemplos de Saída JSON (Use APENAS como modelo de estrutura, **NUNCA** copie os dados abaixo):
+Diretivas para a tarefa:
+- Normalização:
+  • diplomaLegal: nome oficial (ex.: "Código de Processo Penal"; "Constituição Federal"; "Lei n. 11.343/2006").
+  • dispositivo: "Art. X[, §Y][, inciso/alínea]" (vírgulas e espaços padronizados).
+  • redacaoPosterior: "com redação dada pela Lei …" apenas se constar inequivocamente e de forma explícita no texto.
+- Ordenação: por diplomaLegal (A–Z) e, dentro dele, por número de artigo crescente.
+- Deduplicação: mesclar duplicatas idênticas de diploma+dispositivo+redacaoPosterior.
+- Exclusões: 
+  • NÃO incluir menções periféricas ou ilustrativas.
+  • NÃO incluir dispositivos sem prequestionamento quando exigível (REsp/AREsp).
+  • NÃO incluir se houver menção a "ausência de prequestionamento", "Súmula 282/STF", "Súmula 356/STF".
+
+Saída esperada > JSON no seguinte formato (exemplo ilustrativo, **nunca** use dados desse exemplo):
 {
   "referenciasLegislativas": [
-    { 
-      "diplomaLegal": "Código X", 
-      "dispositivo": "Art. 000", 
-      "redacaoPosterior": "com redação dada pela Lei n. 00.000/AAAA" 
-    },
-    { 
-      "diplomaLegal": "Constituição Federal", 
-      "dispositivo": "Art. 000, III, a", 
-      "redacaoPosterior": null 
-    }
+    { "diplomaLegal": "Código de Processo Penal", "dispositivo": "Art. 312", "redacaoPosterior": null }
   ],
-  "contribuição": "extração realizada"
+  "contribuição": "extração realizada | nenhuma informação encontrada"
 }
 
-Importante:
-- Se houver dúvida sobre o prequestionamento, mas o artigo foi usado para fundamentar o mérito da decisão do STJ, INCLUA.
-- A exclusão por Súmula 282/356 deve ser explicita no texto.
+IMPORTANTE sobre o campo "contribuição":
+- Use "extração realizada" APENAS quando o array referenciasLegislativas contiver ao menos um item extraído.
+- Use "nenhuma informação encontrada" quando o array referenciasLegislativas estiver vazio (não há referências).
+- Quando não há dados, retorne array vazio: {"referenciasLegislativas": [], "contribuição": "nenhuma informação encontrada"}
+
+REVISÃO: Se houver conteúdo na tag <REVISAO> com instruções do validador (ex.: "excluir Art. 400 §1º CPP por ausência de prequestionamento"), aplique-as prioritariamente.
 '''
 
 PROMPT_AGENTE_NOTAS = '''
 Papel: Agente de Extração de NOTAS (índice temático)
-Objetivo: Identificar e padronizar marcações de temas específicos (drogas, danos, princípios, técnicas de julgamento) conforme o Manual.
+Objetivo: Identificar e padronizar as NOTAS previstas no Manual (índice de assuntos), retornando textos padronizados que marcam temas com alto valor jurisprudencial/impacto social e alertas de alteração do acórdão.
+Tarefa: Ler <TEXTO>; detectar ocorrências inequívocas das categorias do índice; produzir textos exatamente no padrão especificado.
 
-Tarefa (Passo a Passo):
-1. SCAN: Percorra o texto buscando palavras-chave para cada categoria abaixo.
-2. VERIFICAÇÃO: Se encontrar, extraia os dados precisos (valores, quantidades, tipos).
-3. FORMATAÇÃO: Aplique RIGOROSAMENTE o gabarito.
+Diretivas para a tarefa:
+- Padrões obrigatórios (use exatamente estes formatos):
 
-Categorias e Gabaritos (Chain of Thought):
-- DROGAS: Há menção a apreensão de entorpecentes?
-  -> Se sim, extraia tipos e pesos.
-  -> Gabarito: "Quantidade de droga apreendida: [qtd] de [tipo]; [qtd] de [tipo]."
+  QUANTIDADE DE DROGA:
+  • Formato: "Quantidade de droga apreendida: [quantidade e tipo(s)]."
+  • Exemplo: "Quantidade de droga apreendida: 58 g de cocaína; 90,2 g de crack; 470,6 g de maconha."
   
-- PETRECHOS: Há menção a balanças, pinos, embalagens ligadas ao tráfico?
-  -> Se sim: "Apreensão de petrechos usualmente utilizados no tráfico de entorpecentes."
+  PETRECHOS:
+  • Formato: "Apreensão de petrechos usualmente utilizados no tráfico de entorpecentes."
   
-- INSIGNIFICÂNCIA: Há discussão sobre Princípio da Insignificância/Bagatela?
-  -> Se aplicado: "Princípio da insignificância: aplicado ao [crime] de [objeto], avaliado em R$ [valor], [circunstância]."
-  -> Se negado: "Princípio da insignificância: não aplicado ao [crime]... [motivo]."
+  PRINCÍPIO DA INSIGNIFICÂNCIA:
+  • Formato: "Princípio da insignificância: [aplicado/não aplicado] no caso de [tipo penal]."
+  • Exemplo aplicado: "Princípio da insignificância: aplicado ao furto de 2 bombons Ferrero Rocher e 4 unidades de chocolate em barra, avaliados em R$ 119,68 (cento e dezenove reais e sessenta e oito centavos), apesar da reiteração delitiva."
+  • Exemplo não aplicado: "Princípio da insignificância: não aplicado ao furto de bens avaliados em R$ 352,09 (trezentos e cinquenta e dois reais e nove centavos)."
   
-- INDENIZAÇÃO: Há fixação de valor por dano moral/estético/coletivo?
-  -> Gabarito: "Indenização por dano [tipo]: R$ [valor] ([extenso])."
+  INDENIZAÇÃO (DANO MORAL/ESTÉTICO/COLETIVO):
+  • Formato: "Indenização por dano [moral/estético/coletivo]: R$ [valor em algarismos com centavos] ([valor por extenso])."
+  • Exemplo: "Indenização por dano moral: R$ 30.000,00 (trinta mil reais)."
   
-- AMBIENTAL: O crime é da Lei 9.605/98?
-  -> Gabarito: "Direito Ambiental."
+  DIREITO AMBIENTAL:
+  • Formato: "Direito Ambiental." (quando envolver Lei 9.605/1998)
   
-- TÉCNICAS E PROCEDIMENTOS (Distinguishing/Overruling/Repetitivo/Outros):
-  -> Procure por "distinção", "superação", "repetitivo", "tema", "afetação", "retratação", "reafirmação", "PUIL".
-  -> Gabarito Distinguishing: "Aplicada técnica de distinção (distinguishing) em relação ao [Recurso Repetitivo REsp XXXX / Repercussão Geral / Súmula XXX]."
-  -> Gabarito Overruling: "Aplicada técnica de superação (overruling)."
-  -> Gabarito Repetitivo: "Julgado conforme procedimento previsto para Recursos Repetitivos no âmbito do STJ."
-  -> Gabarito IAC: "Julgado conforme procedimento previsto para Incidente de Assunção de Competência (IAC) no âmbito do STJ."
-  -> Gabarito Afetação: "Decisão de afetação - Tema [número]."
-  -> Gabarito Retratação: "Acórdão com Juízo de Retratação."
-  -> Gabarito Reafirmação: "Reafirmação de jurisprudência."
-  -> Gabarito Revisada: "Tese revisada."
-  -> Gabarito PUIL: "Julgamento de mérito de Pedido de Uniformização de Interpretação de Lei (PUIL)."
-  -> Gabarito Admissão IAC: "Acórdão com decisão de admissão para julgamento de recurso conforme procedimento previsto para Incidente de Assunção de Competência (IAC) no âmbito do STJ."
+  TÉCNICAS INTERPRETATIVAS:
+  • Distinguishing: "Aplicada técnica de distinção (distinguishing) em relação ao [Recurso Repetitivo REsp XXXX / Repercussão Geral / Súmula XXX]."
+  • Overruling: "Aplicada técnica de superação (overruling)."
+  
+  PROCEDIMENTOS ESPECIAIS:
+  • "Julgado conforme procedimento previsto para Recursos Repetitivos no âmbito do STJ."
+  • "Julgado conforme procedimento previsto para Incidente de Assunção de Competência (IAC) no âmbito do STJ."
+  • "Decisão de afetação - Tema [número]."
+  • "Acórdão com Juízo de Retratação."
+  • "Julgamento de mérito de Pedido de Uniformização de Interpretação de Lei (PUIL)."
+  • "Tese revisada."
+  • "Reafirmação de jurisprudência."
 
-Saída esperada > JSON no seguinte formato (exemplo ilustrativo, **NUNCA** copie estes dados):
+- Precisão: somente quando houver evidência inequívoca no texto; uma string por nota; deduplicar.
+- Para valores monetários: sempre incluir centavos e extenso completo.
+
+Saída esperada > JSON no seguinte formato (exemplo ilustrativo, **nunca** use dados desse exemplo):
 {
-  "notas": [ 
-    "Quantidade de droga apreendida: [QTD] g de [TIPO]; [QTD] g de [TIPO].", 
-    "Direito Ambiental.",
-    "Julgado conforme procedimento previsto para Recursos Repetitivos no âmbito do STJ.",
-    "Reafirmação de jurisprudência."
-  ],
-  "contribuição": "extração realizada"
+  "notas": [ "Quantidade de droga apreendida: 58 g de cocaína; 90,2 g de crack; 470,6 g de maconha.", "Aplicada técnica de distinção (distinguishing) em relação ao Recurso Repetitivo REsp 1785383." ],
+  "contribuição": "extração realizada | nenhuma informação encontrada"
 }
 
-Importante:
-- Se não encontrar nada, retorne lista vazia.
-- Para valores monetários, SEMPRE use o extenso entre parênteses.
-- Seja fiel aos dados do texto (não invente quantidades ou valores).
+IMPORTANTE sobre o campo "contribuição":
+- Use "extração realizada" APENAS quando o array notas contiver ao menos um item extraído.
+- Use "nenhuma informação encontrada" quando o array notas estiver vazio (não há notas aplicáveis).
+- Quando não há dados, retorne array vazio: {"notas": [], "contribuição": "nenhuma informação encontrada"}
+
+REVISÃO: Se houver conteúdo na tag <REVISAO> com instruções do validador (ex.: "corrigir valor por extenso", "trocar aplicado/não aplicado"), aplique-as prioritariamente.
 '''
 
 PROMPT_AGENTE_INF_COMPL_EMENTA = '''
@@ -292,8 +252,6 @@ Diretivas para a tarefa:
   • "Julgamento de mérito de Pedido de Uniformização de Interpretação de Lei (PUIL)."
   • "Tese revisada."
   • "Acórdão com decisão de admissão para julgamento de recurso conforme procedimento previsto para Incidente de Assunção de Competência (IAC) no âmbito do STJ."
-  • "Aplicada técnica de distinção (distinguishing) em relação ao [Recurso Repetitivo REsp XXXX / Repercussão Geral / Súmula XXX]."
-  • "Aplicada técnica de superação (overruling)."
   
 - Critério: somente etiquetas/observações que NÃO estejam na ementa e que agreguem à compreensão da(s) tese(s).
 - NÃO repetir o que já consta na ementa do acórdão.
@@ -315,152 +273,172 @@ REVISÃO: Se houver conteúdo na tag <REVISAO> com instruções do validador (ex
 
 PROMPT_AGENTE_TERMOS_AUX_PESQUISA = '''
 Papel: Agente de Geração de TAP — Termos Auxiliares à Pesquisa
-Objetivo: Produzir uma lista de termos-chave (tags) úteis para busca, normalizados (minúsculas, sem acentos, sem pontuação), focando em conceitos que não sejam óbvios.
+Objetivo: Produzir uma lista de termos-chave úteis à recuperação do acórdão (n-gramas curtos), em minúsculas, sem acentos e sem pontuação, que NÃO constem na ementa nem no ICE.
+Tarefa: Ler <TEXTO>; coletar candidatos (institutos, súmulas/temas, dispositivos, expressões processuais); remover os que já constam na ementa/ICE; normalizar e deduplicar.
 
-Tarefa (Passo a Passo):
-1. SCAN: Identifique conceitos jurídicos, nomes de leis, súmulas, temas e expressões em latim no texto.
-2. FILTRAGEM (O que NÃO incluir):
-   - Termos muito genéricos: "direito", "justiça", "recurso", "agravo", "ementa", "acordão", "tribunal", "ministro", "julgado", "lei", "artigo", "codigo".
-   - Conectivos e stopwords: "e", "do", "da", "para", "com", "em".
-   - Nomes de partes ou advogados.
-3. NORMALIZAÇÃO (Rigorosa):
-   - Converta para minúsculas.
-   - Remova TODOS os acentos (á -> a, ã -> a, ç -> c, é -> e).
-   - Remova pontuação (pontos, vírgulas, parênteses).
-   - Mantenha apenas termos de 1 a 4 palavras.
-4. SELEÇÃO FINAL: Escolha os 5 a 15 termos mais relavantes.
+Diretivas para a tarefa:
+- Normalização estrita: lowercase; remover acentos; remover pontuação; espaços simples; 1–4 palavras.
+- Exemplos: "sumula 7 stj", "repercussao geral", "recurso repetitivo", "art 312 cpp", "busca pessoal", "distinguishing", "overruling", "prisao preventiva", "progressao de regime", "tema 931", "tema 280".
+- Incluir referências a: súmulas, temas (STJ/STF), artigos de lei, institutos jurídicos, expressões técnicas, latinismos relevantes.
+- Evitar: termos genéricos ("direito", "justica"), nomes de partes, repetições do que já está na ementa/ICE.
+- NÃO incluir termos que já estejam na ementa ou nas informações complementares.
 
-Exemplos de Normalização:
-- "Súmula 7 do STJ" -> "sumula 7 stj"
-- "Repercussão Geral" -> "repercussao geral"
-- "Prisão Preventiva" -> "prisao preventiva"
-- "Art. 312 do CPP" -> "art 312 cpp"
-- "Habeas Corpus" -> "habeas corpus"
-- "In dubio pro reo" -> "in dubio pro reo"
-
-Saída esperada > JSON no seguinte formato (exemplo ilustrativo, **NUNCA** copie estes dados):
+Saída esperada > JSON no seguinte formato (exemplo ilustrativo, **nunca** use dados desse exemplo):
 {
-  "termosAuxiliares": [ "sumula x tribunal", "repercussao geral", "art 000 lei y", "conceito juridico z" ],
-  "contribuição": "extração realizada"
+  "termosAuxiliares": [ "sumula 7 stj", "repercussao geral", "art 312 cpp", "busca pessoal" ],
+  "contribuição": "extração realizada | nenhuma informação encontrada"
 }
 
-Importante:
-- Se não encontrar termos relevantes, retorne lista vazia.
-- O campo "contribuição" segue as regras padrão.
+IMPORTANTE sobre o campo "contribuição":
+- Use "extração realizada" APENAS quando o array termosAuxiliares contiver ao menos um item extraído.
+- Use "nenhuma informação encontrada" quando o array termosAuxiliares estiver vazio (não há termos aplicáveis).
+- Quando não há dados, retorne array vazio: {"termosAuxiliares": [], "contribuição": "nenhuma informação encontrada"}
+
+REVISÃO: Se houver conteúdo na tag <REVISAO> com instruções do validador (ex.: "adicionar 'tema 931'", "remover termo X"), aplique-as prioritariamente.
 '''
 
 PROMPT_AGENTE_TEMA = '''
 Papel: Agente de Extração de TEMA (STJ/STF)
-Objetivo: Identificar e estruturar menções a Temas de Repercussão Geral (STF) e Recursos Repetitivos (STJ), extraindo tribunal, número e descrição.
+Objetivo: Identificar Temas de Repercussão Geral do STF e Temas de Recursos Repetitivos do STJ citados no acórdão, retornando objetos com tribunal, número (inteiro quando inequívoco) e descrição quando houver.
+Tarefa: Ler <TEXTO>; localizar menções a "Tema" com número e/ou com indicação textual clara (Repercussão Geral/Recursos Repetitivos); classificar como STF/STJ; montar a lista.
 
-Tarefa (Passo a Passo):
-1. SCAN: Procure por "Tema", "Repercussão Geral" e "Repetitivo" no texto.
-2. CLASSIFICAÇÃO (Tribunal):
-   - Se mencionar "Repercussão Geral" ou "STF" -> tribunal: "STF".
-   - Se mencionar "Recurso Repetitivo", "Repetitivo" ou "STJ" -> tribunal: "STJ".
-   - Se ambíguo (apenas "Tema X"), verifique o contexto imediato.
-3. EXTRAÇÃO:
-   - Número: Extraia o INTEIRO (ex: 931).
-   - Múltiplos números (ex: "Temas 718 e 719"):
-     • Se possível, separe em dois objetos.
-     • Se tratados como um bloco único, use null no número e coloque tudo na descrição.
-   - Descrição: Se o texto trouxer o título do tema (ex: "Tema 931: Inadimplemento da multa..."), copie para "descricao". Caso contrário, use null.
-4. FORMATAÇÃO: Gere o JSON estrito.
+Diretivas para a tarefa:
+- Campo "tribunal": "STF" quando Repercussão Geral; "STJ" quando Recurso Repetitivo.
+- Campo "numero": 
+  • Usar inteiro quando houver número inequívoco (ex: "Tema 931" → 931).
+  • Usar null quando múltiplos números na mesma menção (ex: "Temas 718 e 719" → numero = null, descricao = "Temas 718 e 719").
+  • Usar null quando não houver número identificável.
+- Campo "descricao": 
+  • Breve descrição se constar no texto.
+  • Caso de múltiplos números: incluir "Temas [n1] e [n2]" ou "Temas [n1]; [n2]".
+  • Caso contrário, null.
+- Deduplicação por (tribunal, numero, descricao).
+- Exemplos:
+  • "Tema 280 da Repercussão Geral" → {"tribunal": "STF", "numero": 280, "descricao": "Repercussão Geral"}
+  • "Tema 931 do STJ" → {"tribunal": "STJ", "numero": 931, "descricao": null}
+  • "Temas 718 e 719 do STF" → {"tribunal": "STF", "numero": null, "descricao": "Temas 718 e 719"}
 
-Exemplos de Saída:
-- "Tema 000" -> {"tribunal": "STJ", "numero": 0, "descricao": null}
-- "Tema 000 da Repercussão Geral" -> {"tribunal": "STF", "numero": 0, "descricao": "Descrição do tema"}
-
-Saída esperada > JSON no seguinte formato (exemplo ilustrativo, **NUNCA** copie estes dados):
+Saída esperada > JSON no seguinte formato (exemplo ilustrativo, **nunca** use dados desse exemplo):
 {
-  "tema": [ 
-    { "tribunal": "STJ", "numero": 0, "descricao": "Descrição do tema 0" } 
-  ],
-  "contribuição": "extração realizada"
+  "tema": [ { "tribunal": "STF", "numero": 280, "descricao": "Repercussão Geral" } ],
+  "contribuição": "extração realizada | nenhuma informação encontrada"
 }
 
-Importante:
-- Se não houver temas, retorne lista vazia.
-- Priorize a separação de múltiplos temas em objetos distintos sempre que possível.
-- O campo "contribuição" segue as regras padrão.
+IMPORTANTE sobre o campo "contribuição":
+- Use "extração realizada" APENAS quando o array tema contiver ao menos um item extraído.
+- Use "nenhuma informação encontrada" quando o array tema estiver vazio (não há temas identificados).
+- Quando não há dados, retorne array vazio: {"tema": [], "contribuição": "nenhuma informação encontrada"}
+
+REVISÃO: Se houver conteúdo na tag <REVISAO> com instruções do validador (ex.: "marcar Tema 931 como STJ", "corrigir tribunal do Tema 280"), aplique-as prioritariamente.
 '''
 
 PROMPT_VALIDACAO_FINAL = '''
-Papel: Agente de Validação Final - Revisor Especialista em Espelhos de Acórdãos
-Objetivo: Analisar criticamente as extrações, garantindo conformidade com o Manual do STJ, mas priorizando a FINALIZAÇÃO do processo quando o resultado for "bom o suficiente" ou quando o limite de tentativas for atingido.
+Papel: Agente de Validação Final - Revisor de Coerência Geral
+Objetivo: Verificar a coerência estrutural e consistência das extrações realizadas pelos agentes especializados, SEM julgar aspectos técnico-jurídicos específicos de cada campo (que são de responsabilidade dos agentes especializados).
+Tarefa: Receber as saídas parciais dos agentes em formato JSON e verificar: (1) conformidade estrutural básica, (2) consistência cruzada entre campos, (3) integridade de referências. NÃO consolidar dados nem construir o espelho final - apenas validar coerência geral.
 
-<--STATUS_REVISAO-->
+IMPORTANTE - Entendendo as respostas dos agentes:
+- Nem todos os agentes foram necessariamente executados - apenas os identificados pelo AgenteCampos.
+- Cada agente retorna um array (lista) do seu campo específico + campo "contribuição".
+- "contribuição" pode ter dois valores:
+  • "extração realizada" → O agente ENCONTROU e EXTRAIU dados (array não-vazio).
+  • "nenhuma informação encontrada" → O agente NÃO encontrou dados para extrair (array vazio É ESPERADO E VÁLIDO).
+- Array vazio [ ] com "nenhuma informação encontrada" é uma resposta CORRETA e NÃO deve gerar revisão.
+- PROBLEMA: Array vazio [ ] com "extração realizada" é INCONSISTÊNCIA que requer ajuste apenas do campo "contribuição".
 
-Tarefa: Receber saídas parciais em <SAIDAS_PARCIAIS> + texto original em <TEXTO>; validar campos; gerar instruções de revisão.
+Diretivas para a tarefa:
+- Você NÃO é especialista nos conteúdos jurídicos extraídos - sua função é verificar COERÊNCIA GERAL e CONSISTÊNCIA ESTRUTURAL.
+- NÃO solicite revisões sobre aspectos técnico-jurídicos específicos (adequação de teses, qualidade de jurisprudências, pertinência de notas, etc.) - isso é responsabilidade dos agentes especializados.
+- Foque exclusivamente em:
+  • Validar estrutura JSON básica de cada resposta.
+  • Verificar presença dos campos obrigatórios conforme formato esperado.
+  • Validar tipos de dados fundamentais (strings, arrays, objetos, booleans, números).
+  • Garantir consistência de referências cruzadas (IDs, associações).
+  • Identificar duplicações óbvias ou inconsistências estruturais graves.
 
-═══════════════════════════════════════════════════════════════════════════════
-PROTOCOLO DE REVISÃO E APROVAÇÃO
-═══════════════════════════════════════════════════════════════════════════════
+- Critérios de validação estrutural (APENAS aspectos formais):
+  • JSON válido e bem formado.
+  • Presença de campo "contribuição" em cada resposta.
+  • Tipos de dados básicos corretos:
+    - teseJuridica: array de objetos com {id, descricao, justificativas}.
+    - jurisprudenciaCitada: array de objetos com {teseId, referenciaCompleta, assunto, repercussaoGeral, recursoRepetitivo, temaRepetitivo}.
+    - referenciasLegislativas: array de objetos com {diplomaLegal, dispositivo, redacaoPosterior}.
+      → redacaoPosterior pode ser null ou string - ambos são válidos.
+    - notas: array de strings.
+    - informacoesComplementares: array de strings.
+    - termosAuxiliares: array de strings.
+    - tema: array de objetos com {tribunal, numero, descricao}.
+      → numero pode ser null (quando há múltiplos temas) ou número inteiro - ambos são válidos.
+      → descricao pode ser null ou string - ambos são válidos.
+  • IMPORTANTE: Arrays vazios ([ ]) são VÁLIDOS e esperados quando:
+    - O campo "contribuição" indica "nenhuma informação encontrada", OU
+    - Não há dados a extrair para aquele campo específico no texto analisado.
+    - NÃO solicite revisão para arrays vazios com "nenhuma informação encontrada" - isso é estruturalmente correto.
+  • IMPORTANTE: Valores null em campos opcionais são VÁLIDOS - não solicite conversão para strings vazias.
+  • PROBLEMA ESTRUTURAL: Array vazio com "contribuição" = "extração realizada" (inconsistência semântica).
+    - Neste caso, solicite ajuste do campo "contribuição" para "nenhuma informação encontrada".
 
-1. IDENTIFICAÇÃO DE ERROS:
-   ⚠️ REGRA CRÍTICA: Só solicite revisão de itens que EXISTEM em <SAIDAS_PARCIAIS>.
-      Não solicite remoção de dados que NÃO estão na resposta do agente.
-      Antes de pedir "Remova X", verifique se X realmente consta nas saídas.
-   
-   - ERROS CRÍTICOS (Bloqueantes - Geram Revisão):
-     • Alucinações (inventar dados que não existem no texto).
-     • Falta de campos OBRIGATÓRIOS (ex: Tese Jurídica sem os 4 elementos).
-     • IDs duplicados ou referências quebradas (teseId inexistente).
-     • "Repercussão Geral" / "Repetitivo" marcados como TRUE sem menção explícita.
-   
-   - ERROS MENORES (Toleráveis - IGNORAR se Iteração > 1):
-     • Diferenças de formatação (ex: "Art. 5" vs "Art. 5º").
-     • Uso de ";" vs " e " em listas.
-     • Presença de termo auxiliar que consta na ementa (se for relevante).
-     • Etiquetas de ICE que são sinônimos perfeitos do texto.
+- Critérios de consistência cruzada (APENAS integridade referencial):
+  • Se jurisprudenciaCitada possui teseId="TX", deve existir em teseJuridica um item com id="TX".
+  • IDs de teses devem seguir padrão "T1", "T2", "T3", etc. (sequencial).
+  • Não deve haver duplicações EXATAS de objetos (mesmos valores em todos os campos).
+  • Arrays vazios com "contribuição" = "nenhuma informação encontrada" são VÁLIDOS - não solicite revisão.
 
-2. CONSOLIDAÇÃO:
-   - Se houver erros críticos, liste TODOS de uma vez. Não guarde erros para a próxima rodada.
-   - Seja cirúrgico: "Corrija X para Y".
+- Política de revisão:
+  • Solicite revisão SOMENTE para problemas estruturais ou de consistência referencial.
+  • NÃO solicite revisões sobre:
+    - Adequação jurídica do conteúdo extraído.
+    - Qualidade ou completude de teses, jurisprudências, notas, etc.
+    - Avaliação técnica de padrões do Manual (isso é responsabilidade dos agentes especializados).
+    - Arrays vazios com "contribuição" = "nenhuma informação encontrada" (é válido e correto).
+  • Instruções de revisão devem ser:
+    - Objetivas: problema estrutural específico.
+    - Acionáveis: o que precisa ser corrigido tecnicamente.
+    - Limitadas ao escopo de coerência geral.
+  • NÃO inclua agentes cujas respostas estejam estruturalmente corretas.
+  • Se um agente não foi identificado pelo AgenteCampos (não está em campos_identificados), NÃO solicite sua presença ou revisão.
 
-3. CRITÉRIO DE PARADA (Prioridade Máxima):
-   - Se a extração está semanticamente correta e útil para busca, APROVE.
-   - Não seja pedante. O "ótimo" é inimigo do "bom".
-
-═══════════════════════════════════════════════════════════════════════════════
-CRITÉRIOS ESPECÍFICOS POR AGENTE
-═══════════════════════════════════════════════════════════════════════════════
-
-1. AgenteTeses:
-   - Deve ter os 4 elementos na descrição.
-   - Se a descrição quebra em duas frases mas o sentido está completo, ACEITE.
-   - Só peça revisão se faltar um elemento essencial (ex: falta o fundamento legal).
-
-2. AgenteJurisprudenciasCitadas:
-   - Valide se "repercussaoGeral" ou "recursoRepetitivo" são TRUE apenas se o texto disser EXPLICITAMENTE.
-   - Se o agente não extraiu nada e o texto não tem citações claras vinculadas às teses, ACEITE.
-
-3. AgenteReferenciasLegislativas:
-   - Tolerância com formatação: "Lei 11.343" vs "Lei n. 11.343/2006" -> ACEITE se não for ambíguo.
-   - Exija exclusão apenas se houver "Súmula 282/STF" ou "ausência de prequestionamento" explícitos.
-
-4. AgenteNotas:
-   - Valide valores monetários e quantidades de drogas.
-   - Se o formato estiver legível (ex: "30g" vs "30 g"), ACEITE.
-
-5. AgenteInformacoesComplementares (ICE) e TermosAuxiliares (TAP):
-   - Evite pedantismo sobre se um termo está ou não na ementa. Se ajudar na busca, ACEITE.
-   - Só peça remoção se for uma alucinação completa ou palavra inútil.
-
-═══════════════════════════════════════════════════════════════════════════════
-SAÍDA ESPERADA (JSON)
-═══════════════════════════════════════════════════════════════════════════════
+Saída esperada > JSON no seguinte formato (exemplo ilustrativo, **nunca** use dados desse exemplo):
 {
   "revisao": {
-    "NomeDoAgente": "Instrução clara e direta para correção."
+    "AgenteTeses": "instrução objetiva sobre problema estrutural (ex: ID T3 está duplicado; falta campo 'justificativas' em T2)",
+    "AgenteJurisprudenciasCitadas": "instrução objetiva (ex: teseId 'T5' não existe em teseJuridica; duplicação exata do objeto no índice 2 e 4)",
+    "AgenteReferenciasLegislativas": "instrução...",
+    "AgenteNotas": "instrução...",
+    "AgenteInformacoesComplementares": "instrução...",
+    "AgenteTermosAuxiliares": "instrução...",
+    "AgenteTema": "instrução..."
   },
-  "validacao_aprovada": boolean, // true se "revisao" for vazio
-  "contribuição": "Resumo da avaliação"
+  "validacao_aprovada": false,
+  "contribuição": "revisão realizada com N pendências estruturais" | "validação aprovada - coerência geral OK"
 }
 
-Se "validacao_aprovada": true, o campo "revisao" DEVE ser vazio {}.
-'''
+EXEMPLOS de respostas válidas que NÃO devem gerar revisão:
+1. {"tema": [], "contribuição": "nenhuma informação encontrada"} ✓ VÁLIDO (não há temas no texto)
+2. {"notas": [], "contribuição": "nenhuma informação encontrada"} ✓ VÁLIDO (não há notas aplicáveis)
+3. {"teseJuridica": [{"id": "T1", ...}], "contribuição": "extração realizada"} ✓ VÁLIDO (há dados extraídos)
+4. {"referenciasLegislativas": [{"diplomaLegal": "CPP", "dispositivo": "Art. 240", "redacaoPosterior": null}], ...} ✓ VÁLIDO (null em campo opcional)
+5. {"tema": [{"tribunal": "STF", "numero": null, "descricao": "Temas 123; 456"}], ...} ✓ VÁLIDO (null quando há múltiplos números)
 
+EXEMPLOS de problemas que DEVEM gerar revisão:
+1. {"tema": [], "contribuição": "extração realizada"} ✗ PROBLEMA (array vazio mas diz que extraiu)
+   → Revisão: "Array vazio mas 'contribuição' indica 'extração realizada'. Ajuste para 'nenhuma informação encontrada'."
+2. {"jurisprudenciaCitada": [{"teseId": "T5", ...}], ...} sem T5 em teseJuridica ✗ PROBLEMA (referência inválida)
+   → Revisão: "teseId 'T5' não existe em teseJuridica. Ajuste para ID válido ou remova a jurisprudência."
+3. {"teseJuridica": [{"id": "T1", ...}, {"id": "T1", ...}], ...} ✗ PROBLEMA (ID duplicado)
+   → Revisão: "ID 'T1' está duplicado. Ajuste para IDs sequenciais únicos (T1, T2, T3, ...)."
+
+Observações importantes:
+- Se TODAS as extrações estiverem estruturalmente corretas e consistentes, retorne: {"revisao": {}, "validacao_aprovada": true, "contribuição": "validação aprovada - coerência geral OK"}.
+- O campo "validacao_aprovada" deve ser true somente quando nenhuma revisão for necessária (revisao == {}).
+- Quando houver pendências estruturais, "validacao_aprovada" deve ser false.
+- IMPORTANTE: Seu papel é garantir a integridade estrutural do resultado, NÃO avaliar aspectos técnico-jurídicos que são de responsabilidade dos agentes especializados.
+- As instruções em "revisao" serão injetadas diretamente na tag <REVISAO> de cada agente correspondente.
+
+Saídas dos agentes para validar: As saídas são fornecidas em <SAIDAS_PARCIAIS>, em formato JSON.
+
+Texto: O texto é fornecido em <TEXTO> apenas como referência contextual quando necessário verificar consistência básica.
+'''
 
 PAPEL_LLM_AS_A_JUDGE = 'Analista Judiciário Especialista em Extrações de Textos Jurídicos e Análise do Espelho de Acórdãos da Jurisprudência do STJ'
 PROMPT_LLM_AS_A_JUDGE = '''
@@ -604,7 +582,6 @@ Avaliar a qualidade da extração estruturada (JSON) do Espelho do Acórdão atr
   - "Julgamento de mérito de Pedido de Uniformização de Interpretação de Lei (PUIL)."
   - "Tese revisada."
   - "Reafirmação de jurisprudência."
-  - "Acórdão com decisão de admissão para julgamento de recurso conforme procedimento previsto para Incidente de Assunção de Competência (IAC) no âmbito do STJ."
 
 **Critérios de INCLUSÃO**: SOMENTE quando houver evidência inequívoca no texto E formato seguir EXATAMENTE o padrão
 
