@@ -7,14 +7,15 @@
 The **17th International Conference on Computational Processing of Portuguese (PROPOR 2026)** is the premier scientific venue for language and speech technologies applied to Portuguese and Galician. The 2026 edition will be held in **Salvador, Brazil, from April 13–16, 2026**.
 PROPOR is a biennial event held alternately in Brazil and Portugal (and now Galicia), with a tradition dating back to 1993. More information at [propor2026.ufba.br](https://propor2026.ufba.br/) and [propor.org](https://propor.org).
 
-📄 **Paper:** _in progress_
+📄 **Paper:** Agent Orchestration - LLM for Legal Metadata Extraction: A Comparative Analysis of Efficiency and Precision
 
 ---
 
 ## Abstract
 
 This work introduces and evaluates JAMEX (Judicial Multi-Agent Metadata Extraction), a multi-agent pipeline for extracting structured metadata from Brazilian court decisions (*Espelho do Acórdão*), and compares it against a strong single-prompt baseline under an Information Retrieval-only (IR-only) setting.
-We first ran a pilot on 300 decisions and then reran the experiment on a stratified dataset of n=1,225. Across re-executions, the accuracy impact of agents was *strategy-dependent*: GPT-5 improves over the baseline in multiple agentic strategies but not across all orchestration variants, while smaller models (Gemma 3 12B/27B) show no robust gains and reduce the paired subset due to non-completion.
+We first ran a pilot on 300 decisions and then reran the experiment on a stratified dataset of n=1,225; completion rates varied across executions, yielding between 779–1,216 successfully completed instances, with non-completion concentrated in agentic configurations.
+Across re-executions, the accuracy impact of agents was *strategy-dependent*: GPT-5 improves over the baseline in multiple agentic strategies but not across all orchestration variants, while smaller models (Gemma 3 12B/27B) show no robust gains.
 Orchestration refinements motivated by agent design literature (memory, planning and directed review) improved traceability, but performance remained sensitive to task decomposition and context splitting.
 Overall, JAMEX increases token usage and operational complexity, so deployment must balance accuracy, completion reliability, and cost for Portuguese legal metadata extraction.
 
@@ -74,7 +75,7 @@ Experiments were conducted on a stratified sample of **n = 1,225** legal appella
 
 Candidate decisions were identified through the STJ internal jurisprudence index (*Summa*), which provides structured metadata including `seq_documento_acordao`, publication date, and class information. The sample was restricted to decisions published on the *Diário da Justiça Eletrônico* (DJe) and indexed with at least one valid *espelho do acórdão* entry in the CKAN open data portal.
 
-A semantic diversity filter was applied using cosine similarity (θ = 0.15) on domain-specific embeddings to reduce near-duplicate documents and increase corpus variance. 
+A semantic diversity filter was applied using cosine similarity (θ = 0.85) on domain-specific embeddings to reduce near-duplicate documents and increase corpus variance. 
 
 ### Obtaining the Full Texts
 
@@ -196,8 +197,10 @@ The dataset derived from STJ public records is subject to the terms of the [STJ 
 
 ## Acknowledgements
 
-This work originated as a capstone project (*Trabalho de Conclusão de Curso*) of the Specialization in Data Science at **Pontifícia Universidade Católica do Paraná (PUCPR)**, where two of the authors are currently enrolled in the Master's program in Computer Science. We thank **PUCPR** for the academic environment and institutional support that made this work possible.
+This work originated as a capstone project (*Trabalho de Conclusão de Curso*) of the Specialization in Data Science at **Pontifícia Universidade Católica do Paraná (PUCPR)**. 
 
-We gratefully acknowledge the **Superior Tribunal de Justiça (STJ)** for making their appellate decisions publicly available through the [Open Data Portal](https://dadosabertos.web.stj.jus.br/group/jurisprudencia) and for the institutional support that made this research possible.
+The authors thank João Paulo de Franco Alcantara (Jurisprudência, STJ) for providing the baseline extraction prompt that served as a foundation for this study, and the **Superior Tribunal de Justiça (STJ)** for making judicial decisions and metadata publicly available through its [Open Data Portal](https://dadosabertos.web.stj.jus.br/group/jurisprudencia).
 
-We also thank the **Coordenação de Aperfeiçoamento de Pessoal de Nível Superior (CAPES)** for supporting scientific research and for fostering the training and development of graduate researchers and faculty across Brazil.
+The authors acknowledge the **Coordenação de Aperfeiçoamento de Pessoal de Nível Superior -- Brasil (CAPES)** for its role in fostering graduate education and scientific research in Brazil.
+
+The authors also acknowledge the **Pontifícia Universidade Católica do Paraná (PUCPR)** for the academic environment and institutional support that enabled this research. Finally, the authors acknowledge **Financiadora de Estudos e Projetos (Finep)**, grant FINEP ProInfra 2021 Ref: 259/2022.
