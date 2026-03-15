@@ -195,9 +195,9 @@ The dataset derived from STJ public records is subject to the terms of the [STJ 
 
 ---
 
-## Acknowledgements
+This work originated as a capstone project (*Trabalho de Conclusão de Curso*) of the Specialization in Data Science at **Pontifícia Universidade Católica do Paraná (PUCPR)**, and was subsequently updated with orchestration variants B and C for the production of this paper. 
 
-This work originated as a capstone project (*Trabalho de Conclusão de Curso*) of the Specialization in Data Science at **Pontifícia Universidade Católica do Paraná (PUCPR)**. 
+## Acknowledgements
 
 The authors thank João Paulo de Franco Alcantara (Jurisprudência, STJ) for providing the baseline extraction prompt that served as a foundation for this study, and the **Superior Tribunal de Justiça (STJ)** for making judicial decisions and metadata publicly available through its [Open Data Portal](https://dadosabertos.web.stj.jus.br/group/jurisprudencia).
 
