@@ -25,6 +25,8 @@ Overall, JAMEX increases token usage and operational complexity, so deployment m
 
 **JAMEX** is a multi-agent orchestration pipeline for structured metadata extraction from Brazilian Portuguese appellate court decisions (*acórdãos*). It decomposes the extraction task across specialist agents with explicit planning, dependency-aware execution, schema validation, and directed review — communicating exclusively through JSON objects for auditability and reproducibility.
 
+> **Note:** JAMEX is not a final product. It is an orchestration suite developed specifically for this experiment, with the primary objective of recording detailed information and audit metrics for the analysis of the experiment.
+
 This repository contains all code used in the experiments reported in the paper, including dataset preparation, the baseline single-prompt approach, the JAMEX pipeline, and the evaluation protocol.
 
 ---
