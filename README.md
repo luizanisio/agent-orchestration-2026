@@ -1,4 +1,4 @@
-# JAMEX: Judicial Multi-Agent Metadata Extraction
+# JAMEX: Judicial Multi-Agent Metadata Extraction [:link:](https://aclanthology.org/2026.propor-1.72/)
 
 ## PROPOR 2026
 
