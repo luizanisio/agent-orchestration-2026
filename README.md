@@ -7,7 +7,8 @@
 The **17th International Conference on Computational Processing of Portuguese (PROPOR 2026)** is the premier scientific venue for language and speech technologies applied to Portuguese and Galician. The 2026 edition will be held in **Salvador, Brazil, from April 13–16, 2026**.
 PROPOR is a biennial event held alternately in Brazil and Portugal (and now Galicia), with a tradition dating back to 1993. More information at [propor2026.ufba.br](https://propor2026.ufba.br/) and [propor.org](https://propor.org).
 
-📄 **Paper:** [Agent Orchestration - LLM for Legal Metadata Extraction: A Comparative Analysis of Efficiency and Precision](https://aclanthology.org/2026.propor-1.72/)
+📓 **Paper:** [Agent Orchestration - LLM for Legal Metadata Extraction: A Comparative Analysis of Efficiency and Precision](https://aclanthology.org/2026.propor-1.72/)<br>
+🖼️ **Poster** [Poster Session](./images/Poster_PROPOR_2026_Agents_Orchestration.png)
 
 ---
 
