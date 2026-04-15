@@ -7,17 +7,13 @@
 The **17th International Conference on Computational Processing of Portuguese (PROPOR 2026)** is the premier scientific venue for language and speech technologies applied to Portuguese and Galician. The 2026 edition will be held in **Salvador, Brazil, from April 13–16, 2026**.
 PROPOR is a biennial event held alternately in Brazil and Portugal (and now Galicia), with a tradition dating back to 1993. More information at [propor2026.ufba.br](https://propor2026.ufba.br/) and [propor.org](https://propor.org).
 
-📄 **Paper:** Agent Orchestration - LLM for Legal Metadata Extraction: A Comparative Analysis of Efficiency and Precision
+📄 **Paper:** [Agent Orchestration - LLM for Legal Metadata Extraction: A Comparative Analysis of Efficiency and Precision](https://aclanthology.org/2026.propor-1.72/)
 
 ---
 
 ## Abstract
 
-This work introduces and evaluates JAMEX (Judicial Multi-Agent Metadata Extraction), a multi-agent pipeline for extracting structured metadata from Brazilian court decisions (*Espelho do Acórdão*), and compares it against a strong single-prompt baseline under an Information Retrieval-only (IR-only) setting.
-We first ran a pilot on 300 decisions and then reran the experiment on a stratified dataset of n=1,225; completion rates varied across executions, yielding between 779–1,216 successfully completed instances, with non-completion concentrated in agentic configurations.
-Across re-executions, the accuracy impact of agents was *strategy-dependent*: GPT-5 improves over the baseline in multiple agentic strategies but not across all orchestration variants, while smaller models (Gemma 3 12B/27B) show no robust gains.
-Orchestration refinements motivated by agent design literature (memory, planning and directed review) improved traceability, but performance remained sensitive to task decomposition and context splitting.
-Overall, JAMEX increases token usage and operational complexity, so deployment must balance accuracy, completion reliability, and cost for Portuguese legal metadata extraction.
+This work introduces and evaluates JAMEX (Judicial Multi-Agent Metadata Extraction), a multi-agent pipeline for extracting structured metadata from Brazilian court decisions (Espelho do Ac{\'o}rd{\~a}o), and compares it against a strong single-prompt baseline under an Information Retrieval-only (IR-only) setting.We first ran a pilot on 300 decisions and then reran the experiment on a stratified dataset of n=1,225; completion rates varied across executions, yielding between 779-1,216 successfully completed instances, with non-completion concentrated in agentic configurations.Across re-executions, the accuracy impact of agents was strategy-dependent: GPT-5 improves over the baseline in multiple agentic strategies but not across all orchestration variants, while smaller models (Gemma3-12B/Gemma3-27B) show no robust gains.Orchestration refinements motivated by agent design literature (memory, planning and directed review) improved traceability, but performance remained sensitive to task decomposition and context splitting.Overall, JAMEX increases token usage and operational complexity, so deployment must balance accuracy, completion reliability, and cost for Portuguese legal metadata extraction.
 
 ---
 
@@ -185,7 +181,30 @@ See the notebooks in `01_notebooks/` and scripts in `03_analysis/` for additiona
 
 If you use this code or dataset in your research, please cite:
 
-_in progress_
+```
+@inproceedings{batitucci-etal-2026-agent,
+    title = "Agent Orchestration - {LLM} for Legal Metadata Extraction: A Comparative Analysis of Efficiency and Precision",
+    author = "Batitucci, Luiz An{\'i}sio  and
+      Lopes, Luciane In{\'a}cia  and
+      Ferreira, Rhodie  and
+      Paraiso, Emerson Cabrera",
+    editor = "Souza, Marlo  and
+      de-Dios-Flores, Iria  and
+      Santos, Diana  and
+      Freitas, Larissa  and
+      Souza, Jackson Wilke da Cruz  and
+      Ribeiro, Eug{\'e}nio",
+    booktitle = "Proceedings of the 17th International Conference on Computational Processing of {P}ortuguese ({PROPOR} 2026) - Vol. 1",
+    month = apr,
+    year = "2026",
+    address = "Salvador, Brazil",
+    publisher = "Association for Computational Linguistics",
+    url = "https://aclanthology.org/2026.propor-1.72/",
+    pages = "727--737",
+    ISBN = "979-8-89176-387-6",
+    abstract = "This work introduces and evaluates JAMEX (Judicial Multi-Agent Metadata Extraction), a multi-agent pipeline for extracting structured metadata from Brazilian court decisions (Espelho do Ac{\'o}rd{\~a}o), and compares it against a strong single-prompt baseline under an Information Retrieval-only (IR-only) setting.We first ran a pilot on 300 decisions and then reran the experiment on a stratified dataset of n=1,225; completion rates varied across executions, yielding between 779{--}1,216 successfully completed instances, with non-completion concentrated in agentic configurations.Across re-executions, the accuracy impact of agents was strategy-dependent: GPT-5 improves over the baseline in multiple agentic strategies but not across all orchestration variants, while smaller models (Gemma3-12B/Gemma3-27B) show no robust gains.Orchestration refinements motivated by agent design literature (memory, planning and directed review) improved traceability, but performance remained sensitive to task decomposition and context splitting.Overall, JAMEX increases token usage and operational complexity, so deployment must balance accuracy, completion reliability, and cost for Portuguese legal metadata extraction."
+}
+```
 
 ---
 
