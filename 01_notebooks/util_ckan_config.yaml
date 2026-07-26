@@ -1,0 +1,100 @@
+# ==========================================================================
+# Configuração de Extração de Dados do CKAN
+# Executar com: python util_ckan.py --config util_ckan_config.yaml
+# Visualizar com: python util_ckan.py --config util_ckan_config.yaml --view
+# ==========================================================================
+
+# --- Configuração Geral ---
+config:
+  download_dir: "./downloads_stj"
+  atualizar_cache_e_mapas: true
+
+# --- Saída ---
+saida:
+  # Caminho do arquivo de saída. O formato de exportação será deduzido automaticamente
+  # da extensão utilizada (suporta: .parquet, .feather, .csv).
+  # Além do arquivo de dados, será gerado automaticamente um arquivo .md com o
+  # mesmo nome, contendo um resumo (EDA) das colunas passíveis de agrupamento.
+  arquivo: "util_ckan_saida.parquet"
+  
+  # Mapeia colunas diretamente geradas pelo processo do CKAN
+  # Colunas disponíveis na extração de Íntegras: 
+  #   id_mapa, numero_registro, data_publicacao, data_publicacao_iso, tipo_decisao, 
+  #   seq_documento, processo, ministro, arquivo_integra, arquivo_metadados, integra
+  # Colunas disponíveis na extração de Espelhos: 
+  #   id, numeroRegistro, siglaClasse, descricaoClasse, nomeOrgaoJulgador, ministroRelator, 
+  #   tipoDeDecisao, dataPublicacao, dataDecisao, teseJuridica, tema, referenciasLegislativas, 
+  #   jurisprudenciaCitada, notas, termosAuxiliares, informacoesComplementares, acordaosSimilares, 
+  #   id_mapa, orgao, data_publicacao_iso, seq_documento_acordao, tem_integra, ementa, decisao, integra
+  # Colunas auto-padronizadas pelo script:
+  #   dt_publicacao, ano, sg_classe, num_registro, seq_documento_acordao
+  colunas_ckan:
+    processo: processo
+    ministro: ministro
+    dt_publicacao: dt_publicacao
+    orgao_julgador: orgao_julgador
+    sg_classe: sg_classe
+    integra: integra
+    num_registro: num_registro
+    seq_documento_acordao: seq_documento_acordao
+    ano: ano
+    tipo_decisao: tipo_decisao
+    ementa: ementa
+  
+  # Preserva colunas (faz merge via left-join) advindas do arquivo_origem configurado nas extrações
+  colunas_origem:
+    sg_ramo_direito: sg_ramo_direito
+    pasta: pasta
+    fold: fold
+
+# --- Sequência de Extrações ---
+extracoes:
+  # Exemplo 1: Extração dinâmica a partir de um arquivo CSV existente, baixando as íntegras
+  - tipo: "integras"
+    incluir_texto: true
+    filtros:
+      arquivo_origem: "util_ckan_lista.csv"
+      coluna_documentos: "seq_documento_acordao"
+    colunas_fixas:
+      - extracao: "$hoje"
+      
+  # Exemplo 2: Extração de espelhos filtrando por anos (2023 e 2024)
+  # - tipo: "espelhos"
+  #   incluir_integras: false
+  #   filtros:
+  #     anos: ["2023", "2024"]
+  #   colunas_fixas:
+  #     - pasta: './saidas/espelhos_2023_2024'
+  #     - extracao: "$hoje"
+
+  # Exemplo 3: Extração de espelhos para órgãos específicos (T5 e T6) no ano de 2023
+  # - tipo: "espelhos"
+  #   incluir_integras: false
+  #   filtros:
+  #     anos: ["2023"]
+  #     orgaos: ["T5", "T6"]
+  #   colunas_fixas:
+  #     - pasta: './saidas/espelhos_T5_T6_2023'
+  
+  # Exemplo 4: Extração manual com injeção de colunas fixas e filtros variados
+  # - tipo: "integras"
+  #   incluir_texto: true
+  #   filtros:
+  #     anos: ["2026"]
+  #     datas: ["2026-05-25", "2026-04-30"]
+  #     classes: ["AREsp", "REsp", "HC", "RHC"]
+  #     tipo_decisao: acordao
+  #   colunas_fixas:
+  #     - fold: 12
+  #     - pasta: './saidas/integras_novas'
+
+  # Exemplo 5: Extração de processos (registros) específicos
+  # - tipo: "integras"
+  #   incluir_texto: true
+  #   filtros:
+  #     # busca pela chave processo (case insensitive) ou numero_registro (12 números string) ou tuplas [registro, data_publicacao] ou [registro, data_publicacao, tipo_decisao]
+  #     processos: ["REsp 2046214", "AREsp 2831077", ["202403674719", "2025-01-03"], ["202302829818", "20230615", "ACÓRDÃO"]]
+  #     documentos: [289154352, 289154346]
+  #   colunas_fixas:
+  #     - fold: 13
+  #     - pasta: "./saidas/integras_especificas"

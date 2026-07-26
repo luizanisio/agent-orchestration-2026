@@ -55,8 +55,6 @@ Parâmetros comuns do construtor (UtilCkanBase):
                                 Aceita vários formatos: 'YYYYMMDD', 'YYYY-MM-DD', 'DD/MM/YYYY'.
                                 None = sem filtro por data específica (usa apenas ``anos`` se informado).
     classes                   : set[str] | None  — siglas de classes processuais. None = todas.
-    registros                 : set[str] | None  — filtrar por numeroRegistro específico.
-                                podem ser tuplas (registro, data_publicacao) ou (registro, data_publicacao, tipo_decisao)
     documentos                : set[int] | None  — filtrar por seq_documento_acordao específico.
     download_dir              : Path      — pasta raiz para cache (padrão: downloads_stj).
     timeout                   : int       — timeout HTTP em segundos (padrão: 600).
@@ -83,6 +81,7 @@ Parâmetros adicionais de UtilCkan:
 
 import json
 import re
+import os
 import zipfile
 from datetime import datetime
 from pathlib import Path
@@ -117,6 +116,12 @@ COLUNAS_ESPELHO_PADRAO = [
     'informacoesComplementares', 'acordaosSimilares',
 ]
 
+COLUNAS_RESUMO_EDA = [
+    'ministroRelator', 'ministro', 'siglaClasse', 'sg_classe',
+    'descricaoClasse', 'nomeOrgaoJulgador', 'orgao_julgador',
+    'tipoDeDecisao', 'tipo_decisao', 'sg_ramo_direito', 'orgao'
+]
+
 CKAN_BASE_URL = 'https://dadosabertos.web.stj.jus.br'
 
 
@@ -135,6 +140,10 @@ def _padronizar_data_filtro(valor: str) -> str:
     """Padroniza data contida nos filtros (registros) para formato YYYYMMDD."""
     if not valor: return ''
     v = str(valor).strip()
+    
+    # Remove parte de hora caso venha de um datetime/timestamp (ex: 'YYYY-MM-DD 00:00:00' ou 'YYYY-MM-DDTHH:MM:SS')
+    v = v.split(' ')[0].split('T')[0]
+    
     if re.match(r'^\d{8}$', v): return v
     
     # DD/MM/YYYY ou DD-MM-YYYY
@@ -167,7 +176,8 @@ def _extrair_data_pub_integra(valor) -> str:
     # Tenta como epoch-ms
     try:
         ts = int(valor) / 1000
-        return datetime.fromtimestamp(ts).strftime('%Y%m%d')
+        from datetime import timezone
+        return datetime.fromtimestamp(ts, tz=timezone.utc).strftime('%Y%m%d')
     except (ValueError, TypeError, OSError):
         return ''
 
@@ -201,12 +211,13 @@ class UtilCkanBase:
         anos:    Optional[set[str]]    = None,
         datas:   Optional[set]         = None,
         classes: Optional[set[str]]    = None,
-        registros: Optional[set] = None,
         documentos: Optional[set] = None,
+        processos: Optional[set[str]] = None,
+        tipos_decisao: list[str] | set[str] | str | None = None,
         download_dir: Path              = Path('downloads_stj'),
         base_url:     str               = CKAN_BASE_URL,
         timeout:      int               = 600,
-        atualizar_cache_e_mapas: bool | int | None = 12 * 60,
+        atualizar_cache_e_mapas: bool = True,
     ):
         """Inicializa a infraestrutura comum.
 
@@ -215,9 +226,10 @@ class UtilCkanBase:
             datas: Datas de publicação específicas. Aceita vários formatos:
                 'YYYYMMDD', 'YYYY-MM-DD', 'DD/MM/YYYY'. Ex: {'2023-06-01', '15/06/2023'}.
             classes: Classes de processos (ex: {'AI', 'RE'}).
-            registros: Números de registro. Aceita strings ou tuplas
-                (registro, data) ou (registro, data, tipo).
+            processos: Números de processo (ex: 'REsp 12345' ou '202512345678').
+                Aceita strings puras ou tuplas (processo, data_pub) ou (processo, data_pub, tipo).
             documentos: Sequências de documentos (ex: {123456}).
+            tipos_decisao: Tipo de decisão processual (ex: 'acordao').
             download_dir: Diretório raiz para cache.
             base_url: URL base do CKAN.
             timeout: Timeout HTTP em segundos.
@@ -226,23 +238,43 @@ class UtilCkanBase:
                 - True          → sempre baixa/atualiza.
                 - int (minutos) → atualiza se o mapa mais antigo tiver > N min.
         """
-        self.anos         = set(anos) if anos else None
+        if anos:
+            self.anos = set()
+            for a in anos:
+                val = str(a).strip()
+                if val.endswith('.0'): val = val[:-2]
+                if val.isdigit():
+                    self.anos.add(int(val))
+        else:
+            self.anos = None
+
         self.datas        = {_padronizar_data_filtro(d) for d in datas} if datas else None
         self.classes      = {c.upper() for c in classes} if classes else None
-        
-        # Filtros de registros aceitam string ou tuplas (reg, data) ou (reg, data, tipo)
-        self.registros = set()
-        if registros:
-            for r in registros:
-                if isinstance(r, str):
-                    self.registros.add(r.strip())
-                elif isinstance(r, (tuple, list)):
-                    if len(r) == 2:
-                        self.registros.add((str(r[0]).strip(), _padronizar_data_filtro(r[1])))
-                    elif len(r) >= 3:
-                        self.registros.add((str(r[0]).strip(), _padronizar_data_filtro(r[1]), str(r[2]).upper().strip()))
+        # Filtros de processos aceitam string ou tuplas (processo, data) ou (processo, data, tipo)
+        # O "processo" pode ser tanto a classe+numero ("REsp 12345") quanto só o número
+        self.processos = set()
+        if processos:
+            for p in processos:
+                if isinstance(p, str):
+                    self.processos.add(p.strip().upper())
+                elif isinstance(p, (tuple, list)):
+                    if len(p) == 2:
+                        self.processos.add((str(p[0]).strip().upper(), _padronizar_data_filtro(p[1])))
+                    elif len(p) >= 3:
+                        self.processos.add((str(p[0]).strip().upper(), _padronizar_data_filtro(p[1]), str(p[2]).upper().strip()))
 
         self.documentos = {str(d).strip() for d in documentos} if documentos else None
+
+        self.tipos_decisao = None
+        if tipos_decisao:
+            import unicodedata
+            def _norm(s):
+                if not s or (isinstance(s, float) and s != s): return ""
+                return unicodedata.normalize('NFKD', str(s)).encode('ASCII', 'ignore').decode('utf-8').strip().lower()
+            if isinstance(tipos_decisao, str):
+                self.tipos_decisao = {_norm(tipos_decisao)}
+            else:
+                self.tipos_decisao = {_norm(td) for td in tipos_decisao}
 
         self.download_dir  = Path(download_dir)
         self.metadados_dir = self.download_dir / 'metadados_integras'
@@ -265,24 +297,11 @@ class UtilCkanBase:
     # Filtros
     # ══════════════════════════════════════════════════════════════════════════
 
-    def _passou_filtro_registro(self, num_reg: str, data_pub: str, tipo_decisao: str) -> bool:
-        """Verifica se o registro satisfaz os filtros de tuplas de registros."""
-        if not self.registros:
-            return True
-        num = num_reg.strip()
-        data = data_pub.strip()
-        tipo = tipo_decisao.upper().strip()
-        return (
-            (num in self.registros) or 
-            ((num, data) in self.registros) or 
-            ((num, data, tipo) in self.registros)
-        )
-
     def _passou_filtro_ano(self, data_pub: str) -> bool:
         """Verifica se a data de publicação está entre os anos filtrados."""
         if not self.anos:
             return True
-        return len(data_pub) >= 4 and data_pub[:4] in self.anos
+        return len(data_pub) >= 4 and data_pub[:4].isdigit() and int(data_pub[:4]) in self.anos
 
     def _passou_filtro_data(self, data_pub: str) -> bool:
         """Verifica se a data de publicação (YYYYMMDD) está entre as datas filtradas."""
@@ -316,6 +335,51 @@ class UtilCkanBase:
                 return True
         return False
 
+    def _passou_filtro_processo(
+        self, 
+        numero_registro: str, 
+        processo: str, 
+        sigla_classe: str = '',
+        data_publicacao: str = '',
+        tipo_decisao: str = ''
+    ) -> bool:
+        """Verifica se o processo ou o número de registro está entre os filtrados."""
+        if not self.processos:
+            return True
+            
+        reg = str(numero_registro).strip()
+        proc = str(processo).strip().upper()
+        if not proc and reg and sigla_classe:
+            proc = f"{sigla_classe} {reg}".strip().upper()
+            
+        data = _padronizar_data_filtro(data_publicacao) if data_publicacao else ""
+        tipo = str(tipo_decisao).upper().strip() if tipo_decisao else ""
+        
+        # O registro pode estar formatado em string, tupla(str, data) ou tupla(str, data, tipo)
+        match_reg = (
+            (reg in self.processos) or
+            ((reg, data) in self.processos) or
+            ((reg, data, tipo) in self.processos)
+        ) if reg else False
+        
+        match_proc = (
+            (proc in self.processos) or
+            ((proc, data) in self.processos) or
+            ((proc, data, tipo) in self.processos)
+        ) if proc else False
+        
+        return match_reg or match_proc
+
+    def _passou_filtro_tipo_decisao(self, tipo_decisao: str) -> bool:
+        """Verifica se o tipo_decisao (normalizado) está entre os filtrados."""
+        if not self.tipos_decisao:
+            return True
+        if not tipo_decisao:
+            return False
+        import unicodedata
+        t = unicodedata.normalize('NFKD', str(tipo_decisao)).encode('ASCII', 'ignore').decode('utf-8').strip().lower()
+        return t in self.tipos_decisao
+
     # ══════════════════════════════════════════════════════════════════════════
     # Duplicatas
     # ══════════════════════════════════════════════════════════════════════════
@@ -329,6 +393,18 @@ class UtilCkanBase:
             'duplicado': registro_novo,
         }
         self.duplicados.setdefault(id_mapa, []).append(entrada)
+
+    def exportar_duplicados(self):
+        """Exporta os duplicados em memória para arquivos JSON separados."""
+        dups_int = [d for lst in self.duplicados.values() for d in lst if d.get('origem') == 'integra']
+        if dups_int:
+            caminho_int = getattr(self, 'download_dir', Path('.')) / 'mapa_integras_duplicados.json'
+            caminho_int.write_text(json.dumps(dups_int, ensure_ascii=False, indent=2), encoding='utf-8')
+        
+        dups_esp = [d for lst in self.duplicados.values() for d in lst if d.get('origem') == 'espelho']
+        if dups_esp:
+            caminho_esp = getattr(self, 'download_dir', Path('.')) / 'mapa_espelhos_duplicados.json'
+            caminho_esp.write_text(json.dumps(dups_esp, ensure_ascii=False, indent=2), encoding='utf-8')
 
     def obter_duplicados(self, filtro=None) -> dict[str, list[dict]]:
         """Retorna dicionário com os id_mapa que possuem duplicatas e suas ocorrências.
@@ -360,6 +436,8 @@ class UtilCkanBase:
             for dup in dados.get('duplicados', []):
                 self.duplicados.setdefault(dup['id_mapa'], []).append(dup)
             print(f'  📋  Mapa íntegras carregado: {len(self._mapa_integras)} registros')
+            if not (self.download_dir / 'mapa_integras_duplicados.json').exists():
+                self.exportar_duplicados()
 
     def _salvar_mapa_integras(self):
         """Persiste mapa de íntegras no disco."""
@@ -373,6 +451,9 @@ class UtilCkanBase:
         self._caminho_mapa_integras.write_text(
             json.dumps(payload, ensure_ascii=False, indent=1), encoding='utf-8'
         )
+        if dups:
+            caminho_dups = self._caminho_mapa_integras.with_name(self._caminho_mapa_integras.stem + '_duplicados.json')
+            caminho_dups.write_text(json.dumps(dups, ensure_ascii=False, indent=2), encoding='utf-8')
 
     def _atualizar_mapa_integras(self):
         """Indexa íntegras usando os JSONs de metadados publicados no CKAN.
@@ -397,13 +478,29 @@ class UtilCkanBase:
         # Tenta listar recursos no CKAN para baixar novos metadados
         recursos_meta = self._listar_recursos_metadados()
         if recursos_meta:
-            nomes_locais = {j.name for j in jsons_locais}
-            para_baixar = [r for r in recursos_meta if r['name'] not in nomes_locais]
+            para_baixar = []
+            for r in recursos_meta:
+                caminho = self.metadados_dir / r['name']
+                valido = False
+                if caminho.is_file() and caminho.stat().st_size > 0:
+                    valido = True
+                    if r.get('size') is not None and caminho.stat().st_size != r['size']:
+                        valido = False
+                    if valido and r.get('last_modified'):
+                        try:
+                            mtime_local = caminho.stat().st_mtime
+                            mtime_remoto = datetime.fromisoformat(r['last_modified'].replace('Z', '+00:00')).timestamp()
+                            if mtime_local < mtime_remoto:
+                                valido = False
+                        except Exception:
+                            pass
+                if not valido:
+                    para_baixar.append(r)
             if para_baixar:
                 print(f'  🔄  Baixando {len(para_baixar)} JSON(s) de metadados de íntegras...')
                 for r in tqdm(para_baixar, desc='Metadados íntegras'):
                     try:
-                        self._baixar(r['url'], r['name'], self.metadados_dir, True)
+                        self._baixar(r['url'], r['name'], self.metadados_dir, True, size=r.get('size'), last_modified=r.get('last_modified'))
                     except Exception as e:
                         print(f'  ⚠️  Erro ao baixar {r["name"]}: {e}')
                 # Reavalia JSONs locais após download
@@ -488,7 +585,12 @@ class UtilCkanBase:
                 if fmt == 'JSON' or nome.endswith('.json'):
                     if not nome.endswith('.json'):
                         nome = nome + '.json'
-                    recursos.append({'name': nome, 'url': r['url']})
+                    recursos.append({
+                        'name': nome, 
+                        'url': r['url'],
+                        'size': r.get('size'),
+                        'last_modified': r.get('last_modified') or r.get('metadata_modified')
+                    })
         except Exception as e:
             print(f'  ⚠️  Erro ao listar metadados de íntegras no CKAN: {e}')
         return recursos
@@ -507,21 +609,52 @@ class UtilCkanBase:
                 fmt  = r.get('format', '').upper()
                 if not (nome.lower().endswith('.zip') or fmt == 'ZIP'):
                     continue
-                if anos and not any(nome.startswith(a) for a in anos):
+                if anos and not any(nome.startswith(str(a)) for a in anos):
                     continue
-                recursos.append({'name': nome, 'url': r['url']})
+                recursos.append({
+                    'name': nome, 
+                    'url': r['url'],
+                    'size': r.get('size'),
+                    'last_modified': r.get('last_modified') or r.get('metadata_modified')
+                })
         except Exception as e:
             print(f'  ⚠️  Erro ao listar ZIPs: {e}')
         return recursos
 
+    def _deduzir_anos_pelos_filtros(self):
+        """Deduz anos faltantes através do mapa_integras, caso documentos ou processos sejam fornecidos."""
+        if self.anos:
+            return
+        if not self.documentos and not self.processos:
+            return
+        anos_descobertos = set()
+        for id_mapa, reg in self._mapa_integras.items():
+            if self.documentos and str(reg.get('seq_documento', '')).strip() in self.documentos:
+                anos_descobertos.add(reg.get('data_publicacao', '')[:4])
+            elif self.processos:
+                if self._passou_filtro_processo(
+                    numero_registro=reg.get('numero_registro', ''),
+                    processo=reg.get('processo', ''),
+                    sigla_classe='',
+                    data_publicacao=reg.get('data_publicacao', ''),
+                    tipo_decisao=reg.get('tipo_decisao', '')
+                ):
+                    anos_descobertos.add(reg.get('data_publicacao', '')[:4])
+        
+        anos_validos = {int(a) for a in anos_descobertos if isinstance(a, str) and a.isdigit() and len(a) == 4}
+        if anos_validos:
+            self.anos = anos_validos
+            print(f"  🔍  Anos deduzidos a partir do mapa de íntegras: {', '.join(sorted(str(a) for a in self.anos))}")
+
     def baixar_integras(self):
         """Baixa todos os ZIPs de íntegras necessários (conforme filtros)."""
         from tqdm.auto import tqdm
+        self._deduzir_anos_pelos_filtros()
         recursos = self.listar_recursos_zip()
         print(f'Baixando {len(recursos)} ZIP(s) de íntegras...')
         for r in tqdm(recursos, desc='ZIPs'):
             try:
-                self._baixar(r['url'], r['name'], self.integras_dir, self._param_cache)
+                self._baixar(r['url'], r['name'], self.integras_dir, self._param_cache, size=r.get('size'), last_modified=r.get('last_modified'))
             except Exception as e:
                 print(f'  ⚠️  {r["name"]}: {e}')
 
@@ -536,26 +669,16 @@ class UtilCkanBase:
         Regras:
           - None / False        → False (nunca retenta).
           - True                → True  (sempre retenta).
-          - int (minutos)       → True se o .info for mais antigo que ``param`` minutos.
         """
         if param is None or param is False:
             return False
-        if param is True:
-            return True
-        try:
-            minutos = int(param)
-            if minutos <= 0:
-                return False
-            idade_min = (datetime.now().timestamp() - caminho_info.stat().st_mtime) / 60
-            return idade_min >= minutos
-        except (TypeError, ValueError, OSError):
-            return False
+        return True
 
-    def _baixar(self, url: str, nome_arquivo: str, pasta: Path, param) -> Path:
+    def _baixar(self, url: str, nome_arquivo: str, pasta: Path, param, size=None, last_modified=None) -> Path:
         """Baixa o arquivo para ``pasta`` usando cache local com estratégia por recurso.
 
         Regras de cache:
-          1. Arquivo existe com tamanho > 0 → usa o cache (nunca re-baixa).
+          1. Arquivo existe com tamanho > 0 e não sofreu alteração no CKAN → usa o cache (nunca re-baixa).
           2. Arquivo ausente + .info presente → falha anterior;
              retenta somente se ``_deve_tentar_recurso`` autorizar.
           3. Arquivo ausente + sem .info → nunca tentado;
@@ -568,8 +691,20 @@ class UtilCkanBase:
 
         # 1. Cache válido
         if caminho.is_file() and caminho.stat().st_size > 0:
-            print(f'  [cache] {nome_arquivo:<55}', end='\r', flush=True)
-            return caminho
+            valido = True
+            if size is not None and caminho.stat().st_size != size:
+                valido = False
+            if valido and last_modified:
+                try:
+                    mtime_local = caminho.stat().st_mtime
+                    mtime_remoto = datetime.fromisoformat(last_modified.replace('Z', '+00:00')).timestamp()
+                    if mtime_local < mtime_remoto:
+                        valido = False
+                except Exception:
+                    pass
+            if valido:
+                print(f'  [cache] {nome_arquivo:<55}', end='\r', flush=True)
+                return caminho
 
         # 2. Falha anterior registrada no .info
         if caminho_info.is_file():
@@ -664,10 +799,17 @@ class UtilCkanBase:
                         seq = str(item.get('seq_documento', ''))
                         txt_path = item.get('arquivo_txt', '')
                         # Tenta: 1) caminho exato, 2) busca por seq no lookup
+                        texto = None
                         if txt_path and txt_path in zf.namelist():
-                            integras[item['id_mapa']] = self._normalizar_texto(zf.read(txt_path).decode('utf-8', errors='replace'))
+                            texto = zf.read(txt_path).decode('utf-8', errors='replace')
                         elif seq in txt_por_seq:
-                            integras[item['id_mapa']] = self._normalizar_texto(zf.read(txt_por_seq[seq]).decode('utf-8', errors='replace'))
+                            texto = zf.read(txt_por_seq[seq]).decode('utf-8', errors='replace')
+                            
+                        if texto is not None:
+                            if texto.lstrip().startswith('#ERRO'):
+                                print(f"  ⚠️  Íntegra com erro de carga (ignorado): {item.get('id_mapa', seq)}")
+                            else:
+                                integras[item['id_mapa']] = self._normalizar_texto(texto)
             except Exception as e:
                 print(f'  ⚠️  Erro ao ler {nome_zip}: {e}')
 
@@ -739,7 +881,8 @@ class UtilCkanBase:
         """Normaliza texto longo (ementa, decisão, íntegra): converte \\r em \\n preservando parágrafos."""
         if not v or not isinstance(v, str):
             return v or ''
-        return v.replace('\r\n', '\n').replace('\r', '\n').strip()
+        # substitui <br> por quebra de linha pois alguns documentos estão com <br> no lugar de \n
+        return v.replace('<br>','\n').replace('\r\n', '\n').replace('\r', '\n').strip()
 
     @staticmethod
     def _imprimir_resumo(df, caminho_saida: Path, col_texto: str = 'integra'):
@@ -771,6 +914,105 @@ class UtilCkanBase:
                 print(f'      {str(cls):<35} {cnt:>5}')
             print(sep)
         print('  ✅  Concluído!')
+
+    @staticmethod
+    def salvar_dataframe(df: pd.DataFrame, caminho_saida: str | Path):
+        """Salva o DataFrame no formato especificado pela extensão do arquivo (.parquet, .feather, .csv)
+        e gera automaticamente um arquivo .md com resumo exploratório (EDA) das colunas configuráveis.
+        """
+        caminho_saida = Path(caminho_saida)
+        caminho_saida.parent.mkdir(parents=True, exist_ok=True)
+        ext = caminho_saida.suffix.lower()
+        
+        if ext == '.parquet':
+            df.to_parquet(caminho_saida, index=False)
+        elif ext == '.feather':
+            df.to_feather(caminho_saida)
+        elif ext == '.csv':
+            df.to_csv(caminho_saida, index=False, encoding='utf-8', sep=';', escapechar='\\')
+        else:
+            print(f"⚠️  Extensão não reconhecida '{ext}'. Salvando como .parquet por padrão.")
+            caminho_saida = caminho_saida.with_suffix('.parquet')
+            df.to_parquet(caminho_saida, index=False)
+            
+        UtilCkanBase.gerar_resumo_eda_md(df, caminho_saida)
+
+    @staticmethod
+    def gerar_resumo_eda_md(df: pd.DataFrame, caminho_saida: Path):
+        """Gera um arquivo Markdown de resumo (EDA) focado em contagens de dados categóricos."""
+        caminho_md = caminho_saida.with_suffix('.md')
+        linhas = [
+            f"# Resumo EDA: {caminho_saida.name}",
+            "",
+            f"**Total de Registros:** {len(df)}",
+            ""
+        ]
+        
+        colunas_presentes = [c for c in COLUNAS_RESUMO_EDA if c in df.columns]
+        if not colunas_presentes:
+            linhas.append("Nenhuma coluna configurada para o resumo (EDA) foi encontrada no dataset.")
+        else:
+            for col in colunas_presentes:
+                linhas.append(f"## {col}")
+                contagem = df[col].fillna('(vazio)').value_counts()
+                total_val = contagem.sum()
+                linhas.append("| Valor | Quantidade | Percentual |")
+                linhas.append("|---|---|---|")
+                for valor, qtd in contagem.items():
+                    pct = (qtd / total_val * 100) if total_val > 0 else 0
+                    linhas.append(f"| {valor} | {qtd} | {pct:.1f}% |")
+                linhas.append("")
+
+        for campo_texto in ['integra', 'ementa']:
+            if campo_texto in df.columns:
+                tamanhos = df[campo_texto].astype(str).str.len()
+                tamanhos = tamanhos[tamanhos > 0]
+                if not tamanhos.empty:
+                    linhas.append(f"## Distribuição de Tamanho: {campo_texto}")
+                    linhas.extend(UtilCkanBase._gerar_histograma_ascii(tamanhos, bins=10))
+                    linhas.append("")
+                
+        caminho_md.write_text("\n".join(linhas), encoding='utf-8')
+        print(f"  📝  Resumo EDA gerado em: {caminho_md}")
+
+    @staticmethod
+    def _gerar_histograma_ascii(serie: pd.Series, bins=10) -> list[str]:
+        """Gera um histograma em texto ASCII para uma série numérica."""
+        if serie.empty or serie.isna().all():
+            return ["(Nenhum dado disponível para histograma)"]
+            
+        import numpy as np
+        counts, edges = np.histogram(serie.dropna(), bins=bins)
+        
+        if len(counts) == 0 or max(counts) == 0:
+            return ["(Nenhum dado disponível para histograma)"]
+            
+        max_count = max(counts)
+        total_count = sum(counts)
+        max_bar_len = 30
+        
+        linhas = [
+            "```text",
+            f"{'Intervalo (tamanho)':<25} | {'Contagem':<10} | {'%':<6} | Distribuição",
+            "-" * 75
+        ]
+        
+        for i in range(bins):
+            start = int(edges[i])
+            end = int(edges[i+1])
+            intervalo = f"[{start:<8} - {end:<8})"
+            
+            count = counts[i]
+            pct = (count / total_count * 100) if total_count > 0 else 0
+            pct_str = f"{pct:.1f}%"
+            
+            bar_len = int((count / max_count) * max_bar_len) if max_count > 0 else 0
+            bar = "█" * bar_len
+            
+            linhas.append(f"{intervalo:<25} | {count:<10} | {pct_str:<6} | {bar}")
+            
+        linhas.append("```")
+        return linhas
 
     @classmethod
     def _obter_trecho_texto(cls, texto: str, inicio=200, fim=100, quebras=None):
@@ -854,13 +1096,14 @@ class UtilCkan(UtilCkanBase):
         datas:   Optional[set]         = None,
         classes: Optional[set[str]]    = None,
         orgaos:  Optional[list[str]]    = None,
-        registros: Optional[set] = None,
         documentos: Optional[set] = None,
+        processos: Optional[set[str]] = None,
         colunas: Optional[list[str]] = None,
+        tipos_decisao: list[str] | set[str] | str | None = None,
         download_dir: Path              = Path('downloads_stj'),
         base_url:     str               = CKAN_BASE_URL,
         timeout:      int               = 600,
-        atualizar_cache_e_mapas: bool | int | None = 12 * 60,
+        atualizar_cache_e_mapas: bool = True,
     ):
         """Inicializa o utilitário CKAN para espelhos.
 
@@ -869,7 +1112,7 @@ class UtilCkan(UtilCkanBase):
             datas: Datas de publicação específicas (ex: {'2023-06-01', '15/06/2023'}).
             classes: Classes de processos (ex: {'AI', 'RE'}).
             orgaos: Siglas dos órgãos (ex: ['T1', 'T2']). None = todos.
-            registros: Números de registro (ex: {'123456'}).
+            processos: Números de processo (ex: {'REsp 12345', '123456'}).
             documentos: Sequências de documentos (ex: {123456}).
             colunas: Colunas a serem extraídas dos espelhos. None = padrão.
             download_dir: Diretório raiz para cache.
@@ -878,23 +1121,14 @@ class UtilCkan(UtilCkanBase):
             atualizar_cache_e_mapas: Controla atualização de cache e mapas.
         """
         super().__init__(
-            anos=anos, datas=datas, classes=classes, registros=registros,
-            documentos=documentos, download_dir=download_dir,
-            base_url=base_url, timeout=timeout,
-            atualizar_cache_e_mapas=atualizar_cache_e_mapas,
+            anos=anos, datas=datas, classes=classes,
+            documentos=documentos, processos=processos, tipos_decisao=tipos_decisao,
+            download_dir=download_dir, base_url=base_url, timeout=timeout,
+            atualizar_cache_e_mapas=atualizar_cache_e_mapas
         )
 
         self.colunas = colunas or COLUNAS_ESPELHO_PADRAO
-
-        # Filtra DATASETS_ESPELHOS_PADRAO pelas siglas informadas
-        if orgaos:
-            siglas = {s.upper() for s in orgaos}
-            self.orgaos = [(s, d) for s, d in DATASETS_ESPELHOS_PADRAO if s in siglas]
-            nao_encontrados = siglas - {s for s, _ in self.orgaos}
-            if nao_encontrados:
-                print(f'  ⚠️  Órgãos não reconhecidos: {nao_encontrados}')
-        else:
-            self.orgaos = DATASETS_ESPELHOS_PADRAO
+        self.orgaos = self._validar_orgaos(orgaos)
 
         self.espelhos_dir = self.download_dir / 'espelhos'
         self.espelhos_dir.mkdir(parents=True, exist_ok=True)
@@ -910,8 +1144,21 @@ class UtilCkan(UtilCkanBase):
         self.atualizar_cache_e_mapas = self._resolver_atualizacao(atualizar_cache_e_mapas)
 
         if self.atualizar_cache_e_mapas:
-           self.baixar_espelhos()
-           self.atualizar_mapas()
+            # Primeiro atualiza o mapa (index) para ter todos os anos mapeados
+            self.atualizar_mapas()
+            # Depois baixa os espelhos (payloads) deduzindo os anos pelo mapa atualizado
+            self.baixar_espelhos()
+
+    def _validar_orgaos(self, orgaos: Optional[list[str]]) -> list[tuple[str, str]]:
+        """Valida e retorna os datasets dos órgãos."""
+        if orgaos:
+            siglas = {s.upper() for s in orgaos}
+            validos = [(s, d) for s, d in DATASETS_ESPELHOS_PADRAO if s in siglas]
+            nao_encontrados = siglas - {s for s, _ in validos}
+            if nao_encontrados:
+                print(f'  ⚠️  Órgãos não reconhecidos: {nao_encontrados}')
+            return validos
+        return DATASETS_ESPELHOS_PADRAO
 
     def _resolver_atualizacao(self, parametro) -> bool:
         """Determina se os mapas e caches devem ser atualizados (espelhos + íntegras)."""
@@ -933,6 +1180,8 @@ class UtilCkan(UtilCkanBase):
             for dup in dados.get('duplicados', []):
                 self.duplicados.setdefault(dup['id_mapa'], []).append(dup)
             print(f'  📋  Mapa espelhos carregado: {len(self._mapa_espelhos)} registros')
+            if not (self.download_dir / 'mapa_espelhos_duplicados.json').exists():
+                self.exportar_duplicados()
         self._carregar_mapa_integras()
 
     def _salvar_mapa_espelhos(self):
@@ -947,6 +1196,9 @@ class UtilCkan(UtilCkanBase):
         self._caminho_mapa_espelhos.write_text(
             json.dumps(payload, ensure_ascii=False, indent=1), encoding='utf-8'
         )
+        if dups:
+            caminho_dups = self._caminho_mapa_espelhos.with_name(self._caminho_mapa_espelhos.stem + '_duplicados.json')
+            caminho_dups.write_text(json.dumps(dups, ensure_ascii=False, indent=2), encoding='utf-8')
 
     def atualizar_mapas(self, forcar: bool = False):
         """Atualiza os dois mapas (espelhos + íntegras).
@@ -1041,16 +1293,28 @@ class UtilCkan(UtilCkanBase):
                 continue
             if not self._passou_filtro_classe(reg.get('sigla_classe', '')):
                 continue
-            if not self._passou_filtro_registro(
-                str(reg.get('numero_registro', '')),
-                str(reg.get('data_publicacao', '')),
-                str(reg.get('tipo_decisao', '')),
-            ):
+            if not self._passou_filtro_tipo_decisao(reg.get('tipo_decisao', '')):
                 continue
-            if not self._passou_filtro_documento(
-                reg.get('seq_documento', ''), id_mapa,
-            ):
-                continue
+                
+            # Filtros de Identificadores (OR logic: basta bater em documento OU processo)
+            if self.documentos or self.processos:
+                passou_doc = False
+                if self.documentos:
+                    seq = str(reg.get('seq_documento', '')).strip()
+                    passou_doc = (seq in self.documentos) or (id_mapa and str(self._mapa_integras.get(id_mapa, {}).get('seq_documento', '')).strip() in self.documentos)
+                
+                passou_proc = False
+                if self.processos:
+                    passou_proc = self._passou_filtro_processo(
+                        reg.get('numero_registro', ''), 
+                        '', 
+                        reg.get('sigla_classe', ''),
+                        reg.get('data_publicacao', ''),
+                        reg.get('tipo_decisao', '')
+                    )
+                    
+                if not (passou_doc or passou_proc):
+                    continue
             # Filtros adicionais
             if filtros:
                 skip = False
@@ -1234,7 +1498,7 @@ class UtilCkan(UtilCkanBase):
 
         # ── 3. Salvamento e resumo ────────────────────────────────────────────
         if caminho_saida:
-            df.to_parquet(caminho_saida, index=False)
+            self.salvar_dataframe(df, caminho_saida)
             self._imprimir_resumo(df, caminho_saida, col_texto='integra')
         return df
 
@@ -1418,12 +1682,13 @@ class UtilCkanIntegra(UtilCkanBase):
         anos:    Optional[set[str]]    = None,
         datas:   Optional[set]         = None,
         classes: Optional[set[str]]    = None,
-        registros: Optional[set] = None,
         documentos: Optional[set] = None,
+        processos: Optional[set[str]] = None,
+        tipos_decisao: list[str] | set[str] | str | None = None,
         download_dir: Path              = Path('downloads_stj'),
         base_url:     str               = CKAN_BASE_URL,
         timeout:      int               = 600,
-        atualizar_cache_e_mapas: bool | int | None = 12 * 60,
+        atualizar_cache_e_mapas: bool = True,
     ):
         """Inicializa o utilitário CKAN para íntegras.
 
@@ -1431,7 +1696,7 @@ class UtilCkanIntegra(UtilCkanBase):
             anos: Anos de interesse (ex: {'2023', '2024'}).
             datas: Datas de publicação específicas (ex: {'2023-06-01', '15/06/2023'}).
             classes: Classes de processos (ex: {'AI', 'RE'}).
-            registros: Números de registro. Aceita strings ou tuplas.
+            processos: Números de processo. Aceita strings ou tuplas.
             documentos: Sequências de documentos (ex: {123456}).
             download_dir: Diretório raiz para cache.
             base_url: URL base do CKAN.
@@ -1439,8 +1704,8 @@ class UtilCkanIntegra(UtilCkanBase):
             atualizar_cache_e_mapas: Controla atualização de cache e mapas.
         """
         super().__init__(
-            anos=anos, datas=datas, classes=classes, registros=registros,
-            documentos=documentos, download_dir=download_dir,
+            anos=anos, datas=datas, classes=classes,
+            documentos=documentos, processos=processos, tipos_decisao=tipos_decisao, download_dir=download_dir,
             base_url=base_url, timeout=timeout,
             atualizar_cache_e_mapas=atualizar_cache_e_mapas,
         )
@@ -1452,7 +1717,10 @@ class UtilCkanIntegra(UtilCkanBase):
         self.atualizar_cache_e_mapas = self._resolver_atualizacao(atualizar_cache_e_mapas)
 
         if self.atualizar_cache_e_mapas:
+            # Primeiro atualiza o mapa (index) para ter todos os anos mapeados
             self.atualizar_mapas()
+            # Depois baixa os ZIPs (payloads) deduzindo os anos pelo mapa atualizado
+            self.baixar_integras()
 
     def _resolver_atualizacao(self, parametro) -> bool:
         """Determina se o mapa de íntegras deve ser atualizado."""
@@ -1496,14 +1764,30 @@ class UtilCkanIntegra(UtilCkanBase):
                 continue
             if not self._passou_filtro_data(reg.get('data_publicacao', '')):
                 continue
-            if not self._passou_filtro_registro(
-                str(reg.get('numero_registro', '')),
-                str(reg.get('data_publicacao', '')),
-                str(reg.get('tipo_decisao', '')),
-            ):
+            if not self._passou_filtro_classe(reg.get('processo', '')):
                 continue
-            if not self._passou_filtro_documento(reg.get('seq_documento', '')):
+            if not self._passou_filtro_tipo_decisao(reg.get('tipo_decisao', '')):
                 continue
+                
+            # Filtros de Identificadores (OR logic: basta bater em documento OU processo)
+            if self.documentos or self.processos:
+                passou_doc = False
+                if self.documentos:
+                    seq = str(reg.get('seq_documento', '')).strip()
+                    passou_doc = (seq in self.documentos)
+                
+                passou_proc = False
+                if self.processos:
+                    passou_proc = self._passou_filtro_processo(
+                        reg.get('numero_registro', ''), 
+                        reg.get('processo', ''),
+                        '',
+                        reg.get('data_publicacao', ''),
+                        reg.get('tipo_decisao', '')
+                    )
+                    
+                if not (passou_doc or passou_proc):
+                    continue
             # Filtros adicionais
             if filtros:
                 skip = False
@@ -1592,7 +1876,7 @@ class UtilCkanIntegra(UtilCkanBase):
 
         # ── 4. Salvamento e resumo ────────────────────────────────────────────
         if caminho_saida:
-            df.to_parquet(caminho_saida, index=False)
+            self.salvar_dataframe(df, caminho_saida)
             self._imprimir_resumo(df, caminho_saida, col_texto='integra')
         return df
 
@@ -1683,6 +1967,436 @@ class UtilCkanIntegra(UtilCkanBase):
 
 
 ##############################################################################
+####### CLI E EXTRAÇÃO EM LOTE
+##############################################################################
+
+import os
+import sys
+
+try:
+    import yaml
+except ImportError:
+    yaml = None
+
+_YAML_EXEMPLO = """\
+# ==========================================================================
+# Configuração de Extração de Dados do CKAN
+# Executar com: python util_ckan.py --config {nome_arquivo}
+# ==========================================================================
+
+# --- Configuração Geral ---
+# download_dir: (Opcional) Caminho para salvar a cache e mapas. 
+# Se não for absoluto, será resolvido a partir da pasta de execução.
+# atualizar_cache_e_mapas: (Opcional) Tempo em minutos para retentar ou True para forçar. Padrão: 720 (12h)
+config:
+  download_dir: "./dados_stj/downloads"
+  atualizar_cache_e_mapas: true
+
+# --- Saída ---
+# arquivo: Caminho onde será salvo o arquivo parquet consolidado final.
+saida:
+  arquivo: "./entrada_experimento.parquet"
+  
+  # Mapeia colunas diretamente geradas pelo processo do CKAN
+  # Colunas disponíveis padrão CKAN: 
+  #   id_mapa, ministro, orgao_julgador, tipo_decisao, ementa, decisao, integra, 
+  #   data_publicacao, data_publicacao_iso, numero_registro, seq_documento, processo
+  # Colunas auto-padronizadas pelo script:
+  #   dt_publicacao, ano, sg_classe, num_registro, seq_documento_acordao
+  # colunas_ckan:
+  #   ministro: num_ministro
+  #   dt_publicacao: dt_publicacao
+  #   sg_classe: sg_classe
+  #   integra: integra
+  #   num_registro: num_registro
+  #   seq_documento_acordao: seq_documento_acordao
+  #   ano: ano
+  
+  # Preserva colunas (faz merge via left-join) advindas do arquivo_origem configurado nas extrações
+  # colunas_origem:
+  #   sg_ramo_direito: sg_ramo_direito
+  #   pasta: pasta
+
+# --- Sequência de Extrações ---
+# Lista de extrações a serem executadas e combinadas.
+# tipo: "espelhos" (espelho + opcionalmente integra) ou "integras" (só integra).
+# incluir_integras, incluir_ementas, incluir_decisoes: apenas para tipo "espelhos".
+# incluir_texto: apenas para tipo "integras".
+extracoes:
+  - tipo: "espelhos"
+    incluir_integras: true
+    incluir_ementas: true
+    filtros:
+      anos: ["2023", "2024"]
+      orgaos: ["T5"]
+      classes: ["HC", "RHC"]
+      tipo_decisao: "acordao"
+      
+  - tipo: "integras"
+    incluir_texto: true
+    filtros:
+      # Puxa dinamicamente as listas baseadas nos únicos de um arquivo
+      arquivo_origem: "./dados/pecas_exportadas_textos.parquet"
+      coluna_anos: "ano"
+      coluna_documentos: "seq_documento_acordao"
+    # colunas_fixas:
+    #   - fold: 12
+    #   - grupo: "meu grupo extra"
+    #   - data: "$hoje"
+"""
+
+def carregar_config_ckan(yaml_path: str) -> dict:
+    if not yaml:
+        print("❌ O pacote 'pyyaml' não está instalado. Instale com: pip install pyyaml")
+        sys.exit(1)
+        
+    if not os.path.isfile(yaml_path):
+        raise FileNotFoundError(f"Arquivo YAML não encontrado: '{yaml_path}'")
+
+    with open(yaml_path, "r", encoding="utf-8") as fp:
+        config = yaml.safe_load(fp) or {}
+
+    if not isinstance(config, dict):
+        raise ValueError(f"YAML deve conter um dicionário, recebido: {type(config)}")
+
+    # --- Config ---
+    cfg = config.get("config", {}) or {}
+    download_dir = cfg.get("download_dir", "")
+    if download_dir:
+        # Resolve path em relação à pasta de execução
+        download_dir = os.path.abspath(download_dir)
+    else:
+        # Padrão na pasta de execução atual
+        download_dir = os.path.abspath("downloads_stj")
+    cfg["download_dir"] = download_dir
+    config["config"] = cfg
+
+    # --- Saída ---
+    saida = config.get("saida", {}) or {}
+    arquivo_saida = saida.get("arquivo", "")
+    if not arquivo_saida:
+        raise ValueError("saida.arquivo é obrigatório no YAML")
+    saida["arquivo"] = os.path.abspath(arquivo_saida)
+    config["saida"] = saida
+
+    # --- Extrações ---
+    extracoes = config.get("extracoes", [])
+    if not extracoes or not isinstance(extracoes, list):
+        raise ValueError("A chave 'extracoes' deve ser uma lista e não pode estar vazia.")
+    
+    return config
+
+def exibir_view_ckan(yaml_path: str):
+    try:
+        config = carregar_config_ckan(yaml_path)
+    except Exception as e:
+        print(f"Erro ao carregar configuração: {e}")
+        return
+
+    arquivo_saida = config["saida"]["arquivo"]
+    print(f"👁️  Visualizando arquivo de saída: {arquivo_saida}\n")
+    if not os.path.isfile(arquivo_saida):
+        print(f"⚠️  Arquivo '{arquivo_saida}' não existe. Rode a extração sem --view primeiro.")
+        return
+
+    try:
+        import pandas as pd
+        df = pd.read_parquet(arquivo_saida)
+    except Exception as e:
+        print(f"Erro ao ler '{arquivo_saida}': {e}")
+        return
+
+    print(f"📊 Total de registros: {len(df)}")
+    print(f"📑 Colunas presentes: {list(df.columns)}")
+    print("-" * 55)
+    
+    # Usa o UtilsCkanBase para exibir a amostra
+    UtilCkanBase.exibir_amostra(df, n=3, titulo="Amostra do Arquivo Final")
+
+def _aplicar_tipos_padrao_ckan(df):
+    """Garante que colunas típicas do CKAN tenham o tipo correto."""
+    if df is None or df.empty:
+        return df
+        
+    import pandas as pd
+    df_out = df.copy()
+    
+    # seq_documento deve ser Int64 (Integer que suporta Nulos no Pandas)
+    for col in ['seq_documento', 'seq_documento_acordao']:
+        if col in df_out.columns:
+            try:
+                df_out[col] = pd.to_numeric(df_out[col], errors='raise').astype('Int64')
+            except Exception as e:
+                raise ValueError(f"Erro ao converter '{col}' para Inteiro. Verifique o arquivo de origem. Detalhe: {e}")
+                
+    # Demais identificadores devem ser strings puras (evitar floats como '123.0')
+    str_cols = ['id_mapa', 'numero_registro', 'processo', 'ministro', 'orgao_julgador', 'tipo_decisao']
+    for col in str_cols:
+        if col in df_out.columns:
+            if pd.api.types.is_float_dtype(df_out[col]) or pd.api.types.is_numeric_dtype(df_out[col]):
+                df_out[col] = pd.to_numeric(df_out[col], errors='coerce').astype('Int64').astype(str).replace('<NA>', '')
+            else:
+                df_out[col] = df_out[col].astype(str).replace('nan', '')
+                
+    # Datas (sempre strings)
+    date_cols = ['data_publicacao', 'data_publicacao_iso', 'dt_publicacao']
+    for col in date_cols:
+        if col in df_out.columns:
+            df_out[col] = df_out[col].astype(str).str.strip().replace('nan', '')
+            
+    return df_out
+
+
+def executar_ckan_batch(yaml_path: str):
+    config = carregar_config_ckan(yaml_path)
+    
+    cfg = config["config"]
+    saida = config["saida"]
+    extracoes = config["extracoes"]
+    
+    download_dir = cfg["download_dir"]
+    atualizar_cache = cfg.get("atualizar_cache_e_mapas", True)
+    
+    arquivo_saida = saida["arquivo"]
+    
+    import pandas as pd
+    dfs_resultado = []
+    referencia_tipos = {}
+    
+    print(f"🚀 Iniciando extração em lote (CKAN)")
+    print(f"📂 Diretório de download: {download_dir}")
+    print(f"💾 Arquivo de saída: {arquivo_saida}\n")
+    
+    for i, extracao in enumerate(extracoes, 1):
+        tipo = str(extracao.get("tipo", "")).strip().lower()
+        print(f"--- Extração {i}/{len(extracoes)}: Tipo '{tipo}' ---")
+        
+        filtros_brutos = extracao.get("filtros", {}) or {}
+        
+        # Filtros dinâmicos via arquivo parquet
+        arq_origem = filtros_brutos.get("arquivo_origem", "")
+        df_filtro = None
+        if arq_origem:
+            arq_origem = os.path.abspath(arq_origem)
+            
+            if os.path.isfile(arq_origem):
+                print(f"   📥 Carregando filtros dinâmicos de: {arq_origem}")
+                import pandas as pd
+                if arq_origem.lower().endswith('.csv'):
+                    df_filtro = pd.read_csv(arq_origem)
+                elif arq_origem.lower().endswith('.feather'):
+                    df_filtro = pd.read_feather(arq_origem)
+                else:
+                    df_filtro = pd.read_parquet(arq_origem)
+                
+                df_filtro = _aplicar_tipos_padrao_ckan(df_filtro)
+                
+                col_anos = filtros_brutos.get("coluna_anos")
+                if col_anos and col_anos in df_filtro.columns:
+                    vals = set(df_filtro[col_anos].dropna().astype(str).unique())
+                    filtros_brutos["anos"] = filtros_brutos.get("anos", []) + list(vals)
+                    print(f"      - {len(vals)} ano(s) recuperado(s)")
+                    
+                col_docs = filtros_brutos.get("coluna_documentos")
+                if col_docs and col_docs in df_filtro.columns:
+                    vals = set(df_filtro[col_docs].dropna().astype(str).unique())
+                    filtros_brutos["documentos"] = filtros_brutos.get("documentos", []) + list(vals)
+                    print(f"      - {len(vals)} seq_documento(s) recuperado(s)")
+                    
+                col_procs = filtros_brutos.get("coluna_processos")
+                if col_procs and col_procs in df_filtro.columns:
+                    vals = set(df_filtro[col_procs].dropna().astype(str).unique())
+                    filtros_brutos["processos"] = filtros_brutos.get("processos", []) + list(vals)
+                    print(f"      - {len(vals)} processo(s) recuperado(s)")
+            else:
+                print(f"   ⚠️  Arquivo de origem dinâmico não encontrado: {arq_origem}")
+
+        # Converte anos/classes para set de strings
+        anos = set(str(a) for a in filtros_brutos.get("anos", [])) if "anos" in filtros_brutos else None
+        datas = set(str(d) for d in filtros_brutos.get("datas", [])) if "datas" in filtros_brutos else None
+        classes = set(str(c) for c in filtros_brutos.get("classes", [])) if "classes" in filtros_brutos else None
+        orgaos = filtros_brutos.get("orgaos")
+        processos = filtros_brutos.get("processos")
+        documentos = filtros_brutos.get("documentos")
+        tipo_decisao_filtro = filtros_brutos.get("tipo_decisao")
+        
+        df_parcial = None
+        
+        if tipo == "espelhos":
+            ckan = UtilCkan(
+                anos=anos, datas=datas, classes=classes, orgaos=orgaos,
+                documentos=documentos, processos=processos, tipos_decisao=tipo_decisao_filtro,
+                download_dir=Path(download_dir),
+                atualizar_cache_e_mapas=atualizar_cache
+            )
+            df_parcial = ckan.gerar_dataset_espelhos(
+                incluir_integras=extracao.get("incluir_integras", False),
+                incluir_ementas=extracao.get("incluir_ementas", True),
+                incluir_decisoes=extracao.get("incluir_decisoes", True)
+            )
+        elif tipo == "integras":
+            integra = UtilCkanIntegra(
+                anos=anos, datas=datas, classes=classes,
+                documentos=documentos, processos=processos, tipos_decisao=tipo_decisao_filtro,
+                download_dir=Path(download_dir),
+                atualizar_cache_e_mapas=atualizar_cache
+            )
+            df_parcial = integra.gerar_dataset_integras(
+                incluir_texto=extracao.get("incluir_texto", True)
+            )
+        else:
+            print(f"⚠️  Tipo de extração desconhecido: '{tipo}'. Ignorando.")
+            continue
+            
+        if df_parcial is not None and not df_parcial.empty:
+            df_parcial = _aplicar_tipos_padrao_ckan(df_parcial)
+            print(f"✔️  Extração {i} resultou em {len(df_parcial)} registros.")
+            
+            # --- Inserir Colunas Fixas ---
+            col_fixas = extracao.get("colunas_fixas", [])
+            if isinstance(col_fixas, list):
+                for item in col_fixas:
+                    if isinstance(item, dict):
+                        for k, v in item.items():
+                            if isinstance(v,str) and v.strip().lower() in ("$hoje", "$data"):
+                                from datetime import date
+                                v = date.today().strftime('%Y-%m-%d')
+                            elif isinstance(v,str) and v.strip().lower() in ("$agora", "$now"):
+                                from datetime import datetime
+                                v = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                            df_parcial[k] = v
+                            
+            # --- Fazer Merge com Arquivo Origem (se aplicável) ---
+            if df_filtro is not None:
+                col_docs = filtros_brutos.get("coluna_documentos")
+                col_regs = filtros_brutos.get("coluna_registros")
+                
+                left_on, right_on = None, None
+                if col_docs and col_docs in df_filtro.columns and 'seq_documento' in df_parcial.columns:
+                    left_on, right_on = 'seq_documento', col_docs
+                    # Já tipados corretamente pelo _aplicar_tipos_padrao_ckan
+                elif col_regs and col_regs in df_filtro.columns and 'numero_registro' in df_parcial.columns:
+                    left_on, right_on = 'numero_registro', col_regs
+                    # Já tipados corretamente pelo _aplicar_tipos_padrao_ckan
+                
+                if left_on and right_on:
+                    print(f"   🔗 Fazendo merge com origem (ON ckan.{left_on} = origem.{right_on})")
+                    colunas_origem = saida.get("colunas_origem", {})
+                    cols_trazer = []
+                    if isinstance(colunas_origem, dict) and colunas_origem:
+                        cols_trazer = [c for c in colunas_origem.keys() if c in df_filtro.columns]
+                    
+                    if cols_trazer:
+                        cols_merge = list(set(cols_trazer + [right_on]))
+                        # Faz left join e remove a coluna de junção extra (right_on) se ela tiver nome diferente para não poluir
+                        df_parcial = pd.merge(df_parcial, df_filtro[cols_merge], how='left', left_on=left_on, right_on=right_on)
+                        if right_on != left_on and right_on in df_parcial.columns and right_on not in cols_trazer:
+                            df_parcial.drop(columns=[right_on], inplace=True)
+
+            # --- Harmonização Dinâmica de Tipos Extras ---
+            for col in df_parcial.columns:
+                if col in referencia_tipos:
+                    # Tenta converter para o tipo que o primeiro grupo definiu
+                    try:
+                        df_parcial[col] = df_parcial[col].astype(referencia_tipos[col])
+                    except Exception as e:
+                        print(f"⚠️  Aviso: Não foi possível harmonizar o tipo da coluna '{col}' ({df_parcial[col].dtype} -> {referencia_tipos[col]}).")
+                else:
+                    # Registra o tipo para os próximos grupos
+                    referencia_tipos[col] = df_parcial[col].dtype
+
+            dfs_resultado.append(df_parcial)
+        else:
+            print(f"⚠️  Extração {i} não retornou nenhum registro.")
+            
+    print("\n" + "=" * 55)
+    if not dfs_resultado:
+        print("❌ Nenhuma extração retornou dados. O arquivo parquet não será gerado.")
+        return
+        
+    print(f"🔄 Concatenando {len(dfs_resultado)} dataframes...")
+    df_final = pd.concat(dfs_resultado, ignore_index=True)
+    
+    if 'id_mapa' in df_final.columns:
+        antes = len(df_final)
+        df_final = df_final.drop_duplicates(subset=['id_mapa']).reset_index(drop=True)
+        depois = len(df_final)
+        if antes > depois:
+            print(f"🧹 Duplicados removidos por id_mapa: {antes} -> {depois} registros únicos.")
+            
+    # === PADRONIZAÇÃO AUTOMÁTICA CKAN ===
+    # Converte numero_registro para string
+    if 'numero_registro' in df_final.columns:
+        df_final['num_registro'] = df_final['numero_registro']
+
+    # Cria seq_documento_acordao (mantém Int64)
+    if 'seq_documento' in df_final.columns:
+        df_final['seq_documento_acordao'] = df_final['seq_documento']
+
+    # Extrai sg_classe de processo
+    if 'processo' in df_final.columns:
+        df_final['sg_classe'] = df_final['processo'].astype(str).str.split(' ').str[0].str.strip()
+
+    # Formata datas (ano e dt_publicacao a partir de data_publicacao)
+    if 'data_publicacao' in df_final.columns:
+        dp_str = df_final['data_publicacao'].astype(str).str.strip()
+        df_final['ano'] = pd.to_numeric(dp_str.str[:4], errors='coerce').astype('Int64')
+        
+        mask_8 = dp_str.str.len() == 8
+        dt_pub = dp_str.copy()
+        dt_pub.loc[mask_8] = dp_str.loc[mask_8].str[:4] + '-' + dp_str.loc[mask_8].str[4:6] + '-' + dp_str.loc[mask_8].str[6:8]
+        df_final['dt_publicacao'] = dt_pub
+    elif 'data_publicacao_iso' in df_final.columns and 'ano' not in df_final.columns:
+        # Fallback de segurança se apenas data_publicacao_iso estiver disponível
+        df_final['ano'] = df_final['data_publicacao_iso'].astype(str).str[:4]
+    # ====================================
+    # Aplica o mapeamento de colunas se configurado
+    colunas_ckan = saida.get("colunas_ckan", {})
+    colunas_origem = saida.get("colunas_origem", {})
+    
+    if colunas_ckan or colunas_origem:
+        renomear_dict = {}
+        cols_manter = []
+        
+        if isinstance(colunas_ckan, dict):
+            for orig, dest in colunas_ckan.items():
+                if orig in df_final.columns:
+                    renomear_dict[orig] = dest
+                    cols_manter.append(orig)
+                    
+        if isinstance(colunas_origem, dict):
+            for orig, dest in colunas_origem.items():
+                if orig in df_final.columns:
+                    renomear_dict[orig] = dest
+                    cols_manter.append(orig)
+                    
+        # Adiciona colunas fixas que foram definidas no YAML para não serem descartadas
+        for extracao in extracoes:
+            fixas = extracao.get("colunas_fixas", [])
+            if isinstance(fixas, list):
+                for f in fixas:
+                    if isinstance(f, dict):
+                        for k in f.keys():
+                            if k in df_final.columns and k not in cols_manter:
+                                cols_manter.append(k)
+                                
+        df_final = df_final[list(set(cols_manter))].rename(columns=renomear_dict)
+        print(f"🔀 Colunas finais após mapeamento: {list(df_final.columns)}")
+    
+    # Garante que a pasta de destino exista
+    pasta_saida = os.path.dirname(arquivo_saida)
+    if pasta_saida:
+        os.makedirs(pasta_saida, exist_ok=True)
+        
+    print(f"💾 Salvando arquivo consolidado: {arquivo_saida}...")
+    UtilCkanBase.salvar_dataframe(df_final, arquivo_saida)
+    
+    # Exibe resumo
+    UtilCkanBase._imprimir_resumo(df_final, Path(arquivo_saida))
+    print("✅ Extração em lote concluída com sucesso.")
+
+
+##############################################################################
 ####### EXEMPLOS
 ##############################################################################
 
@@ -1727,7 +2441,7 @@ class ExemplosCKan():
         print('=== Exemplo 2: construir mapas + dataset com um número de registro específico ===\n')
         num_registro = num_registro or '202201546162'
         ckan2 = UtilCkan(
-            registros= {num_registro},
+            processos= {num_registro},
             atualizar_cache_e_mapas = atualizar_cache_e_mapas,
         )
 
@@ -1745,7 +2459,7 @@ class ExemplosCKan():
         print('=== Exemplo 3: UtilCkanIntegra — íntegras sem espelhos ===\n')
         num_registro = num_registro or '202302829818'
         integra = UtilCkanIntegra(
-            registros = {num_registro},
+            processos = {num_registro},
             atualizar_cache_e_mapas = atualizar_cache_e_mapas,
         )
 
@@ -1796,16 +2510,35 @@ class ExemplosCKan():
     
 
 if __name__ == '__main__':
-    """Exemplos de uso — execução direta para teste rápido."""
+    """Exemplos de uso ou execução CLI."""
+    import argparse
     from pathlib import Path
 
-    atualizar_mapas_e_cache = True
-    # Exemplo 1: construir mapas e gerar dataset Penal (2024)
-    #ExemplosCKan.exemplo1(atualizar_mapas_e_cache)
+    parser = argparse.ArgumentParser(description="Utilitários CKAN e CLI de extração em lote")
+    parser.add_argument("--config", type=str, help="Caminho para o arquivo YAML de configuração")
+    parser.add_argument("--view", action="store_true", help="Apenas visualizar o parquet final gerado sem re-extrair")
+    args, unknown = parser.parse_known_args()
 
-    # Exemplo 2: construir mapas e gerar dataset com um número de registro específico
-    ExemplosCKan.exemplo2(num_registro = '202302829818', atualizar_cache_e_mapas = atualizar_mapas_e_cache)
-
-    # Exemplo 3: UtilCkanIntegra — íntegras sem espelhos
-    #ExemplosCKan.exemplo3_integra(num_registro = '202302829818', atualizar_cache_e_mapas = atualizar_mapas_e_cache)
+    if args.config:
+        yaml_path = args.config
+        if not os.path.isfile(yaml_path):
+            print(f"⚠️  Arquivo '{yaml_path}' não encontrado.")
+            resp = input("Deseja criar um arquivo de configuração com exemplo? (s/N): ").strip().lower()
+            if resp in ("s", "sim", "y", "yes"):
+                with open(yaml_path, "w", encoding="utf-8") as f:
+                    f.write(_YAML_EXEMPLO.format(nome_arquivo=os.path.basename(yaml_path)))
+                print(f"✅ Arquivo de exemplo criado em: '{yaml_path}'")
+                print("   Edite-o com suas configurações e rode o comando novamente.")
+            sys.exit(0)
+            
+        if args.view:
+            exibir_view_ckan(yaml_path)
+        else:
+            executar_ckan_batch(yaml_path)
+    else:
+        print("💡 Dica: Use --config <arquivo.yaml> para rodar extração em lote.\n")
+        atualizar_mapas_e_cache = False
+        
+        # Exemplo 2: construir mapas e gerar dataset com um número de registro específico
+        ExemplosCKan.exemplo2(num_registro = '202302829818', atualizar_cache_e_mapas = atualizar_mapas_e_cache)
 
